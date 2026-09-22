@@ -6,4 +6,5 @@
 - [hooks/settings.json 동기화 규칙](hooks_settings_sync_rule.md) — .claude/hooks/*.sh 삭제 시 settings.json의 hooks 참조도 같이 지워야 함. 2026-09-22 notification-hook.sh 삭제 후 settings.json 미동기화(참조 남음) 발견.
 - [.phone clamp/max-height 엣지케이스](phone_clamp_overflow_edge_case.md) — 데스크톱 창 높이 768px~1030px 구간에서 body 패딩과 충돌해 페이지 스크롤 발생 가능(Minor, 2026-09-22 발견, 아직 미해결).
 - [.gitignore가 supabase-client.js를 제외하는 버그](gitignore_supabase_client_bug.md) — 커밋 시 핵심 스크립트가 저장소에서 빠져 앱이 전체적으로 깨짐(Critical, 2026-09-22 발견, 커밋 전 반드시 재확인).
-- [Supabase 마이그레이션 리뷰 반복 포인트](supabase_migration_review_notes.md) — 0002 마이그레이션의 search_path 유실 위험, entries.js 에러 UX 부재, status-badge CSS/문서 중복(2026-09-22).
+- [Supabase 마이그레이션 리뷰 반복 포인트](supabase_migration_review_notes.md) — 6단계 전부 완료(2026-09-22), search_path 관례 정착, 소프트삭제 RPC 우회 패턴, confirm()→showDialog() 문서 3곳 드리프트.
+- [showDialog Promise 재사용 패턴](showdialog_promise_reuse_pattern.md) — 단일 다이얼로그 인스턴스 재사용, 동시 호출 시 이전 Promise 미해결 엣지케이스(Minor, 2026-09-22).

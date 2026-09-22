@@ -1,3 +1,3 @@
 - [entries.js 리뷰 기준](feedback_entries_review.md) — 확정된 파일 구조(8개 섹션), 고친 것/의도적으로 안 고친 것과 이유
-- [프로젝트 JS 기본 사실](project_context.md) — 유일한 JS 파일, 화면 2개, entries.json 스키마, innerHTML 금지 전례
-- [Supabase 도입 진행 상태](project_supabase_migration.md) — 6단계 계획 중 2단계 완료, supabase-client.js 산출물(supabaseClient/window.supabaseReady), CDN 버전 2.116.0
+- [프로젝트 JS 기본 사실](project_context.md) — JS 파일 2개, 화면 2개+바텀시트 오버레이 2개(등록/수정), isMine 판별, 소프트 삭제, innerHTML 금지 전례
+- [Supabase 도입 진행 상태](project_supabase_migration.md) — 6단계 전부 완료(읽기/상태UPDATE/등록INSERT/수정·삭제UPDATE/내 글 필터), RLS 빈 배열 방어 3갈래 분기가 표준 쓰기 패턴

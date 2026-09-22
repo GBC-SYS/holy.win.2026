@@ -75,7 +75,7 @@
 **참고:**
 - `--muted`은 `--card`와 같은 값(#ece7db)을 공유한다 — 이 프로젝트에는 카드 표면과 별도의 옅은 배경이 아직 없기 때문이다. 필요해지면 그때 분리한다.
 - `--muted-foreground`(#6e6b64)는 02번에서 라이트 배경 대비 4.5:1을 맞추기 위해 다크 테마 값(#8a8783)보다 어둡게 조정한 값과 같다.
-- `--destructive`는 현재 코드에서 쓰이지 않는다(삭제 동작이 없음). 추가할 때 쓸 표준 빨강 제안값만 미리 채워둔 것이며, 이 값이 실제로 화면에 쓰이기 전까지는 02번 7색 밖의 예외로 취급한다.
+- `--destructive`는 실제로 쓰인다 — 티켓 상세 화면의 위험 버튼(`.btn-danger`, "삭제")이 `entries.css`의 `--destructive`(#dc2626, 배경)/`--destructive-foreground`(#ffffff, 글자)로 구현되어 있다. 대비 4.83:1(02번 "코드에 남아있는 추가 색" 표 참고)로 4.5:1 기준을 통과하며, 삭제는 `showDialog()` 커스텀 다이얼로그(백드롭 탭으로 안 닫힘) 확인 단계를 거친 뒤에만 실행된다. 02번 7색 밖의 예외로 취급되는 것은 동일하다.
 - `--success`/`--success-foreground`는 `--destructive`와 달리 실제로 쓰인다 — 티켓 상세 화면과 리스트 카드의 상태 배지(`.status-badge--done`/`.entry-status--done`, "완료")가 `entries.css`의 `--success`(#1f7a37, 글자)/`--success-soft`(#e3f5e6, 배경)로 구현되어 있다. 여기서는 shadcn 명명 규칙(`--이름`=배경, `--이름-foreground`=글자)을 따르므로 순서가 반대로 매핑된다: `--success`(배경 #e3f5e6) / `--success-foreground`(글자 #1f7a37). 02번 "상태 색은 7색 밖 예외(최대 3색)" 조항의 1번째 색이며, 경고/오류 색은 아직 추가하지 않았다.
 - `--primary-foreground`(#141413)는 `.cta-btn { color: var(--ink) }`의 실측값과 일치한다.
 

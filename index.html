@@ -24,6 +24,10 @@
           </div>
         </div>
         <p class="subtitle">함께 기도해요 · 홀리윈 전도 대상자</p>
+        <div class="filter-tabs" role="tablist" aria-label="명단 필터">
+          <button type="button" class="filter-tab filter-tab--active" id="filter-tab-all" role="tab" aria-selected="true">전체</button>
+          <button type="button" class="filter-tab" id="filter-tab-mine" role="tab" aria-selected="false">내가 쓴 글</button>
+        </div>
       </header>
 
       <div class="list-scroll">
@@ -35,6 +39,7 @@
           <p class="group-label group-label--dim">이전 명단</p>
           <div class="group-list" id="list-past"></div>
         </div>
+        <p class="list-empty is-hidden" id="list-empty">아직 작성한 글이 없어요</p>
       </div>
 
       <footer class="cta-bar">
@@ -107,8 +112,87 @@
           이 이름을 위해 함께 기도해요
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c0-7-4-10-8-10 0 6 3 9 8 10zm0 0c0-7 4-10 8-10 0 6-3 9-8 10z"/></svg>
         </p>
+
+        <div class="ticket-owner-actions ticket-owner-actions--hidden" id="ticket-owner-actions">
+          <button type="button" class="btn-danger" id="btn-delete-entry">삭제</button>
+          <button type="button" class="btn-secondary" id="btn-edit-entry">수정</button>
+        </div>
       </div>
     </section>
+
+    <!-- ============ 명단 등록 바텀시트 ============ -->
+    <div class="sheet-backdrop sheet-backdrop--hidden" id="sheet-backdrop"></div>
+
+    <div class="sheet-panel sheet-panel--hidden" id="sheet-panel" role="dialog" aria-modal="true" aria-label="전도 명단 등록">
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-header">
+        <span class="topbar-title">명단 등록</span>
+        <button type="button" class="back-btn" id="btn-form-close" aria-label="닫기">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form class="form-wrap" id="entry-form">
+        <div class="form-field">
+          <label class="form-label" for="input-to-name">대상자 이름</label>
+          <input class="form-input" type="text" id="input-to-name" name="to_name" maxlength="50" required autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="input-from-name">제출자 이름</label>
+          <input class="form-input" type="text" id="input-from-name" name="from_name" maxlength="50" required autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="input-relation">관계</label>
+          <input class="form-input" type="text" id="input-relation" name="relation" maxlength="50" required autocomplete="off">
+        </div>
+
+        <button type="submit" class="cta-btn form-submit-btn">등록하기</button>
+      </form>
+    </div>
+
+    <!-- ============ 명단 수정 바텀시트 ============ -->
+    <div class="sheet-backdrop sheet-backdrop--hidden" id="edit-sheet-backdrop"></div>
+
+    <div class="sheet-panel sheet-panel--hidden" id="edit-sheet-panel" role="dialog" aria-modal="true" aria-label="전도 명단 수정">
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-header">
+        <span class="topbar-title">명단 수정</span>
+        <button type="button" class="back-btn" id="btn-edit-form-close" aria-label="닫기">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form class="form-wrap" id="edit-entry-form">
+        <div class="form-field">
+          <label class="form-label" for="edit-input-to-name">대상자 이름</label>
+          <input class="form-input" type="text" id="edit-input-to-name" name="to_name" maxlength="50" required autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="edit-input-from-name">제출자 이름</label>
+          <input class="form-input" type="text" id="edit-input-from-name" name="from_name" maxlength="50" required autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="edit-input-relation">관계</label>
+          <input class="form-input" type="text" id="edit-input-relation" name="relation" maxlength="50" required autocomplete="off">
+        </div>
+
+        <button type="submit" class="cta-btn form-submit-btn">저장하기</button>
+      </form>
+    </div>
+
+    <!-- ============ 알림/확인 다이얼로그 ============ -->
+    <div class="sheet-backdrop sheet-backdrop--hidden" id="dialog-backdrop"></div>
+
+    <div class="dialog-panel dialog-panel--hidden" id="dialog-panel" role="alertdialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-description">
+      <p class="dialog-title" id="dialog-title"></p>
+      <p class="dialog-description" id="dialog-description"></p>
+      <div class="dialog-actions">
+        <button type="button" class="cta-btn dialog-confirm-btn" id="dialog-confirm-btn">확인</button>
+        <button type="button" class="btn-secondary dialog-cancel-btn" id="dialog-cancel-btn">취소</button>
+      </div>
+    </div>
 
   </div>
 

@@ -12,3 +12,5 @@ metadata:
 **Why:** anon key는 공개 키라 `.env` 처리 없이 코드에 하드코딩하는 것이 이 프로젝트의 명시적 결정([[project_supabase_migration]] 참고, RLS가 실제 접근 제어를 담당)인데, 아마 이 결정과 반대로 "API 키가 든 파일이니 gitignore해야 한다"는 일반적인 반사作용으로 실수로 추가된 것으로 보인다. 프로젝트 결정과 정면으로 모순되는 설정이다.
 
 **How to apply:** 다음 리뷰에서 `.gitignore`에 `assets/js/*.js` 관련 패턴이 다시 나타나는지, 그리고 `supabase-client.js`가 실제로 `git ls-files`/커밋에 포함되는지 반드시 재확인할 것. 재발하면 Critical(BLOCKED)로 즉시 지적.
+
+**해소 확인(2026-09-22, 6단계 완료 후 최종 리뷰):** `.gitignore` 전체를 다시 읽어 `assets/js/supabase-client.js` 줄이 더 이상 없음을 확인함. 같은 커밋에 `.gitignore` 자체도 수정 대상(`M .gitignore`)으로 포함되어 있어, 이번 커밋이 실제로 이 버그를 고친 것으로 보인다. 계속 재발 여부만 추적.

@@ -8,11 +8,16 @@
 ```
 ## Components
 - 주 버튼 — --accent 배경 + --ink 글자, 모서리 14px(05번), 높이 약 52px(padding 16px 기준), 화면당 하나만
-- 보조 버튼 — 미구현. 추가 시: 배경 없음 + --ink 글자 + 테두리 1px(--card-muted-line), 주 버튼과 같은 높이(52px)·모서리(14px)
+- 보조 버튼(btn-secondary) — --card-muted 배경 + --ink 글자 + 테두리 1px(--card-muted-line), 주 버튼과 같은 높이(52px)·모서리(14px). 티켓 상세 화면의 "수정" 버튼에 적용(본인 글일 때만 노출)
 - 카드 — --card-muted 배경(강조 카드는 --paper, 02번 예외 참고), 모서리 16px(05번), 안쪽 여백 20px(04번), 그림자 없음·절제 카드만 테두리(06번)
-- 입력창 — 미구현. 추가 시: --card-muted 배경, 모서리 14px(05번), 높이 52px(주 버튼과 동일), 포커스 시 --accent 아웃라인
+- 입력창(form-input) — --card-muted 배경, 모서리 14px(05번), 높이 52px(주 버튼과 동일), 포커스 시 --accent 2px 아웃라인(outline-offset 1px). 라벨(form-label)은 grid-label과 동일 톤(11px, #a6a39e). 등록 바텀시트(#entry-form)와 수정 바텀시트(#edit-entry-form) 둘 다에 적용됨
 - 칩(relation-tag) — 기본 --accent-soft 배경 + --accent 글자(강조 카드), 절제 카드(entry-card--dark)에서는 --card-muted-line 배경 + --muted 글자. count-chip(리스트 개수 표시)은 상시 --accent 배경 + --ink 글자
 - 상태 배지(status-badge) — 티켓 상세 화면 전용, 탭하면 다음 상태로 순환하는 버튼형 칩. "기도 중"은 --accent-soft 배경 + #3a1e10 글자(--accent 글자는 대비 미달이라 예외 색 사용), "완료"는 --success-soft 배경 + --success 글자. 모서리 999px(칩과 동일), 화면당 하나만(티켓 그리드의 상태 칸)
+- 바텀시트(sheet-backdrop/sheet-panel) — 명단 등록/수정 폼 전용 오버레이 컨테이너. 화면 전환(.screen)과 별개로 리스트/티켓 화면 위에 뜬다. 백드롭은 검정 위 50% 불투명도 스크림(rgba(0,0,0,0.5), 새 색 등록 아님), opacity 트랜지션(0.28s ease)으로 열고 닫음. 패널 배경은 --paper, 위쪽 모서리만 24px(0번 티켓 카드와 동일 값), transform translateY로 슬라이드(0.28s ease), 최대 높이는 화면의 70%. 상단 핸들 바(sheet-handle)는 36×4px, 모서리 999px, --card-muted-line 배경, 장식용(드래그 기능 없음). 닫기는 백드롭 탭 또는 닫기 버튼(back-btn 스타일 재사용, X 아이콘)만 지원 — 드래그로 끌어내리는 제스처는 미구현. 화면(또는 시트 용도)당 하나만 — 현재 등록용(#sheet-backdrop/#sheet-panel)과 수정용(#edit-sheet-backdrop/#edit-sheet-panel) 두 인스턴스가 같은 CSS 클래스를 공유한다
+- 위험 버튼(btn-danger) — --destructive 배경(#dc2626) + --destructive-foreground 글자(#ffffff, 대비 4.83:1, 02번 참고), 주 버튼/보조 버튼과 같은 높이(52px)·모서리(14px). 삭제 등 되돌릴 수 없는 동작 전용이며 항상 다이얼로그(아래 항목) 확인 단계를 거친 뒤에만 실행한다. 티켓 상세 화면의 "삭제" 버튼(본인 글일 때만 노출, 보조 버튼과 가로로 나란히 배치)에 적용
+- 다이얼로그(dialog-backdrop/dialog-panel) — 브라우저 기본 alert()/confirm()을 대체하는 알림·확인 전용 오버레이. **바텀시트와는 다른 컴포넌트**: 화면 하단이 아니라 중앙에 뜨고, transform translate(-50%,-50%) + scale(0.95→1)와 opacity로 열림(트랜지션은 바텀시트와 동일하게 0.28s ease), 백드롭 탭으로 닫히지 않는다(중요한 확인/알림을 실수로 놓치지 않도록 하는 의도적 설계 — 반드시 버튼을 눌러야 닫힘). 백드롭 자체는 기존 sheet-backdrop 클래스를 그대로 재사용(검정 50% 스크림). 패널 배경 --paper, 모서리 24px(바텀시트와 동일 값), 너비 calc(100% - 64px)·max-width 300px, z-index는 바텀시트(40/50)보다 위(70)로 시트 위에도 뜰 수 있게 함. 제목(dialog-title, 15~16px·굵게·--ink)과 설명(dialog-description, 14px·--muted)을 매 호출마다 텍스트만 갈아끼우는 단일 재사용 인스턴스 — 화면 전체에 하나만 존재. 두 가지 쓰임새: (1) 확인 전용 알림 — 버튼 하나("확인", cta-btn), showCancel 없이 호출. (2) 확인+취소 — 삭제 등 되돌릴 수 없는 동작 전용, 취소(btn-secondary)/확인(danger일 때 btn-danger) 버튼 두 개가 나란히 배치. `assets/js/entries.js`의 `showDialog(props)` 함수로 Promise 기반 호출
+- 탭(filter-tab) — 선택 안 됨: --card-muted 배경 + --muted 글자(버튼처럼 보이도록 무채색 배경 항상 유지). 선택됨(filter-tab--active): --accent-soft 배경 + --accent 글자(칩과 동일 원칙). 모서리 999px, 리스트 화면 헤더의 "전체"/"내가 쓴 글" 두 상태 전환에 적용, 화면당 하나만
+- 빈 상태(list-empty) — 아이콘 없이 1줄 설명 문구만("아직 작성한 글이 없어요"), --muted 글자. "내가 쓴 글" 필터 결과가 0건일 때만 리스트 영역에 노출되고 그룹 리스트는 숨김
 ```
 
 ## 작성 규칙
@@ -39,10 +44,10 @@
 
 ```
 - 배지/태그 — status-badge로 구현됨(위 "채우는 칸" 참고). 성공(--success) 1색만 사용 중 — 경고/오류 색은 아직 미구현, 필요해지기 전까지 추가하지 않는다
-- 위험 버튼 — 삭제 등 되돌릴 수 없는 동작에만. 확인 단계와 함께 쓸 것
-- 탭 — 선택됨 [            ] / 선택 안 됨 [            ]
+- 위험 버튼 — btn-danger로 구현됨(위 "채우는 칸" 참고)
+- 탭 — filter-tab으로 구현됨(위 "채우는 칸" 참고)
 - 토글 — On [            ] / Off [            ]
-- 빈 상태(Empty state) — 아이콘 + 1줄 설명 + (선택) 액션 버튼 1개
+- 빈 상태(Empty state) — list-empty로 구현됨(위 "채우는 칸" 참고). 현재는 문구만 있고 액션 버튼은 없음(과하게 만들지 않기 위해 최소 구현)
 - 하단 네비게이션 — 아이콘 [활성색] / [비활성색], 최대 5개 탭
 ```
 
