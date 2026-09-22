@@ -29,6 +29,11 @@ This project is **statkit.cms.api**, a Next.js-based CMS with Supabase as the ba
 
 ---
 
+## 쓰기/읽기 작업 분리 규칙 (holy.win.2026)
+
+- **쓰기(DDL/DML) 작업** — 테이블 생성·변경, 마이그레이션, RLS 정책, INSERT/UPDATE/DELETE 등 데이터베이스 상태를 바꾸는 모든 SQL은 Supabase에 직접 실행하지 않는다. `supabase/` 경로 아래에 파일로 작성해서 남긴다 (예: `supabase/migrations/`, `supabase/schema.sql`). 파일로 먼저 작성해야 리뷰·롤백·이력 추적이 가능하다.
+- **읽기(SELECT/조회) 작업** — 스키마 확인, 데이터 조회, 디버깅용 쿼리는 파일을 만들지 않고 Supabase에 직접 접근해서 조회한다(`.mcp.json`에 설정된 `supabase` MCP 서버 사용).
+
 ## Backup File Protocol
 
 Whenever you work on schema changes, migrations, or need historical context:
