@@ -1,12 +1,14 @@
 ---
-name: phone_clamp_overflow_edge_case
-description: .phone의 height:clamp(844px,82vh,1100px)+max-height:100vh 조합이 데스크톱 창 높이가 768px~1030px 사이(모바일 미디어쿼리 미적용 구간)일 때 body의 24px 상하 패딩과 충돌해 스크롤이 생길 수 있음 — 2026-09-22 리뷰에서 발견, Minor로 판정(그레이스풀 디그레이드, 클리핑 아님)
+name: container_margin_scroll_note
+description: .container(구 .phone)의 스크롤 사이드이펙트 이력 — 2026-09-22 낮 clamp/max-height 기반 엣지케이스는 완전히 해소됐고, 같은 날 저녁 margin-top:40px 추가로 다른 성격의(상시, 40px 고정) 스크롤이 새로 생김
 metadata:
   type: project
 ---
 
-`assets/css/entries.css`의 `.phone`은 `height: clamp(844px, 82vh, 1100px); max-height: 100vh;`로 반응형화되어 있다. 뷰포트 너비가 768px 초과(모바일 미디어쿼리 미적용)이면서 높이가 대략 1030px 미만이면, `82vh`가 844px보다 작아 clamp의 하한(844px)이 강제되고, 그 값이 다시 `max-height: 100vh`로 잘려 사실상 `.phone` 높이 = 100vh가 된다. 여기에 `body { padding: 24px }`(상하 48px)가 더해지므로 `.phone` + body 패딩의 총 높이가 뷰포트를 최대 48px 초과할 수 있다.
+**1세대 이슈(해소됨, 2026-09-22 낮):** 과거 `.phone`은 `height: clamp(844px, 82vh, 1100px); max-height: 100vh;`였고, 데스크톱 창 높이 768~1030px 구간에서 body의 24px 상하 패딩과 겹쳐 최대 48px까지 페이지 스크롤이 생길 수 있는 조건부 엣지케이스였다(Minor). 이후 스크롤 아키텍처 전체가 고정 박스+내부 스크롤에서 네이티브 document 스크롤로 리팩터링되면서 `clamp`/`max-height`/`overflow` 관련 속성이 `.container`에서 전부 제거되어 이 메커니즘 자체가 사라졌다.
 
-**Why:** `body`는 `min-height: 100vh`이고 `overflow` 제어가 따로 없어 실제로는 body 자체가 자라며 페이지 스크롤이 생기는 정도로 그친다(콘텐츠 잘림/깨짐은 아님) — 그래서 2026-09-22 리뷰에서는 Minor로만 지적하고 BLOCKED 사유로 삼지 않았다. 다만 흔한 데스크톱 창 크기(예: 1440×800)에서 재현 가능한 조건이라 완전히 무시할 이슈는 아니다.
+**2세대 이슈(2026-09-22 저녁, 현재 상태):** 리네이밍(`.phone`→`.container`)과 함께 `.container`에 `margin: 40px auto 0`이 추가됨. 현재 `.container`는 `min-height: 100dvh`이고 `body`에는 padding이 없으므로(`init.css`가 `* { margin:0; padding:0 }` 리셋), 문서 전체 높이는 최소 `100dvh + 40px`가 되어 뷰포트 크기·구간과 무관하게 **항상** 약간의(40px) 페이지 스크롤이 생긴다 — 특정 창 높이 구간에서만 재현되던 1세대와 달리 상시 재현되는 대신 폭도 40px로 작고 고정적이라 그레이스풀하다. 사용자가 "떠 있는 카드" 느낌을 위해 의도적으로 요청한 트레이드오프로 확인됨(2026-09-22 리뷰에서 Minor/정보성으로만 지적, BLOCKED 사유 아님).
 
-**How to apply:** 다음에 `.phone`/`body`의 padding·clamp·max-height 값이 바뀌는 CSS 변경을 리뷰할 때, `max-height: calc(100vh - 48px)` 또는 body padding을 고려한 계산식으로 고쳐졌는지 확인하고, 여전히 안 고쳐졌다면 Minor로 재지적(단, 누적 지적 시 Major로 격상 고려).
+**Why:** 두 이슈 모두 원인 메커니즘이 다르므로(1세대: clamp+max-height 상호작용, 2세대: margin-top+min-height 상호작용) 혼동하지 말 것. 1세대 메커니즘은 코드에서 완전히 사라졌으니 재발 여부를 확인할 때 `clamp`/`max-height`를 찾는 것은 의미 없다.
+
+**How to apply:** 다음에 `.container`의 `margin`/`min-height`/`padding` 값이 바뀌는 CSS 변경을 리뷰할 때, `margin-top` 값이 늘어나면 상시 스크롤 폭도 그만큼 커진다는 점만 확인하고 Minor로 지적(사용자가 이미 승인한 트레이드오프이므로 재지적은 정보성에 그친다 — 값이 40px보다 눈에 띄게 커지면 그때 격상 고려).

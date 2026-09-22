@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A static HTML/CSS/JS site for "홀리윈 2026 전도 명단" (a church outreach event's mobile prayer-list app). No framework, no bundler, no `package.json` — plain files loaded via `<link>`/`<script>` tags. The whole app renders inside a single `.phone` container (a mobile-width column, `max-width: 430px`, centered on wider viewports) with two screens toggled by CSS class (`#screen-list`, `#screen-ticket`). Scrolling is native document/window scroll — `.phone` has no fixed height or `overflow` clipping, so the browser's own scrollbar and momentum scrolling apply directly (previously this was a fixed 390×844 mockup box with an internal `overflow-y: auto` scroll region; that was intentionally removed so the site behaves like a normal full page rather than a boxed device preview).
+A static HTML/CSS/JS site for "홀리윈 2026 전도 명단" (a church outreach event's mobile prayer-list app). No framework, no bundler, no `package.json` — plain files loaded via `<link>`/`<script>` tags. The whole app renders inside a single `.container` container (a mobile-width column, `max-width: 430px`, centered on wider viewports) with two screens toggled by CSS class (`#screen-list`, `#screen-ticket`). Scrolling is native document/window scroll — `.container` has no fixed height or `overflow` clipping, so the browser's own scrollbar and momentum scrolling apply directly (previously this was a fixed 390×844 mockup box with an internal `overflow-y: auto` scroll region; that was intentionally removed so the site behaves like a normal full page rather than a boxed device preview).
 
 ## Running it locally
 
@@ -18,7 +18,7 @@ Then open `http://localhost:8080/index.html`. Opening `index.html` directly via 
 
 ## Architecture
 
-**Entry point:** `index.html` at the repo root contains both screens' markup (list screen + ticket detail screen) inside one `.phone` container, and loads `assets/css/init.css` + `assets/css/entries.css` + `assets/js/entries.js`.
+**Entry point:** `index.html` at the repo root contains both screens' markup (list screen + ticket detail screen) inside one `.container` container, and loads `assets/css/init.css` + `assets/css/entries.css` + `assets/js/entries.js`.
 
 **Screen flow (`assets/js/entries.js`):** fetches `./assets/data/entries.json` (fetch paths resolve relative to `index.html`, not to the script file), renders list cards into `#list-recent`/`#list-past`, and toggles screens via the `.screen--hidden` class rather than routing — there is no router or multi-page navigation.
 

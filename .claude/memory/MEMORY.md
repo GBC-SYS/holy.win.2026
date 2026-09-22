@@ -1,9 +1,10 @@
 - [애매한 시각 요청은 후보 확인 후 수정](feedback_ambiguous-visual-requests.md) — Chrome 자동화 미연결 환경, 추측성 CSS 수정 금지
-- [git-commit-pusher 신뢰 불가](feedback_git-commit-pusher-unreliable.md) — 커밋/푸시 후 git status/log로 직접 검증
+- [git-commit-pusher 신뢰 불가](feedback_git-commit-pusher-unreliable.md) — 도구 목록에 Bash 자체가 없음(구조적 원인, 3회 재현), 커밋/푸시 후 git status/log로 직접 검증
+- [CSS 튜닝 전 인라인 스타일부터 확인](feedback_check-inline-styles-before-css-tuning.md) — padding 반복 증가로 안 고쳐지면 JS의 .style.* 강제 대입부터 grep
 - [Supabase CRUD 마이그레이션 완료](project_supabase-crud-migration.md) — 6단계 전부 완료·배포(커밋 db5e447), holywin_ 접두사·소프트삭제 RPC 등 확정 규칙만 남음
 - [Supabase 프로젝트를 statkit.cms.api와 공유](project_supabase-shared-project-conflict.md) — 다른 앱 트리거가 익명 로그인과 충돌한 전례, 새 DB 작업 전 기존 트리거 확인 필요
 - [GitHub Pages 실배포 + PWA 아이콘](project_github-pages-deployment.md) — gbc-sys.github.io/holy.win.2026, 매니페스트 앱이름은 영문 "holywin" 선호
 - [사용자는 스크린샷 기반 소규모 반복 조정 선호](user_screenshot-driven-iteration.md) — 이미지 첨부 시 그대로 구현, 없으면 먼저 확인
 - [사용자는 대시보드/DevTools 탐색에 안내 필요](user_needs-dashboard-navigation-guidance.md) — 클릭 단위로 구체적 경로 안내, 예시 코드는 적용 여부 먼저 판단해줄 것
-- [스크롤 아키텍처 리팩터링(네이티브 스크롤 전환)](project_scroll-architecture-refactor.md) — .phone 고정박스+내부스크롤 → 일반 컬럼+document 스크롤, 오버레이 3종 fixed 전환, z-index 확정값, 남은 Minor 정리 항목
+- [스크롤 아키텍처 리팩터링(네이티브 스크롤 전환)](project_scroll-architecture-refactor.md) — .container 고정박스+내부스크롤 → 일반 컬럼+document 스크롤, 오버레이 3종 fixed 전환, z-index 확정값, 남은 Minor 정리 항목
 - [CLAUDE.md 데이터 로딩 설명 낡음](project_claude-md-doc-drift.md) — entries.json fetch 설명이 Supabase 전환 이후에도 방치됨(2026-09-22 발견)

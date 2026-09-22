@@ -5,7 +5,9 @@ metadata:
   type: project
 ---
 
-이 저장소(holy.win.2026)는 "홀리윈 2026 전도 명단"이라는 실제 정적 웹앱이다. 프레임워크/번들러/`package.json` 없이 `index.html` + `assets/css/{init,entries}.css` + `assets/js/entries.js` + `assets/data/entries.json`으로 구성되며, `.phone`(390×844) 목업 안에서 리스트 화면 ↔ 티켓 상세 화면을 `.screen--hidden` 클래스 토글로 전환한다.
+이 저장소(holy.win.2026)는 "홀리윈 2026 전도 명단"이라는 실제 정적 웹앱이다. 프레임워크/번들러/`package.json` 없이 `index.html` + `assets/css/{init,entries}.css` + `assets/js/entries.js` + `assets/data/entries.json`으로 구성되며, 리스트 화면 ↔ 티켓 상세 화면을 `.screen--hidden` 클래스 토글로 전환한다.
+
+**2026-09-22 리네이밍:** 컨테이너 클래스가 `.phone` → `.container`로 전면 변경됨(index.html/entries.css/CLAUDE.md/docs/의 모든 언급, 코드 전체에서 잔재 없음 확인). 또한 그 이전 시점에 고정 390×844 박스+내부 스크롤 구조에서 `min-height:100dvh` 네이티브 document 스크롤 구조로 이미 리팩터링되어 있었다([[container_margin_scroll_note]] 참고) — 지금 `.container`는 "폰 목업"이 아니라 `max-width:430px`로 제한된 일반 콘텐츠 컬럼이다.
 
 **주의 — 과거에 다른 저장소(statkit.llm.design, 문서 템플릿 킷)와 혼동해 메모리를 남긴 적 있음.** statkit.llm.design은 `docs/01~09-*.md` 번호 파일 자체가 산출물인 범용 템플릿 킷이지만, 이 저장소(holy.win.2026)는 그 방법론을 **가져와서 실제 앱의 값으로 채운 것**이다. 즉 `docs/`는 여기서 "산출물"이 아니라 `assets/css/entries.css`의 실제 코드 값을 설명하는 **부속 문서**이며, 코드와 문서가 서로 어긋나면 안 된다.
 
