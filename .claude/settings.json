@@ -70,17 +70,6 @@
           }
         ]
       }
-    ],
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/notification-hook.sh"
-          }
-        ]
-      }
     ]
   },
   "permissions": {
