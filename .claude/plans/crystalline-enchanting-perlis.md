@@ -1,41 +1,73 @@
-# docs/ 디자인 시스템 템플릿을 프로젝트 실제 아이덴티티로 채우기
+# Supabase 기반 무로그인 CRUD 도입
+
+> 이전 계획("티켓 카드 보딩패스 스타일 재디자인")은 이미 구현 완료되어 더 이상 유효하지 않으므로, 이번 요청에 맞춰 완전히 새로 작성함.
 
 ## Context
 
-`docs/` 폴더에는 `01-style-reference.md` ~ `09-shadcn-tokens.md`, `design.template.md`, `design.shadcn.md`, `README.md`로 구성된 "디자인 시스템 문서 템플릿 킷"이 있다. 이전 조사에서 확인했듯 이 킷은 다른 저장소(statkit.llm.design)에서 복사해온 범용 템플릿이며, `#______`, `[__]px` 같은 빈칸만 있고 이 프로젝트를 위해 채워진 값은 없다.
+지금까지 이 앱은 `assets/data/entries.json`을 fetch로 읽기만 하는 완전 정적 사이트였고, 상태(기도 중/완료) 토글조차 `localStorage`에 값을 얹는 "가짜 영속성"이었다(그 브라우저에서만 보이고, `entries.json` 원본은 절대 안 바뀜). 사용자는 "본인이 작성한 전도 대상자를 따로 보고 수정도 하고 싶다"며 실제 CRUD(등록/조회/수정/삭제)를 요청했고, 회원가입·로그인 UI 없이 Supabase 같은 가벼운 백엔드로 **실제로 여러 사람과 공유되는** 명단을 원한다고 확정했다(순수 로컬 방식은 명시적으로 거절).
 
-그 사이 `index.html` + `assets/css/entries.css` + `assets/js/entries.js` + `assets/data/entries.json`으로 "전도 명단" 기능(리스트 화면 + 티켓 상세 화면)이 실제로 구현되었고, 폰트도 Pretendard로 전환되었다. 즉 지금은 코드에 실제 디자인 결정이 이미 내려져 있는 상태이며, 이번 요청은 그 결정을 `docs/` 템플릿에 역으로 문서화하는 작업이다.
+사용자는 이 프로젝트용 Supabase 프로젝트를 이미 가지고 있다(URL/anon key 제공 가능). 조사 결과 `.mcp.json`의 기존 `supabase` 항목은 완전히 다른 프로젝트(`statkit.cms.api`, read_only)를 가리키고 있어 이 프로젝트엔 재사용 불가하고, `supabase/` 디렉토리는 비어있으며, `.claude/agents/supabase-db-architect.md`에 이미 "쓰기(DDL/DML)는 파일로 먼저 작성, 읽기만 MCP로 직접 조회"라는 이 저장소 전용 규칙이 있다.
 
-사용자는 "shadcn 아이덴티티를 유지하고 싶다"(https://ui.shadcn.com/)고 요청했다. 이 프로젝트는 Tailwind나 shadcn/ui 컴포넌트를 쓰는 게 아니라 순수 정적 CSS이므로, 이는 shadcn 컴포넌트 도입이 아니라 **shadcn/ui의 시맨틱 토큰 네이밍 구조**(`--background`/`--foreground`, `--primary`/`--primary-foreground`, `--card`, `--muted`, `--border`, `--radius` 등 "배경-글자 짝" 규칙)를 `09-shadcn-tokens.md`에 그대로 채워, 이 프로젝트의 실제 색상·모서리 값을 shadcn 규약이 읽을 수 있는 이름으로 정렬한다는 뜻으로 해석한다. `docs/09-shadcn-tokens.md`가 이미 "변수 이름은 shadcn/ui 규약을 그대로 따른다"고 명시하고 있어 이 해석과 정확히 맞는다.
+Plan 서브에이전트가 Supabase 공식 문서를 직접 확인해 아키텍처를 검증했고, 사용자와 상의해 아래 세 가지 핵심 결정을 확정했다:
 
-## `entries.css`에서 역추출한 실제 디자인 값
+1. **소유권 모델: Supabase Anonymous Sign-In 채택** (커스텀 헤더 방식 대신). 화면엔 로그인 UI가 전혀 없지만, 내부적으로 `supabase.auth.signInAnonymously()`로 진짜 `auth.uid()`를 발급받아 표준 RLS(`auth.uid() = owner_id`)를 쓴다. 직접 토큰 관리 코드를 짤 필요가 없고, 스팸 방지용 rate limit이 기본 내장되며, Realtime과도 호환된다. **단, Supabase Dashboard → Authentication → Providers에서 "Allow anonymous sign-ins"를 사용자가 직접 켜야 한다(에이전트가 대신 할 수 없음).**
+2. **"이번 주 제출"/"이전 명단" 구분: `submitted_at` 기준 7일 이내를 클라이언트에서 파생 계산.** 기존 `group` 컬럼(현재 5개 데이터 전부 하드코딩, 파생 규칙 없음)은 없앤다.
+3. **마이그레이션 실행: 파일로만 작성, 사용자가 Supabase Dashboard SQL Editor에 직접 붙여넣어 실행.** `.mcp.json`은 건드리지 않는다(기존 규칙과 일치, 사람 검토 단계 유지).
 
-- **색상**: `--ink:#141413`(다크 바탕), `--paper:#faf9f5`(강조 표면=티켓/최신 카드), `--accent:#e8622c`, `--accent-soft:#fceae0`, `--muted:#8a8783`, `--line:#232220`, `--card-dark:#1f1e1c`(일반 표면), `--card-dark-line:#2b2a28`. 그 외 컴포넌트 국소적으로 쓰이는 `#0c0c0b`(페이지 바깥 배경), `#3a1e10`(accent 위 텍스트), `#e5e3df`(점선), `#a6a39e`(그리드 라벨), `#c9c6c1`(다크 태그 텍스트).
-- **바탕/표면 관계**: 방식 B(어두운 바탕 + 밝은 표면). 일반 표면은 `--card-dark`(바탕보다 살짝 밝음, 2~6% 규칙에 부합), `--paper`는 티켓·최신 제출 카드에만 쓰는 "강조 표면" 예외(의도적으로 훨씬 밝음 — 스포트라이트 효과).
-- **폰트/타이포**: Pretendard, 9-weight 로컬 `@font-face`. 실사용 크기/굵기: 28~34px/900(화면 제목·티켓 이름), 20px(라이트)·18px(다크)/700(카드 제목=entry-to), 12px/700(그룹 라벨·eyebrow — 의도적으로 카드 제목보다 작은 예외), 14px/400(본문), 12px/400(부가 정보). 실측 `line-height:1.15`(ticket-name).
-- **간격**: 화면 좌우 여백 24px, 카드 안쪽 20px 안팎, 카드 사이 12px(`.group-list gap`), 작은 요소 간격 8px(`.ticket-from gap`) 등이 뼈대. 다만 실제 코드에는 6/10/14/18/22/26/28/30px 같은 4의 배수가 아닌 값도 다수 섞여 있어(수작업 프로토타입 특성), 이번에 4·8·12·16·20·24의 6단계 스케일로 정식화하고 벗어난 값은 레거시로 문서에 명시한다.
-- **모서리**: 기준값 16px(카드), 버튼 14px(기준-2), 티켓 24px(기준+8), 원형 999. `.phone` 프레임의 28px은 디바이스 목업 전용 예외로 스케일 밖에 별도 명시.
-- **그림자**: 리스트 카드(entry-card)는 그림자 없음(다크 카드만 테두리로 구분). 화면 위에 뜨는 강조 요소(티켓, 폰 프레임)만 2단계 그림자 — 티켓 `0 24px 48px rgba(0,0,0,.35)`, 폰 프레임 `0 40px 80px rgba(0,0,0,.5)`. "절충형(레이어 분리)" 방향과 정확히 일치.
+이 방식의 본질적 한계를 사용자가 인지해야 한다: **익명 인증이라 브라우저 데이터를 지우거나 다른 기기로 접속하면 본인 글이라도 다시는 수정/삭제할 수 없다.** 진짜 계정이 아니기 때문이며, 이건 "회원가입 없이" 요구사항의 필연적 트레이드오프다.
 
-## 작성 방식 — 파일별
+## 아키텍처
 
-각 파일은 기존 `## 채우는 칸` 코드블록의 빈칸만 실제 값으로 교체하고, 나머지 설명/규칙/체크리스트 섹션은 원문 그대로 둔다(템플릿의 교육적 설명은 향후 다른 프로젝트에도 재사용되므로 보존). 실제 코드와 템플릿의 이상적 규칙이 어긋나는 지점(간격 스케일 이탈, 두 개의 표면 색 등)은 해당 파일의 채워진 칸 바로 아래에 짧은 "코드 현황" 메모를 덧붙여 투명하게 기록한다.
+### 클라이언트 로딩 (번들러 없음, classic script 유지)
+`<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.x.y">`(정확한 버전 핀 고정, `@2` 같은 부동 태그 금지)를 `entries.js`보다 먼저 로드 → `window.supabase.createClient(url, anonKey)`로 전역 `supabaseClient` 생성. `import`/`export` 없이 기존 classic-script 컨벤션 그대로 유지(`js-component-architect` 원칙과 일치).
 
-1. **`01-style-reference.md`**: 서비스명 "홀리윈 2026 전도 명단", 한 줄 설명(전도 대상자를 올리고 함께 기도하는 모바일 명단), 분위기 단어 3개 = **따뜻한 / 정성스러운 / 인상적인**(웜톤 팔레트+정갈한 티켓 레이아웃+900 굵기 대비와 큰 그림자). Theme: **dark**. Platform: **mobile 390×844**.
-2. **`02-colors.md`**: 위 7개 값(바탕=`--ink`, 표면=`--card-dark`, 글자 기본=`--paper`, 글자 보조=`--muted`, 테두리=`--line`, 포인트=`--accent`, 포인트 옅은 것=`--accent-soft`) 채우고 "표면이 더 밝다"로 명시. 표기법은 **HEX**(코드가 이미 HEX). 표 아래에 강조 표면(`--paper`)과 코드에 남아있는 추가 색(위 목록)을 "예외" 메모로 별도 기록.
-3. **`03-typography.md`**: Font Pretendard(fallback system-ui, sans-serif), 5단계 크기/굵기 채우고, 굵기는 **400/700**을 기본 2종으로 명시하되 900을 "화면 제목·인물명 전용 예외"로 별도 기재. 섹션 제목 tier가 카드 제목보다 작은 이 프로젝트의 의도적 예외를 각주로 설명. 행간 본문 1.5 / 제목 1.15.
-4. **`04-spacing.md`**: 스케일 **4·8·12·16·20·24**, 화면 좌우 24px·카드 안쪽 20px·카드 사이 12px·요소 내부 간격 8px. 56px(상태바 여백)과 스케일 밖 레거시 값(6/10/14/18/22/26/28/30)은 별도 메모로 기록.
-5. **`05-radius.md`**: 방식 2(파생형) 채택 — 기준값 16px, 작은 요소 기준-2=14px(버튼과 통합), 버튼·입력창 14px, 카드 16px, 큰 컨테이너 기준+8=24px, 원형 999. 폰 프레임 28px은 디바이스 프레임 전용 예외로 각주 처리.
-6. **`06-elevation.md`**: "절충(레이어 분리)" 채택 — 화면에 붙어있는 요소(카드/버튼/입력창)는 그림자 없음(다크 카드만 테두리), 화면 위에 뜨는 강조 요소(티켓/폰 프레임)만 그림자 2단계(위 수치 그대로 기재).
-7. **`07-components.md`**: 주 버튼(배경 accent+글자 ink, 모서리 14px, 높이 약 52px), 보조 버튼(미구현 — 제안 스펙만 기재: 투명 배경+paper 글자+card-dark-line 테두리), 카드(표면색 06번 규칙), 입력창(미구현 — 제안 스펙), 칩(relation-tag/count-chip 실제 배경·글자 조합).
-8. **`08-guidelines.md`**: DO/DON'T를 실제 코드 근거로 채움 — 포인트 색 사용처 한정, 강조 표면(`--paper`)은 핵심 콘텐츠 전용, 다크/라이트 표면별 텍스트 색 고정(섞지 않기), 04번 스케일 밖 레거시 값 신규 사용 금지, 06번 2단계 그림자만 사용 등.
-9. **`09-shadcn-tokens.md`**: 이 프로젝트는 다크 단일 테마이므로 **`:root`에 다크 값을 그대로 채우고 `.dark` 블록은 통째로 삭제**(README의 "테마 하나만 쓰면 .dark 블록 삭제" 규칙 적용). `--chart-*`/`--sidebar-*` 블록도 삭제(대시보드·사이드바 없음). 매핑: `--background:#141413`, `--foreground:#faf9f5`, `--card:#1f1e1c`/`--card-foreground:#faf9f5`, `--popover`는 card와 동일, `--primary:#e8622c`/`--primary-foreground:#141413`(cta-btn 실측 색), `--secondary:#2b2a28`/`--secondary-foreground:#c9c6c1`, `--muted:#1f1e1c`/`--muted-foreground:#8a8783`, `--accent:#fceae0`/`--accent-foreground:#e8622c`, `--destructive`는 미사용이므로 표준 빨강 제안값 + "미사용" 각주, `--border`/`--input:#232220`, `--ring:#e8622c`. 모서리 파생값은 `--radius:16px` 기준으로 `calc()` 채움(05번과 동일 수치로 검산).
-10. **`docs/DESIGN.md`** (신규): `README.md`의 "새 프로젝트 시작 체크리스트" 1단계("`design.template.md`를 `DESIGN.md`로 복사")를 따라, `design.template.md`(01~09를 `@docs/...`로 불러오는 참조 인덱스)를 그대로 복사해 생성 — 화면을 만들 때마다 AI에게 전달할 최종 진입 파일.
+### 스키마 (`holywin_entries` 테이블)
+| 컬럼 | 타입 | 비고 |
+|---|---|---|
+| `id` | `bigint generated always as identity` | 내부 식별자, 화면 노출 안 됨(소유권은 owner_id가 지킴) |
+| `to_name` | `text not null check (length(to_name) <= 50)` | 전도 대상자 이름(기존 `to`) |
+| `from_name` | `text not null check (length(from_name) <= 50)` | 제출자 이름(기존 `from`) |
+| `relation` | `text not null check (length(relation) <= 50)` | |
+| `status` | `text not null default '기도 중' check (status in ('기도 중','완료'))` | |
+| `submitted_at` | `timestamptz not null default now()` | 기존 자유 텍스트 `date` 대체, 화면 표시는 JS에서 포맷 |
+| `owner_id` | `uuid not null default auth.uid() references auth.users(id) on delete set null` | 익명 세션의 `auth.uid()` |
+| `deleted_at` | `timestamptz` | soft delete |
 
-`design.template.md`, `design.shadcn.md`는 README가 명시한 대로 "복사해서 쓰는 범용 원본"이므로 수정하지 않는다.
+### RLS 정책
+- SELECT: 공개, `deleted_at is null`인 행만
+- INSERT: 공개(익명 세션이면 누구나), `owner_id`는 `default auth.uid()`로 서버가 채움
+- UPDATE: `owner_id = auth.uid()`인 행만 — 실제 `DELETE` 권한은 부여하지 않고, 이 UPDATE 정책으로 `deleted_at`만 채우는 soft delete로 "삭제"를 구현(복구 가능성 확보)
+- 시드 데이터(기존 `entries.json`의 5건)는 owner_id 없이(또는 존재하지 않는 값으로) 넣어 사실상 아무도 수정 못 하는 읽기 전용 시범 데이터로 유지
 
-## 검증 방법
+## 구현 순서 (단계별로 나눠 진행 — 한 번에 다 하지 않음)
 
-- 9개 파일 모두에서 `#______`, `[__]px`, `[___]`, `______`, `[A / B / C]` 같은 미채움 빈칸 패턴이 남아있지 않은지 `grep`으로 확인.
-- `02-colors.md`의 HEX 값과 `09-shadcn-tokens.md`의 대응 변수 값이 서로 어긋나지 않는지, `05-radius.md`의 파생값과 `09`의 `calc()` 결과가 일치하는지 교차 확인.
-- 각 파일의 체크리스트 항목(예: "분위기 단어 정확히 3개인가", "포인트 색이 1개인가", "원형은 999 한 줄이 포함되어 있는가")을 실제로 충족하는지 대조.
+### 0단계 — 사용자로부터 받아야 할 것 (구현 착수 전)
+- Supabase 프로젝트 URL + anon public key (anon key는 공개용 키라 `.env` 차단 규칙과 무관하게 코드에 직접 넣어도 됨)
+- Dashboard에서 "Allow anonymous sign-ins" 활성화 확인
+
+### 1단계 — 스키마 + RLS (`supabase-db-architect` 위임)
+`supabase/migrations/0001_init.sql` 작성: 위 스키마 DDL, RLS 정책, 기존 `entries.json` 5건을 시드 INSERT로 포함, 파일 상단에 "익명 인증 기반 소유권의 한계" 주석 명시. 사용자가 Dashboard SQL Editor에서 직접 실행.
+
+### 2단계 — Supabase 클라이언트 연결 (`js-component-architect` 위임)
+`assets/js/supabase-client.js` 신규 — CDN 클라이언트 초기화, 페이지 로드 시 기존 세션 없으면 `signInAnonymously()` 호출 후 완료 대기. `index.html`에 `<script>` 태그 순서대로 추가.
+
+### 3단계 — 읽기 전환 (`js-component-architect` 위임)
+`entries.js`의 `fetch('./assets/data/entries.json')`를 `supabaseClient.from('holywin_entries').select(...)`로 교체. `group` 필터링 로직을 `submitted_at` 7일 기준 파생 함수로 교체. `assets/data/entries.json`은 더 이상 fetch되지 않음(마이그레이션 시드로 이관되었으므로 파일 자체는 삭제).
+
+### 4단계 — 상태 토글을 실제 UPDATE로 전환 (`js-component-architect` 위임)
+`getStatusOverrides`/`saveStatusOverride`/`applyStatusOverrides`/`STATUS_STORAGE_KEY`(가짜 localStorage 영속성) 전체 제거. `handleStatusToggle`이 `supabaseClient.from('holywin_entries').update({status}).eq('id', entry.id)`를 호출하도록 교체(RLS로 본인 글 아니면 실패 — 실패 시 사용자에게 알림 필요).
+
+### 5단계 — 등록(Create) 폼 (`js-component-architect` 위임)
+`#btn-add`의 `alert()` placeholder를 실제 폼 화면(`#screen-list`/`#screen-ticket`과 같은 패턴의 세 번째 `.screen`)으로 교체 — 대상자 이름/제출자 이름/관계 입력 → `insert()`. `docs/07-components.md`에 이미 "미구현, 제안 스펙만 기재"로 남아있는 입력창 스펙을 이번에 실제 값으로 채운다(문서 동기화 규칙).
+
+### 6단계 — 수정/삭제 UI + "내 글" 필터 (`js-component-architect` 위임)
+티켓 상세 화면에 "내 글"일 때만 보이는 수정 폼(이름/관계 수정)과 삭제 버튼(확인 단계 포함, `docs/07-components.md`의 "위험 버튼" 조건과 일치) 추가. 리스트 화면에 "내가 쓴 글" 필터/탭 추가(`owner_id = 현재 auth.uid()`로 필터링).
+
+각 단계 완료 후 사용자가 브라우저에서 직접 확인하고 다음 단계로 넘어간다(대규모 변경을 한 번에 검토하기 어려우므로).
+
+## 확인 방법
+- 1단계 후: Supabase Dashboard Table Editor에서 `holywin_entries` 테이블과 시드 5건이 보이는지 확인
+- 2~3단계 후: 로컬 서버(`python3 -m http.server 8080`)로 접속해 목록이 Supabase에서 로드되는지, DevTools Application 탭에서 익명 세션이 생겼는지 확인
+- 4단계 후: 상태 배지를 토글하고 새로고침 → 유지되는지, 다른 브라우저(시크릿 창)에서도 바뀐 상태가 보이는지(진짜 공유 확인)
+- 5~6단계 후: 새 글 등록 → 목록에 바로 뜨는지, "내가 쓴 글" 필터에 방금 등록한 것만 보이는지, 수정/삭제가 본인 글에서만 동작하고 시드 데이터나 다른 브라우저에서 만든 글에는 안 먹히는지 확인
+- Chrome 자동화 도구가 이번 세션 내내 연결되지 않았으므로 각 단계마다 사용자의 수동 확인이 필요함

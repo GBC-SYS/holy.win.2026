@@ -8,6 +8,8 @@
   --line: #e6e1d5;
   --card-muted: #ece7db;
   --card-muted-line: #ddd6c5;
+  --success: #1f7a37;
+  --success-soft: #e3f5e6;
 }
 
 @font-face {
@@ -225,8 +227,8 @@ body {
 
 .entry-right {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
   gap: 6px;
 }
 
@@ -240,6 +242,29 @@ body {
 }
 
 .entry-card--dark .relation-tag {
+  color: var(--muted);
+  background: var(--card-muted-line);
+}
+
+.entry-status {
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.entry-status--praying {
+  color: #3a1e10;
+  background: var(--accent-soft);
+}
+
+.entry-status--done {
+  color: var(--success);
+  background: var(--success-soft);
+}
+
+.entry-card--dark .entry-status--praying,
+.entry-card--dark .entry-status--done {
   color: var(--muted);
   background: var(--card-muted-line);
 }
@@ -325,13 +350,12 @@ body {
   background: var(--paper);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
 }
 
 .ticket-head {
   position: relative;
   background: var(--accent);
-  padding: 32px 28px 26px;
+  padding: 36px 28px 32px;
 }
 
 .ticket-leaf {
@@ -345,30 +369,47 @@ body {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #3a1e10;
+  color: #ffffff;
 }
 
 .ticket-name {
-  margin: 4px 0 0;
+  margin: 8px 0 0;
   font-family: 'Pretendard', sans-serif;
   font-weight: 900;
-  font-size: 34px;
-  line-height: 1.15;
-  color: var(--ink);
+  font-size: 44px;
+  line-height: 1.1;
+  color: #ffffff;
 }
 
 .ticket-from {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 14px;
-  font-size: 12px;
-  color: #3a1e10;
+  margin-top: 22px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 .ticket-perf {
+  position: relative;
   border-top: 2px dashed #e5e3df;
 }
+
+.ticket-perf::before,
+.ticket-perf::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg);
+  transform: translateY(-50%);
+}
+
+.ticket-perf::before { left: -10px; }
+.ticket-perf::after { right: -10px; }
 
 .ticket-grid {
   padding: 26px 28px;
@@ -390,15 +431,52 @@ body {
   color: var(--ink);
 }
 
-.grid-value--accent { color: var(--accent); }
+.status-badge {
+  display: inline-block;
+  border: none;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.status-badge:hover { opacity: 0.85; }
+.status-badge:active { opacity: 0.7; }
+
+.status-badge--praying {
+  color: #3a1e10;
+  background: var(--accent-soft);
+}
+
+.status-badge--done {
+  color: var(--success);
+  background: var(--success-soft);
+}
 
 .stamp-wrap {
-  padding: 4px 28px 30px;
+  padding: 16px 28px 30px;
   display: flex;
   justify-content: center;
 }
 
 .stamp { transform: rotate(-9deg); }
+
+.stamp--done .stamp-ring--outer {
+  fill: var(--accent);
+  stroke: #ffffff;
+}
+
+.stamp--done .stamp-ring--inner { stroke: #ffffff; }
+
+.stamp--done .stamp-icon { stroke: #ffffff; }
+
+.stamp--done .stamp-arc-text,
+.stamp--done #t-stamp-status {
+  fill: #ffffff;
+}
 
 .ticket-footnote {
   display: flex;

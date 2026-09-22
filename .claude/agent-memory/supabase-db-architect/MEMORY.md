@@ -1,0 +1,2 @@
+- [무로그인 Supabase CRUD 전환 계획](project_anon-auth-crud-plan.md) — 익명 인증 소유권 모델, 단계별 계획, 진행 상황
+- [entries 테이블 베이스라인 스키마](project_entries-schema.md) — 0001_init.sql 스키마/RLS/FK-시드 이슈 및 해결책

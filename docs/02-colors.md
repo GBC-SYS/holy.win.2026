@@ -31,6 +31,7 @@
 | #e5e3df | 티켓 안쪽 점선 구분선 |
 | #a6a39e | 그리드 라벨(`.grid-label`), 리스트 카드의 제출일(`.entry-date`) 등 아주 옅은 보조 텍스트(대비가 낮은 편이라 향후 개선 후보) |
 | #ddd6c5 (--card-muted-line) | 절제 카드(`.entry-card--dark`) 테두리, 그 안의 칩(`.relation-tag`) 배경 |
+| #1f7a37 (--success) / #e3f5e6 (--success-soft) | 상태 배지(`.status-badge--done`/`.entry-status--done`, "완료") 전용 예외 색. `--success` on `--paper` = 5.39:1, `--success` on `--success-soft` = 4.74:1 — 둘 다 4.5:1 기준 통과. 초기값(#3f6b3a/#dddfd1)이 어둡고 탁하다는 피드백으로 더 밝고 선명한 톤으로 교체함(대비 기준은 유지). 07번 "상태 색은 7색 밖 예외(최대 3색)" 조항에 해당하며, 현재 "성공" 1색만 등록되어 있다(경고/오류는 미구현) |
 
 ## 작성 규칙
 

@@ -54,19 +54,17 @@
       <div class="ticket-wrap">
         <div class="ticket">
           <div class="ticket-head">
-            <svg class="ticket-leaf" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#141413" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="ticket-leaf" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2.4 4.5 6 4c2.2-.3 4 1 6 3.3C14 5 15.8 3.7 18 4c3.6.5 5.6 4.2 4 7.7-2.5 4.7-10 9.3-10 9.3z"/>
             </svg>
             <p class="ticket-eyebrow">전도 대상자</p>
             <h2 class="ticket-name" id="t-to">-</h2>
             <div class="ticket-from">
               <span id="t-from">-</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               <span>가 함께 기도하고 있어요</span>
             </div>
           </div>
-
-          <div class="ticket-perf"></div>
 
           <div class="ticket-grid">
             <div>
@@ -83,22 +81,24 @@
             </div>
             <div>
               <p class="grid-label">상태</p>
-              <p class="grid-value grid-value--accent" id="t-status">-</p>
+              <p class="grid-value" id="t-status">-</p>
             </div>
           </div>
 
+          <div class="ticket-perf"></div>
+
           <div class="stamp-wrap">
-            <svg width="128" height="128" viewBox="0 0 128 128" class="stamp">
+            <svg width="128" height="128" viewBox="0 0 128 128" class="stamp" id="t-stamp">
               <defs>
                 <path id="stampArc" d="M 64 20 A 44 44 0 1 1 63.9 20"/>
               </defs>
-              <circle cx="64" cy="64" r="58" fill="none" stroke="#E8622C" stroke-width="2"/>
-              <circle cx="64" cy="64" r="52" fill="none" stroke="#E8622C" stroke-width="1" stroke-dasharray="2 3"/>
-              <text font-family="'Pretendard',sans-serif" font-size="9.5" font-weight="700" letter-spacing="2.5" fill="#E8622C">
+              <circle class="stamp-ring stamp-ring--outer" cx="64" cy="64" r="58" fill="none" stroke="#E8622C" stroke-width="2"/>
+              <circle class="stamp-ring stamp-ring--inner" cx="64" cy="64" r="52" fill="none" stroke="#E8622C" stroke-width="1" stroke-dasharray="2 3"/>
+              <text class="stamp-arc-text" font-family="'Pretendard',sans-serif" font-size="9.5" font-weight="700" letter-spacing="2.5" fill="#E8622C">
                 <textPath href="#stampArc" startOffset="0%">HOLY · WIN · 2026 · HOLY · WIN · 2026 ·</textPath>
               </text>
-              <svg width="26" height="26" x="51" y="38" viewBox="0 0 24 24" fill="none" stroke="#E8622C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2.4 4.5 6 4c2.2-.3 4 1 6 3.3C14 5 15.8 3.7 18 4c3.6.5 5.6 4.2 4 7.7-2.5 4.7-10 9.3-10 9.3z"/></svg>
-              <text x="64" y="86" text-anchor="middle" font-family="'Pretendard',sans-serif" font-size="13" font-weight="900" fill="#E8622C" letter-spacing="1">기도 중</text>
+              <svg class="stamp-icon" width="26" height="26" x="51" y="38" viewBox="0 0 24 24" fill="none" stroke="#E8622C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2.4 4.5 6 4c2.2-.3 4 1 6 3.3C14 5 15.8 3.7 18 4c3.6.5 5.6 4.2 4 7.7-2.5 4.7-10 9.3-10 9.3z"/></svg>
+              <text id="t-stamp-status" x="64" y="86" text-anchor="middle" font-family="'Pretendard',sans-serif" font-size="13" font-weight="900" fill="#E8622C" letter-spacing="1">기도 중</text>
             </svg>
           </div>
         </div>
@@ -112,6 +112,8 @@
 
   </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="./assets/js/supabase-client.js"></script>
 <script src="./assets/js/entries.js"></script>
 </body>
 </html>
