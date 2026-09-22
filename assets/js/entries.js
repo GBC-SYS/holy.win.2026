@@ -6,9 +6,6 @@ const listRecent = document.getElementById('list-recent');
 const listPast = document.getElementById('list-past');
 const countText = document.getElementById('count-text');
 const btnAdd = document.getElementById('btn-add');
-const phoneEl = document.querySelector('.phone');
-const headerEl = document.querySelector('.header');
-const listScrollEl = document.querySelector('.list-scroll');
 const groupRecentEl = document.getElementById('group-recent');
 const groupPastEl = document.getElementById('group-past');
 const listEmptyEl = document.getElementById('list-empty');
@@ -63,18 +60,6 @@ const dialogTitle = document.getElementById('dialog-title');
 const dialogDescription = document.getElementById('dialog-description');
 const dialogCancelBtn = document.getElementById('dialog-cancel-btn');
 const dialogConfirmBtn = document.getElementById('dialog-confirm-btn');
-
-// ============ 레이아웃 동기화 ============
-// CTA 버튼이 뷰포트에 따라 화면 밖으로 밀려나는 것을 막기 위해
-// .list-scroll의 실제 스크롤 가능 높이를 인라인으로 계산해둔다.
-function syncListScrollMaxHeight() {
-  const phoneHeight = phoneEl.getBoundingClientRect().height;
-  const headerHeight = headerEl.getBoundingClientRect().height;
-  listScrollEl.style.maxHeight = `${phoneHeight - headerHeight}px`;
-}
-
-syncListScrollMaxHeight();
-window.addEventListener('resize', syncListScrollMaxHeight);
 
 // ============ 상태 ============
 let entries = [];
@@ -351,6 +336,7 @@ function setListFilter(mine) {
 function setScreen(activeScreen, inactiveScreen) {
   inactiveScreen.classList.add('screen--hidden');
   activeScreen.classList.remove('screen--hidden');
+  window.scrollTo(0, 0);
 }
 
 function openTicket(id) {

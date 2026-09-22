@@ -5,3 +5,5 @@
 - [GitHub Pages 실배포 + PWA 아이콘](project_github-pages-deployment.md) — gbc-sys.github.io/holy.win.2026, 매니페스트 앱이름은 영문 "holywin" 선호
 - [사용자는 스크린샷 기반 소규모 반복 조정 선호](user_screenshot-driven-iteration.md) — 이미지 첨부 시 그대로 구현, 없으면 먼저 확인
 - [사용자는 대시보드/DevTools 탐색에 안내 필요](user_needs-dashboard-navigation-guidance.md) — 클릭 단위로 구체적 경로 안내, 예시 코드는 적용 여부 먼저 판단해줄 것
+- [스크롤 아키텍처 리팩터링(네이티브 스크롤 전환)](project_scroll-architecture-refactor.md) — .phone 고정박스+내부스크롤 → 일반 컬럼+document 스크롤, 오버레이 3종 fixed 전환, z-index 확정값, 남은 Minor 정리 항목
+- [CLAUDE.md 데이터 로딩 설명 낡음](project_claude-md-doc-drift.md) — entries.json fetch 설명이 Supabase 전환 이후에도 방치됨(2026-09-22 발견)

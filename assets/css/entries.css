@@ -74,54 +74,30 @@
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   background: #e7e2d4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-family: 'Pretendard', system-ui, sans-serif;
-  padding: 24px;
 }
 
 .phone {
   position: relative;
-  aspect-ratio: 390 / 844;
-  width: auto;
-  height: clamp(844px, 82vh, 1100px);
-  max-height: 100vh;
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
   background: var(--bg);
-  border-radius: 28px;
-  overflow: hidden;
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
-}
-
-@media (max-width: 768px) {
-  body {
-    padding: 0;
-  }
-
-  .phone {
-    width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    max-height: none;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
 }
 
 .screen {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
-  transition: transform 0.28s ease, opacity 0.28s ease;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .screen--hidden {
-  transform: translateX(16px);
-  opacity: 0;
-  pointer-events: none;
+  display: none;
 }
 
 /* ---------- 리스트 화면 ---------- */
@@ -191,9 +167,7 @@ body {
 
 .list-scroll {
   flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 8px 24px 96px;
+  padding: 8px 24px calc(104px + env(safe-area-inset-bottom, 0px));
 }
 
 .group-label {
@@ -317,22 +291,19 @@ body {
 }
 
 .cta-bar {
-  position: absolute;
-  left: 16px;
-  right: 16px;
-  bottom: 20px;
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 30;
+  width: 100%;
+  max-width: 430px;
+  padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
-@media (max-width: 768px) {
-  .cta-bar {
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  }
-}
-
-@media (min-width: 769px) and (min-height: 1030px) {
-  .cta-bar {
-    bottom: 28px;
-  }
+.cta-bar .cta-btn {
+  pointer-events: auto;
 }
 
 .cta-btn {
@@ -621,7 +592,7 @@ body {
 /* ---------- 명단 등록 바텀시트 ---------- */
 
 .sheet-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 40;
   background: rgba(0, 0, 0, 0.5);
@@ -635,23 +606,23 @@ body {
 }
 
 .sheet-panel {
-  position: absolute;
-  left: 0;
-  right: 0;
+  position: fixed;
+  left: 50%;
   bottom: 0;
   z-index: 50;
-  max-height: 70%;
+  width: 100%;
+  max-width: 430px;
   display: flex;
   flex-direction: column;
   background: var(--paper);
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.2);
-  transform: translateY(0);
+  transform: translate(-50%, 0);
   transition: transform 0.28s ease;
 }
 
 .sheet-panel--hidden {
-  transform: translateY(100%);
+  transform: translate(-50%, 100%);
   pointer-events: none;
 }
 
@@ -678,7 +649,7 @@ body {
    기존 .sheet-backdrop/.sheet-backdrop--hidden 클래스를 그대로 재사용(id만 dialog용). */
 
 .dialog-panel {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   z-index: 70;
