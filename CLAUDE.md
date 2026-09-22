@@ -30,6 +30,10 @@ Then open `http://localhost:8080/index.html`. Opening `index.html` directly via 
 
 Current theme is light only (see `docs/01-style-reference.md`); there is no dark-mode variant in the code.
 
+## Memory
+
+Important project memory (decisions, past incidents, conventions learned during work) is stored **inside this repo at `.claude/memory/`**, not in Claude Code's default global per-project memory path (`~/.claude/projects/.../memory/`). Start of `.claude/memory/MEMORY.md` is the index; read it at the start of a session for this repo, since the global auto-memory system does not auto-inject content from this in-repo path — it must be read explicitly. When saving new memory (e.g. via `/save-memory` or ad hoc), write the file directly into `.claude/memory/` using the same `{type}_{slug}.md` frontmatter convention as the existing files there, and update `.claude/memory/MEMORY.md`'s index — do not write to the global path.
+
 ## Known repo quirks
 
 - **`.env*` files are hard-blocked.** `.claude/hooks/pre-tool-use.sh` refuses any Read/Write to a path matching `.env`, `.env.*`, etc. (`.claude/settings.json` also denies it at the permissions level). This blocks even `.env.example`. There is currently no working code that reads environment variables — the static JS has no build step to inject them.
