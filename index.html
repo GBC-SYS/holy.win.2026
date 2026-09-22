@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>홀리윈 2026 전도 명단</title>
+  <link rel="stylesheet" href="./assets/css/init.css" />
+  <link rel="stylesheet" href="./assets/css/entries.css" />
+</head>
+<body>
+
+  <div class="phone">
+
+    <!-- ============ 리스트 화면 ============ -->
+    <section id="screen-list" class="screen" aria-label="전도 명단 리스트">
+      <header class="header">
+        <div class="header-row">
+          <h1 class="title">전도 명단</h1>
+          <div class="count-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2.4 4.5 6 4c2.2-.3 4 1 6 3.3C14 5 15.8 3.7 18 4c3.6.5 5.6 4.2 4 7.7-2.5 4.7-10 9.3-10 9.3z"/>
+            </svg>
+            <span id="count-text">-</span>
+          </div>
+        </div>
+        <p class="subtitle">함께 기도해요 · 홀리윈 전도 대상자</p>
+      </header>
+
+      <div class="list-scroll">
+        <div id="group-recent">
+          <p class="group-label">이번 주 제출</p>
+          <div class="group-list" id="list-recent"></div>
+        </div>
+        <div id="group-past">
+          <p class="group-label group-label--dim">이전 명단</p>
+          <div class="group-list" id="list-past"></div>
+        </div>
+      </div>
+
+      <footer class="cta-bar">
+        <button type="button" class="cta-btn" id="btn-add">+ 전도 대상자 이름 올리기</button>
+      </footer>
+    </section>
+
+    <!-- ============ 상세(티켓) 화면 ============ -->
+    <section id="screen-ticket" class="screen screen--hidden" aria-label="전도 티켓 상세">
+      <div class="topbar">
+        <button type="button" class="back-btn" id="btn-back" aria-label="목록으로">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <span class="topbar-title">전도 명단</span>
+      </div>
+
+      <div class="ticket-wrap">
+        <div class="ticket">
+          <div class="ticket-head">
+            <svg class="ticket-leaf" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#141413" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2.4 4.5 6 4c2.2-.3 4 1 6 3.3C14 5 15.8 3.7 18 4c3.6.5 5.6 4.2 4 7.7-2.5 4.7-10 9.3-10 9.3z"/>
+            </svg>
+            <p class="ticket-eyebrow">전도 대상자</p>
+            <h2 class="ticket-name" id="t-to">-</h2>
+            <div class="ticket-from">
+              <span id="t-from">-</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <span>가 함께 기도하고 있어요</span>
+            </div>
+          </div>
+
+          <div class="ticket-perf"></div>
+
+          <div class="ticket-grid">
+            <div>
+              <p class="grid-label">관계</p>
+              <p class="grid-value" id="t-relation">-</p>
+            </div>
+            <div>
+              <p class="grid-label">제출일</p>
+              <p class="grid-value" id="t-date">-</p>
+            </div>
+            <div>
+              <p class="grid-label">제출자</p>
+              <p class="grid-value" id="t-from2">-</p>
+            </div>
+            <div>
+              <p class="grid-label">상태</p>
+              <p class="grid-value grid-value--accent" id="t-status">-</p>
+            </div>
+          </div>
+
+          <div class="stamp-wrap">
+            <svg width="128" height="128" viewBox="0 0 128 128" class="stamp">
+              <defs>
+                <path id="stampArc" d="M 64 20 A 44 44 0 1 1 63.9 20"/>
+              </defs>
+              <circle cx="64" cy="64" r="58" fill="none" stroke="#E8622C" stroke-width="2"/>
+              <circle cx="64" cy="64" r="52" fill="none" stroke="#E8622C" stroke-width="1" stroke-dasharray="2 3"/>
+              <text font-family="'Pretendard',sans-serif" font-size="9.5" font-weight="700" letter-spacing="2.5" fill="#E8622C">
+                <textPath href="#stampArc" startOffset="0%">HOLY · WIN · 2026 · HOLY · WIN · 2026 ·</textPath>
+              </text>
+              <svg width="26" height="26" x="51" y="38" viewBox="0 0 24 24" fill="none" stroke="#E8622C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2.4 4.5 6 4c2.2-.3 4 1 6 3.3C14 5 15.8 3.7 18 4c3.6.5 5.6 4.2 4 7.7-2.5 4.7-10 9.3-10 9.3z"/></svg>
+              <text x="64" y="86" text-anchor="middle" font-family="'Pretendard',sans-serif" font-size="13" font-weight="900" fill="#E8622C" letter-spacing="1">기도 중</text>
+            </svg>
+          </div>
+        </div>
+
+        <p class="ticket-footnote">
+          이 이름을 위해 함께 기도해요
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c0-7-4-10-8-10 0 6 3 9 8 10zm0 0c0-7 4-10 8-10 0 6-3 9-8 10z"/></svg>
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+<script src="./assets/js/entries.js"></script>
+</body>
+</html>

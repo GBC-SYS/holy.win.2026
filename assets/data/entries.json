@@ -1,0 +1,10 @@
+{
+  "count": 12,
+  "entries": [
+    { "id": 1, "from": "규리", "to": "민지", "relation": "친구", "date": "2026.9.20", "status": "기도 중", "group": "recent" },
+    { "id": 2, "from": "재원", "to": "박선생님", "relation": "직장동료", "date": "2026.9.19", "status": "기도 중", "group": "recent" },
+    { "id": 3, "from": "태원", "to": "이모", "relation": "가족", "date": "2026.9.19", "status": "기도 중", "group": "recent" },
+    { "id": 4, "from": "소윤호", "to": "창현", "relation": "친구", "date": "2026.9.15", "status": "기도 중", "group": "past" },
+    { "id": 5, "from": "희연", "to": "수진", "relation": "친구", "date": "2026.9.14", "status": "기도 중", "group": "past" }
+  ]
+}

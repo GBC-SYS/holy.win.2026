@@ -1,0 +1,43 @@
+# Claude 역할을 Codex 구성 계층으로 등록. 모델·권한은 부모 설정 상속.
+[agents]
+enabled = true
+
+[agents.code-reviewer]
+description = "변경 코드의 품질·보안·성능을 검토하고 커밋 전 APPROVED 또는 BLOCKED 판정을 제공한다."
+config_file = "agents/code-reviewer.toml"
+
+[agents.development-planner]
+description = "PRD를 분석해 의존성, 구현 단계, 사용자 시나리오 검증을 포함한 ROADMAP.md를 작성한다."
+config_file = "agents/development-planner.toml"
+
+[agents.prd-generator]
+description = "1인 개발자가 바로 구현에 착수할 수 있는 간결한 PRD를 작성한다."
+config_file = "agents/prd-generator.toml"
+
+[agents.prd-validator]
+description = "PRD의 완전성, 일관성, 기술적 타당성과 구현 위험을 검증한다."
+config_file = "agents/prd-validator.toml"
+
+[agents.git-commit-pusher]
+description = "사용자가 요청한 Git 작업을 수행한다. code-reviewer APPROVED 후 선별 스테이징·한국어 커밋·요청된 푸시를 처리한다."
+config_file = "agents/git-commit-pusher.toml"
+
+[agents.infra-architect]
+description = "프로젝트 초기 설정과 디렉터리 구조, Next.js·Supabase 인프라를 설계하고 구축한다."
+config_file = "agents/infra-architect.toml"
+
+[agents.rbac-architect]
+description = "역할·권한 모델, RBAC 테이블, RLS와 권한 검사 구조를 설계한다."
+config_file = "agents/rbac-architect.toml"
+
+[agents.router]
+description = "사용자 요청을 분석해 적합한 전문 에이전트를 선택한다. 커밋·푸시는 code-reviewer APPROVED 후 git-commit-pusher 순서로 연결한다."
+config_file = "agents/router.toml"
+
+[agents.starter-cleaner]
+description = "스타터의 불필요한 예제·의존성을 정리하고 실제 프로젝트 규칙에 맞춰 초기 구조를 준비한다."
+config_file = "agents/starter-cleaner.toml"
+
+[agents.supabase-db-architect]
+description = "Supabase 스키마, SQL, 인덱스, RLS, 마이그레이션과 백업을 설계·검토한다."
+config_file = "agents/supabase-db-architect.toml"

@@ -1,0 +1,379 @@
+:root {
+  --ink: #141413;
+  --paper: #ffffff;
+  --bg: #f3efe6;
+  --accent: #e8622c;
+  --accent-soft: #fceae0;
+  --muted: #6e6b64;
+  --line: #e6e1d5;
+  --card-muted: #ece7db;
+  --card-muted-line: #ddd6c5;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-Thin.woff2') format('woff2');
+  font-weight: 100;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-ExtraLight.woff2') format('woff2');
+  font-weight: 200;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #e7e2d4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Pretendard', system-ui, sans-serif;
+  padding: 24px;
+}
+
+.phone {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  max-height: 100vh;
+  background: var(--bg);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+}
+
+.screen--hidden {
+  transform: translateX(16px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- 리스트 화면 ---------- */
+
+.header {
+  padding: 56px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  margin: 0;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--ink);
+}
+
+.count-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+
+.count-chip span { font-size: 13px; font-weight: 700; }
+
+.subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.list-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 24px 24px;
+}
+
+.group-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: 16px 0 10px;
+}
+
+.group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.entry-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--paper);
+  border: 1px solid var(--paper);
+  border-radius: 16px;
+  padding: 18px 20px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.entry-card:hover { border-color: var(--accent); }
+
+.entry-card--dark {
+  background: var(--card-muted);
+  border-color: var(--card-muted-line);
+}
+
+.entry-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.entry-from {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 4px;
+}
+
+.entry-to {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.entry-card--dark .entry-to { color: var(--ink); font-size: 18px; }
+
+.entry-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.relation-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.entry-card--dark .relation-tag {
+  color: var(--muted);
+  background: var(--card-muted-line);
+}
+
+.entry-date {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed #e5e3df;
+  font-size: 12px;
+  color: #a6a39e;
+}
+
+.cta-bar {
+  padding: 16px 24px 28px;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+
+.cta-btn {
+  width: 100%;
+  background: var(--accent);
+  color: var(--ink);
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---------- 상세(티켓) 화면 ---------- */
+
+.topbar {
+  padding: 56px 24px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--card-muted);
+  border: none;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.topbar-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.ticket-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 24px 24px;
+}
+
+.ticket {
+  background: var(--paper);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+}
+
+.ticket-head {
+  position: relative;
+  background: var(--accent);
+  padding: 32px 28px 26px;
+}
+
+.ticket-leaf {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+}
+
+.ticket-eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #3a1e10;
+}
+
+.ticket-name {
+  margin: 4px 0 0;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.ticket-from {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: #3a1e10;
+}
+
+.ticket-perf {
+  border-top: 2px dashed #e5e3df;
+}
+
+.ticket-grid {
+  padding: 26px 28px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 16px;
+}
+
+.grid-label {
+  margin: 0 0 4px;
+  font-size: 11px;
+  color: #a6a39e;
+}
+
+.grid-value {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.grid-value--accent { color: var(--accent); }
+
+.stamp-wrap {
+  padding: 4px 28px 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.stamp { transform: rotate(-9deg); }
+
+.ticket-footnote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 20px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
