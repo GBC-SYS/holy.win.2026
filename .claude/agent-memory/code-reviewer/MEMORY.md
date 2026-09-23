@@ -13,3 +13,5 @@
 - [Bash 도구 없음 — Read/Grep으로 리뷰](feedback_no_bash_tool_use_read_grep.md) — 이 저장소의 code-reviewer는 도구 목록에 Bash가 없어 git diff 직접 실행 불가. Read/Grep/Glob으로 현재 파일 상태를 직접 대조해 리뷰할 것.
 - [PWA 설치 유도 배너 → QR 시트 통합 버튼](install_prompt_feature_review.md) — 1차 BLOCKED(배너 카드 가림) → 2차 배너 삭제·QR 시트 버튼 통합(APPROVED 조건부) → 3차 라벨 단축+padding/gap/font-size 조정(APPROVED, 2026-09-23). 남은 Minor: 더블클릭 가드/try-catch/문서 적용처 미기재 + 320px 초협폭 줄바꿈 미검증.
 - [.btn-secondary hover 전역 삭제](btn_secondary_hover_removal.md) — QR 시트 hover 제거 요청이 전역 `.btn-secondary:hover` 삭제로 확대(2026-09-23, APPROVED). `.cta-btn`은 애초 hover 없어 비대칭이었음, `#btn-edit-entry`도 영향받음. docs 06/07번은 색상 원칙만 규정해 드리프트 아님.
+- [저장소 성격 갱신: "전도 명단"→"전도 대상자"](project_repo_nature.md) — 2026-09-23 프로젝트명 리네이밍 반영.
+- ["전도 명단"→"전도 대상자" 리네이밍 누락](naming_전도명단_전도대상자_rename_gap.md) — assets/manifest.webmanifest의 PWA name 필드(사용자 노출)가 빠짐(2026-09-23, Major 지적). CLAUDE.md/마이그레이션 주석/에이전트 정의 파일은 Minor.

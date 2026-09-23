@@ -125,6 +125,12 @@ body {
   color: var(--ink);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .count-chip {
   display: flex;
   align-items: center;
@@ -136,6 +142,16 @@ body {
 }
 
 .count-chip span { font-size: 13px; font-weight: 700; }
+
+/* 새로고침 아이콘 버튼 — back-btn 스타일 재사용. 로딩 중에는 아이콘을 회전시켜
+   네트워크 요청이 진행 중임을 알린다(.is-spinning). */
+.header-actions .back-btn.is-spinning svg {
+  animation: refresh-spin 0.7s linear infinite;
+}
+
+@keyframes refresh-spin {
+  to { transform: rotate(360deg); }
+}
 
 .subtitle {
   margin: 0;

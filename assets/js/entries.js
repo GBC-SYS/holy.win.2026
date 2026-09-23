@@ -6,6 +6,7 @@ const listRecent = document.getElementById('list-recent');
 const listPast = document.getElementById('list-past');
 const countText = document.getElementById('count-text');
 const btnAdd = document.getElementById('btn-add');
+const btnRefresh = document.getElementById('btn-refresh');
 const groupRecentEl = document.getElementById('group-recent');
 const groupPastEl = document.getElementById('group-past');
 const listEmptyEl = document.getElementById('list-empty');
@@ -570,6 +571,15 @@ btnQrSave.addEventListener('click', handleQrSave);
 
 btnQrInstall.addEventListener('click', triggerInstallPrompt);
 
+btnRefresh.addEventListener('click', async () => {
+  if (btnRefresh.disabled) return;
+  btnRefresh.disabled = true;
+  btnRefresh.classList.add('is-spinning');
+  await loadEntries();
+  btnRefresh.classList.remove('is-spinning');
+  btnRefresh.disabled = false;
+});
+
 // ============ Supabase row → entries.js 필드 매핑 ============
 // createEntryCard/renderList/renderTicket 등 렌더링 함수들은 entry.to/from/relation/
 // date/status/id/group 필드명을 그대로 기대한다. 그 함수들은 건드리지 않고, DB의
@@ -610,27 +620,29 @@ function mapRowToEntry(row) {
 }
 
 // ============ 데이터 로딩 ============
-window.supabaseReady
-  .then((session) => {
+// 최초 로딩과 새로고침 버튼(btn-refresh)이 이 함수를 공유한다.
+async function loadEntries() {
+  try {
+    const session = await window.supabaseReady;
     currentUserId = session?.user?.id ?? null;
-    return window.supabaseClient
+
+    const { data, error } = await window.supabaseClient
       .from('holywin_entries')
       .select('*')
       .order('submitted_at', { ascending: false });
-  })
-  .then(({ data, error }) => {
+
     if (error) {
       console.error('holywin_entries 데이터를 불러오지 못했습니다.', error);
       entries = [];
-      renderList();
-      return;
+    } else {
+      entries = (data ?? []).map(mapRowToEntry);
     }
-
-    entries = (data ?? []).map(mapRowToEntry);
-    renderList();
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error('holywin_entries 데이터를 불러오지 못했습니다.', err);
     entries = [];
-    renderList();
-  });
+  }
+
+  renderList();
+}
+
+loadEntries();

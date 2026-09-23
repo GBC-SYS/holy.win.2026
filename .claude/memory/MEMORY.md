@@ -10,3 +10,6 @@
 - [CLAUDE.md 데이터 로딩 설명 낡음](project_claude-md-doc-drift.md) — entries.json fetch 설명이 Supabase 전환 이후에도 방치됨(2026-09-22 발견)
 - [디자인 docs는 리뷰 차단 게이트](project_design-docs-are-review-gate.md) — CSS 토큰(색·radius·그림자) 바꿀 때 docs/0X도 같이 안 고치면 code-reviewer가 Major로 BLOCKED시킴
 - [QR 공유 기능 리뷰 이력](project_qr-share-feature-review.md) — SRI 미고정·iOS Safari 저장 실패 두 Major 2026-09-23 재검토에서 해결·APPROVED. 남은 Minor: QR 렌더 전 저장 버튼 활성 상태(빈 이미지 저장 가능), toBlob 비동기 갭으로 인한 user-activation 소실 시 원래 문제로 조용히 회귀할 이론적 가능성
+- [PWA 설치 버튼은 QR 시트에 통합됨](project_install-prompt-qr-integration.md) — 독립 배너(1세대) 폐기, #btn-qr-install이 최종 구조. install-prompt.js가 entries.js보다 먼저 로드돼야 함. iOS는 설치 후에도 브라우저 탭에서 버튼이 다시 뜰 수 있음(플랫폼 한계)
+- [classic script 로드 순서 의존성](project_classic-script-load-order.md) — 번들러 없음, 다른 파일 함수를 top-level에서 즉시 참조하면 index.html의 script 태그 순서가 실행을 좌우함(함수 바디 안 참조는 순서 무관)
+- [승인된 기능도 즉시 재설계될 수 있음](feedback_post-approval-redesign-expected.md) — Plan Mode+구현+code-reviewer APPROVED 거친 배너를 사용자가 스크린샷 보고 곧바로 전면 재설계 지시. 승인/계획을 방어 근거로 쓰지 말 것

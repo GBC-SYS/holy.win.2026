@@ -1,11 +1,13 @@
 ---
 name: project_repo_nature
-description: holy.win.2026 저장소는 실제로 동작하는 정적 HTML/CSS/JS 교회 전도 명단 앱이며, docs/ 아래 01~09 디자인 시스템 문서는 statkit.llm.design 템플릿 방법론을 이 앱에 맞게 채워 넣은 것
+description: holy.win.2026 저장소는 실제로 동작하는 정적 HTML/CSS/JS 교회 전도 대상자(구 "전도 명단") 앱이며, docs/ 아래 01~09 디자인 시스템 문서는 statkit.llm.design 템플릿 방법론을 이 앱에 맞게 채워 넣은 것
 metadata:
   type: project
 ---
 
-이 저장소(holy.win.2026)는 "홀리윈 2026 전도 명단"이라는 실제 정적 웹앱이다. 프레임워크/번들러/`package.json` 없이 `index.html` + `assets/css/{init,entries}.css` + `assets/js/entries.js` + `assets/data/entries.json`으로 구성되며, 리스트 화면 ↔ 티켓 상세 화면을 `.screen--hidden` 클래스 토글로 전환한다.
+이 저장소(holy.win.2026)는 "홀리윈 2026 전도 대상자"(2026-09-23 이전 명칭: "전도 명단")라는 실제 정적 웹앱이다. 프레임워크/번들러/`package.json` 없이 `index.html` + `assets/css/{init,entries}.css` + `assets/js/entries.js` + `assets/data/entries.json`으로 구성되며, 리스트 화면 ↔ 티켓 상세 화면을 `.screen--hidden` 클래스 토글로 전환한다.
+
+**2026-09-23 "전도 명단"→"전도 대상자" 리네이밍:** index.html(title/h1/topbar-title/QR 안내문구/aria-label 7곳)과 docs/DESIGN.md·docs/01-style-reference.md의 프로젝트명은 교체됨. 단 `assets/manifest.webmanifest`의 `"name"` 필드(PWA 설치 시 홈 화면에 표시되는 실제 사용자 노출 문자열)와 루트 `CLAUDE.md` 1줄 설명은 이 세션에서 손대지 않아 "전도 명단"이 그대로 남아 있었다(→ 같은 리뷰에서 지적, [[naming_전도명단_전도대상자_rename_gap]] 참고). 다음에 이 프로젝트명을 다시 바꾸게 되면 index.html/docs 2개 외에 `assets/manifest.webmanifest`·`CLAUDE.md`·`supabase/migrations/0001_init.sql` 주석·`.claude/agents/js-component-architect.md`·다른 서브에이전트 메모리 파일들까지 grep으로 전수 확인할 것.
 
 **2026-09-22 리네이밍:** 컨테이너 클래스가 `.phone` → `.container`로 전면 변경됨(index.html/entries.css/CLAUDE.md/docs/의 모든 언급, 코드 전체에서 잔재 없음 확인). 또한 그 이전 시점에 고정 390×844 박스+내부 스크롤 구조에서 `min-height:100dvh` 네이티브 document 스크롤 구조로 이미 리팩터링되어 있었다([[container_margin_scroll_note]] 참고) — 지금 `.container`는 "폰 목업"이 아니라 `max-width:430px`로 제한된 일반 콘텐츠 컬럼이다.
 
