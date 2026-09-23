@@ -1,4 +1,4 @@
-- [애매한 시각 요청은 후보 확인 후 수정](feedback_ambiguous-visual-requests.md) — Chrome 자동화 미연결 환경, 추측성 CSS 수정 금지
+- [애매한 시각 요청은 후보 확인 후 수정](feedback_ambiguous-visual-requests.md) — Chrome 자동화는 2026-09-23부터 정상 연결됨(직접 스크린샷 검증 가능), 단 탭 재연결 시 캐시로 인해 강력 새로고침 필요
 - [git-commit-pusher 신뢰 불가](feedback_git-commit-pusher-unreliable.md) — 도구 목록에 Bash 자체가 없음(구조적 원인, 3회 재현), 커밋/푸시 후 git status/log로 직접 검증
 - [CSS 튜닝 전 인라인 스타일부터 확인](feedback_check-inline-styles-before-css-tuning.md) — padding 반복 증가로 안 고쳐지면 JS의 .style.* 강제 대입부터 grep
 - [Supabase CRUD 마이그레이션 완료](project_supabase-crud-migration.md) — 6단계 전부 완료·배포(커밋 db5e447), holywin_ 접두사·소프트삭제 RPC 등 확정 규칙만 남음
@@ -12,4 +12,5 @@
 - [QR 공유 기능 리뷰 이력](project_qr-share-feature-review.md) — SRI 미고정·iOS Safari 저장 실패 두 Major 2026-09-23 재검토에서 해결·APPROVED. 남은 Minor: QR 렌더 전 저장 버튼 활성 상태(빈 이미지 저장 가능), toBlob 비동기 갭으로 인한 user-activation 소실 시 원래 문제로 조용히 회귀할 이론적 가능성
 - [PWA 설치 버튼은 QR 시트에 통합됨](project_install-prompt-qr-integration.md) — 독립 배너(1세대) 폐기, #btn-qr-install이 최종 구조. install-prompt.js가 entries.js보다 먼저 로드돼야 함. iOS는 설치 후에도 브라우저 탭에서 버튼이 다시 뜰 수 있음(플랫폼 한계)
 - [classic script 로드 순서 의존성](project_classic-script-load-order.md) — 번들러 없음, 다른 파일 함수를 top-level에서 즉시 참조하면 index.html의 script 태그 순서가 실행을 좌우함(함수 바디 안 참조는 순서 무관)
-- [승인된 기능도 즉시 재설계될 수 있음](feedback_post-approval-redesign-expected.md) — Plan Mode+구현+code-reviewer APPROVED 거친 배너를 사용자가 스크린샷 보고 곧바로 전면 재설계 지시. 승인/계획을 방어 근거로 쓰지 말 것
+- [승인된 기능도 즉시 재설계될 수 있음](feedback_post-approval-redesign-expected.md) — code-reviewer 2회 APPROVED 받은 전면 색상 리브랜딩도 "컨셉과 다르다"며 통째로 롤백됨. 참고 이미지까지 첨부된 요청을 정확히 구현해도 곧바로 되돌려달라 할 수 있음
+- [티켓 상세는 "두 개의 뜬 카드" 구조로 확정](project_ticket-detail-two-card-layout.md) — 주황/흰 카드 사이 틈은 버그 아님, 하나로 합쳤다가 바로 거부당한 전례 있음. 정확한 margin 값은 계속 바뀌므로 코드에서 직접 확인

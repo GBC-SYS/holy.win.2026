@@ -5,6 +5,7 @@
 - [radius 문서 동기화 규칙](radius_doc_sync_rule.md) — docs/05-radius.md·09-shadcn-tokens.md의 ".container 28px 프레임" 문구가 실제 코드(24px 24px 0 0)와 불일치했던 문제(Major, 2026-09-22 발견) → 같은 날 재검토에서 24px로 갱신 확인, 해소됨.
 - [엘리베이션(그림자) 스펙 위반](elevation_shadow_spec_violation.md) — docs/06-elevation.md·08-guidelines.md이 정했던 옛 그림자 값과 .container 실제 값(0 8px 32px rgba(20,21,26,.12))이 달랐던 문제(Major, 2026-09-22) → 코드는 유지하고 문서를 코드에 맞춰 갱신, 해소됨. 티켓 그림자 미구현은 2026-09-23 풀블리드 리디자인으로 요구 자체가 없어지며 해소.
 - [티켓 풀블리드+브라운 리브랜딩 리뷰](project_ticket_fullbleed_brown_rebrand_review.md) — 1차 BLOCKED(대비 미달 2건+문서 드리프트 3건) → 2차 APPROVED(2026-09-23, 대비율 재계산 전부 일치). 남은 Minor: entry-status--praying 예외표 누락, "그림자 1단계만" 문구가 cta-btn/dialog-panel 그림자와 여전히 안 맞음.
+- [.ticket-hero/.ticket-wrap margin 0 16px 재도입 리뷰](project_ticket_margin_reintroduction_2026-09-23.md) — 04번 spacing 스케일 값, 둘 다 동일 margin이라 정렬 이상 없음, docs 05/09 모순 없음(APPROVED, 2026-09-23). Minor: entries.css 110~116행 주석이 margin-없던 시절 근거라 살짝 낡음.
 - [entries.js innerHTML 패턴](entries_js_xss_pattern.md) — createEntryCard는 2026-09-22 수정으로 innerHTML→createElement/textContent 전환 완료(해소). entries.json 소스가 실제 폼 제출로 바뀌면 회귀 여부 Critical로 재검토.
 - [hooks/settings.json 동기화 규칙](hooks_settings_sync_rule.md) — .claude/hooks/*.sh 삭제 시 settings.json의 hooks 참조도 같이 지워야 함. 2026-09-22 notification-hook.sh 삭제 후 settings.json 미동기화(참조 남음) 발견.
 - [.container 마진/스크롤 이력](phone_clamp_overflow_edge_case.md) — 1세대(clamp/max-height, 해소됨) → 2세대(margin-top:40px로 상시 40px 스크롤, Minor·의도된 트레이드오프, 2026-09-22).

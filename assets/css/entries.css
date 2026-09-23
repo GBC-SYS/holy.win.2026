@@ -391,6 +391,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
    배경/모서리/그림자를 여기서 한 번에 관리하고, 두 자식은 overflow:hidden에
    맞춰 클리핑된다 — 각자 그림자를 가지면 이음매에 이중 그림자가 생기기 때문. */
 .ticket-hero {
+  margin: 0 16px;
   border-radius: 28px;
   overflow: hidden;
   background: var(--accent);
@@ -435,6 +436,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .ticket-wrap {
   display: flex;
   flex-direction: column;
+  margin: 0 16px;
   background: var(--paper);
   border-radius: 32px;
   overflow: hidden;
