@@ -546,8 +546,6 @@ body {
   cursor: pointer;
 }
 
-.btn-secondary:hover { border-color: var(--accent); }
-
 /* 위험 버튼 — 삭제 등 되돌릴 수 없는 동작 전용. showDialog({danger:true, showCancel:true})로 확인 단계를 거친 뒤에만 호출된다.
    --destructive(#dc2626)/--destructive-foreground(#ffffff) 대비 4.83:1, 02번 문서 참고 */
 .btn-danger {
