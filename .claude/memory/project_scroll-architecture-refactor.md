@@ -25,4 +25,10 @@ metadata:
 
 **Why:** 고정 크기 모바일 목업 박스 대신 일반 페이지처럼 동작하게 하려고 의도적으로 제거함(사용자 요청).
 
-**How to apply:** 이 화면 구조를 다시 건드릴 때 위 4가지 미정리 항목을 함께 정리할 기회로 삼을 것. [[project-claude-md-doc-drift]]도 참고 — CLAUDE.md의 다른 섹션(데이터 로딩 설명)도 별개로 낡아 있었음.
+**2026-09-22 후속 변경(같은 날, 리네이밍 + 비주얼 폴리시):**
+- 클래스명을 `.phone` → `.container`로 전면 리네이밍(index.html/entries.css/CLAUDE.md/docs 전부 반영, `.claude/agent-memory/`의 다른 서브에이전트 전용 네임스페이스는 범위 밖으로 남겨둠).
+- `body` 배경을 하드코딩 `#e7e2d4`에서 `var(--bg)`로 통일 — 이제 `body`와 `.container`가 완전히 같은 색이라, 데스크톱에서 컬럼을 구분해주던 회색 거터가 사라짐(사용자가 트레이드오프 인지 후 명시적으로 선택).
+- `.container`에 `border-radius:24px 24px 0 0`(상단만) + `box-shadow:0 8px 32px rgba(20,21,26,.12)` 추가 — 배경색이 같아져도 그림자만으로 카드 경계가 인지됨. `margin:40px auto 0`도 추가(상단 여백만, 좌우는 기존 auto 중앙정렬 유지). margin-top이 `min-height:100dvh`와 겹쳐서 뷰포트 크기와 무관하게 상시 약 40px 정도의 페이지 스크롤이 생기는 부작용이 있음(Minor로 리뷰 승인됨, 모바일 전용으로 좁히려면 `@media`로 제한 고려).
+- 이 그림자/라운드 값 변경 과정에서 `docs/02·05·06·08·09`가 옛 `.phone`(28px, 네 모서리, `0 40px 80px rgba(0,0,0,.5)`, `#e7e2d4`) 기준으로 낡아 있던 게 code-reviewer에게 Major로 BLOCKED됐다 — 자세한 내용과 일반화된 교훈은 [[project-design-docs-are-review-gate]] 참고.
+
+**How to apply:** 이 화면 구조를 다시 건드릴 때 위 4가지 미정리 항목을 함께 정리할 기회로 삼을 것. [[project-claude-md-doc-drift]]도 참고 — CLAUDE.md의 다른 섹션(데이터 로딩 설명)도 별개로 낡아 있었음. 시각적 토큰(색/radius/그림자)을 또 바꿀 때는 [[project-design-docs-are-review-gate]]를 먼저 참고해서 docs/도 같이 갱신할 것.

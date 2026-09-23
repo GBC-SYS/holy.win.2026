@@ -48,6 +48,17 @@ const editFormFields = {
   relation: document.getElementById('edit-input-relation'),
 };
 
+// ============ DOM 참조 — QR 코드 공유 바텀시트 ============
+const btnQrShare = document.getElementById('btn-qr-share');
+const qrSheetBackdrop = document.getElementById('qr-sheet-backdrop');
+const qrSheetPanel = document.getElementById('qr-sheet-panel');
+const btnQrClose = document.getElementById('btn-qr-close');
+const qrCanvas = document.getElementById('qr-canvas');
+const qrUrlText = document.getElementById('qr-url-text');
+const qrCaption = document.getElementById('qr-caption');
+const qrCaptionDefaultText = qrCaption.textContent;
+const btnQrSave = document.getElementById('btn-qr-save');
+
 // ============ DOM 참조 — 티켓 소유자 액션(수정/삭제) ============
 const ticketOwnerActions = document.getElementById('ticket-owner-actions');
 const btnEditEntry = document.getElementById('btn-edit-entry');
@@ -384,6 +395,68 @@ function closeEditForm() {
   editSheetPanel.classList.add('sheet-panel--hidden');
 }
 
+// ============ QR 코드 공유 바텀시트 ============
+// 등록/수정 바텀시트와 같은 오버레이 메커니즘(백드롭/패널의 hidden 클래스 토글)을
+// 그대로 재사용한다. window.location.href(로컬 개발 서버 주소 등)가 아니라 항상
+// 배포된 GitHub Pages 주소를 인코딩한다 — 누가 QR을 찍어도 실제 서비스로 연결되도록.
+const QR_SHARE_URL = 'https://gbc-sys.github.io/holy.win.2026/';
+
+function openQrSheet() {
+  const url = QR_SHARE_URL;
+  qrUrlText.textContent = url;
+
+  // qrcode.js는 CDN에서 로드되므로(사내망 차단/애드블록 등으로) 로드에 실패할 수
+  // 있다. 그 경우 QRCode가 전역에 없어 바로 예외가 나므로, 시트는 정상적으로 열되
+  // 빈 캔버스 대신 안내 문구로 바꿔서 "고장난 버튼"처럼 보이지 않게 한다.
+  if (typeof QRCode === 'undefined') {
+    console.error('QR 코드 라이브러리(qrcode.js)를 불러오지 못했습니다.');
+    qrCaption.textContent = 'QR 코드를 불러오지 못했어요. 네트워크를 확인해주세요.';
+  } else {
+    qrCaption.textContent = qrCaptionDefaultText;
+    QRCode.toCanvas(qrCanvas, url, { width: 220, margin: 1 }, (err) => {
+      if (err) {
+        console.error('QR 코드를 생성하지 못했습니다.', err);
+        qrCaption.textContent = 'QR 코드를 불러오지 못했어요. 네트워크를 확인해주세요.';
+      }
+    });
+  }
+
+  qrSheetBackdrop.classList.remove('sheet-backdrop--hidden');
+  qrSheetPanel.classList.remove('sheet-panel--hidden');
+}
+
+function closeQrSheet() {
+  qrSheetBackdrop.classList.add('sheet-backdrop--hidden');
+  qrSheetPanel.classList.add('sheet-panel--hidden');
+}
+
+// 캔버스를 PNG로 저장한다. canvas.toDataURL + <a download> 조합은 iOS Safari에서
+// 다운로드로 이어지지 않고 새 탭 이동처럼 동작하는 경우가 있어 신뢰할 수 없다
+// (알려진 플랫폼 제약). 그래서 파일 공유가 가능한 환경(iOS Safari 포함)에서는
+// Web Share API를 우선 쓰고, 지원하지 않는 환경(대부분의 데스크톱 브라우저)에서만
+// 기존 <a download> 방식으로 폴백한다.
+function handleQrSave() {
+  qrCanvas.toBlob(async (blob) => {
+    if (!blob) return;
+    const file = new File([blob], 'holywin-qr.png', { type: 'image/png' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: 'HOLY WIN 2026 QR' });
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return; // 사용자가 공유 시트를 취소함
+        console.error('QR 이미지 공유에 실패했습니다.', err);
+      }
+    }
+
+    const link = document.createElement('a');
+    link.href = qrCanvas.toDataURL('image/png');
+    link.download = 'holywin-qr.png';
+    link.click();
+  }, 'image/png');
+}
+
 // ============ 알림/확인 다이얼로그 ============
 // 바텀시트(sheet-backdrop/sheet-panel)와 완전히 별개의 오버레이다. 화면 중앙에
 // fade+scale로 뜨고, 백드롭을 탭해도 닫히지 않는다 — 실수로 알림을 놓치지 않도록
@@ -477,6 +550,18 @@ editEntryForm.addEventListener('submit', handleEditFormSubmit);
 
 filterTabAll.addEventListener('click', () => setListFilter(false));
 filterTabMine.addEventListener('click', () => setListFilter(true));
+
+btnQrShare.addEventListener('click', openQrSheet);
+
+btnQrClose.addEventListener('click', closeQrSheet);
+
+qrSheetBackdrop.addEventListener('click', (event) => {
+  if (event.target === qrSheetBackdrop) {
+    closeQrSheet();
+  }
+});
+
+btnQrSave.addEventListener('click', handleQrSave);
 
 // ============ Supabase row → entries.js 필드 매핑 ============
 // createEntryCard/renderList/renderTicket 등 렌더링 함수들은 entry.to/from/relation/

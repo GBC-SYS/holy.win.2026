@@ -299,12 +299,33 @@ body {
   z-index: 30;
   width: 100%;
   max-width: 430px;
+  display: flex;
+  gap: 10px;
   padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   pointer-events: none;
 }
 
 .cta-bar .cta-btn {
+  flex: 1;
+  width: auto;
+  pointer-events: auto;
+}
+
+/* 아이콘 버튼(QR 공유) — back-btn과 같은 무채색 배경 원칙을 따르되, cta-btn과
+   나란히 놓이므로 원형 대신 cta-btn과 같은 모서리(14px)의 정사각형으로 맞춘다.
+   높이는 flex 컨테이너의 기본 align-items:stretch로 cta-btn과 자동으로 맞춰진다. */
+.qr-btn {
+  flex: none;
+  width: 52px;
+  background: var(--paper);
+  border: none;
+  border-radius: 14px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   pointer-events: auto;
 }
 
@@ -643,6 +664,53 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+/* ---------- QR 코드 공유 바텀시트 ----------
+   등록/수정 바텀시트와 같은 sheet-backdrop/sheet-panel 오버레이를 재사용한다.
+   본문은 이 시트에서만 쓰는 구조라 별도 클래스로 둔다. */
+
+.qr-sheet-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 24px calc(24px + env(safe-area-inset-bottom, 0px));
+}
+
+.qr-card {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+
+.qr-card canvas {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+}
+
+.qr-caption {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.qr-url {
+  margin: -10px 0 0;
+  font-size: 13px;
+  color: #a6a39e;
+  text-align: center;
+  word-break: break-all;
+}
+
+.qr-sheet-body .cta-btn {
+  margin-top: 8px;
 }
 
 /* ---------- 알림/확인 다이얼로그 ----------
