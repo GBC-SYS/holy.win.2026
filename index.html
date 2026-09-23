@@ -215,7 +215,10 @@
         </div>
         <p class="qr-caption" id="qr-caption">카메라로 스캔하면 전도 명단으로 연결돼요</p>
         <p class="qr-url" id="qr-url-text">-</p>
-        <button type="button" class="cta-btn" id="btn-qr-save">이미지로 저장</button>
+        <div class="qr-actions">
+          <button type="button" class="cta-btn" id="btn-qr-save">이미지로 저장</button>
+          <button type="button" class="btn-secondary is-hidden" id="btn-qr-install">📲 홈 화면에 추가</button>
+        </div>
       </div>
     </div>
 
@@ -237,6 +240,7 @@
 <!-- QR Code 라이브러리 -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js" integrity="sha384-HGmnkDZJy7mRkoARekrrj0VjEFSh9a0Z8qxGri/kTTAJkgR8hqD1lHsYSh3JdzRi" crossorigin="anonymous"></script>
 <script src="./assets/js/supabase-client.js"></script>
+<script src="./assets/js/install-prompt.js"></script>
 <script src="./assets/js/entries.js"></script>
 </body>
 </html>

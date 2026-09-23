@@ -58,6 +58,7 @@ const qrUrlText = document.getElementById('qr-url-text');
 const qrCaption = document.getElementById('qr-caption');
 const qrCaptionDefaultText = qrCaption.textContent;
 const btnQrSave = document.getElementById('btn-qr-save');
+const btnQrInstall = document.getElementById('btn-qr-install');
 
 // ============ DOM 참조 — 티켓 소유자 액션(수정/삭제) ============
 const ticketOwnerActions = document.getElementById('ticket-owner-actions');
@@ -421,6 +422,10 @@ function openQrSheet() {
     });
   }
 
+  // install-prompt.js의 canPromptInstall() — 시트를 열 때마다 다시 확인한다. beforeinstallprompt가
+  // 시트를 처음 연 뒤에야 도착했거나, appinstalled로 상태가 바뀌었을 수 있어서다.
+  btnQrInstall.classList.toggle('is-hidden', !canPromptInstall());
+
   qrSheetBackdrop.classList.remove('sheet-backdrop--hidden');
   qrSheetPanel.classList.remove('sheet-panel--hidden');
 }
@@ -562,6 +567,8 @@ qrSheetBackdrop.addEventListener('click', (event) => {
 });
 
 btnQrSave.addEventListener('click', handleQrSave);
+
+btnQrInstall.addEventListener('click', triggerInstallPrompt);
 
 // ============ Supabase row → entries.js 필드 매핑 ============
 // createEntryCard/renderList/renderTicket 등 렌더링 함수들은 entry.to/from/relation/

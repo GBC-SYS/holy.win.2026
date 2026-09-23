@@ -11,3 +11,4 @@
 - [Supabase 마이그레이션 리뷰 반복 포인트](supabase_migration_review_notes.md) — 6단계 전부 완료(2026-09-22), search_path 관례 정착, 소프트삭제 RPC 우회 패턴, confirm()→showDialog() 문서 3곳 드리프트.
 - [showDialog Promise 재사용 패턴](showdialog_promise_reuse_pattern.md) — 단일 다이얼로그 인스턴스 재사용, 동시 호출 시 이전 Promise 미해결 엣지케이스(Minor, 2026-09-22).
 - [Bash 도구 없음 — Read/Grep으로 리뷰](feedback_no_bash_tool_use_read_grep.md) — 이 저장소의 code-reviewer는 도구 목록에 Bash가 없어 git diff 직접 실행 불가. Read/Grep/Glob으로 현재 파일 상태를 직접 대조해 리뷰할 것.
+- [PWA 설치 유도 배너 → QR 시트 통합 버튼](install_prompt_feature_review.md) — 1차 BLOCKED(배너 카드 가림) → 2차 배너 삭제·QR 시트 버튼 통합(APPROVED 조건부) → 3차 라벨 단축+padding/gap/font-size 조정(APPROVED, 2026-09-23). 남은 Minor: 더블클릭 가드/try-catch/문서 적용처 미기재 + 320px 초협폭 줄바꿈 미검증.
