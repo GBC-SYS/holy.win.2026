@@ -88,10 +88,10 @@
 --radius-sm: calc(var(--radius) - 4px);   /* 12px — 배지, 체크박스 (현재 배지·칩은 999 고정 사용, 예비값) */
 --radius-md: calc(var(--radius) - 2px);   /* 14px — 버튼, 입력창 (cta-btn 실측값과 일치) */
 --radius-lg: var(--radius);               /* 16px — 카드, 다이얼로그 (entry-card 실측값과 일치) */
---radius-xl: calc(var(--radius) + 8px);   /* 24px — 큰 컨테이너, 모달 (ticket, .container 상단 모서리 실측값과 일치) */
+--radius-xl: calc(var(--radius) + 8px);   /* 24px — 큰 컨테이너, 모달 (파생값 기준) */
 ```
 
-`.container`의 `border-radius: 24px 24px 0 0`(상단만)은 예전 고정 크기 디바이스 목업 프레임(28px, 네 모서리 전부) 시절의 예외였으나, 지금은 값이 `--radius-xl`(24px)과 그대로 일치한다 — 더 이상 변수화 예외로 다룰 이유가 없다. 자세한 배경은 05번 참고.
+`.container`/`.ticket-wrap`의 `border-radius`(32px)는 `--radius-xl`(24px 파생값)보다 크게 잡은 의도적 예외값이다. `.ticket-hero`(티켓 화면의 주황 상단 카드)는 `28px`로 또 다른 예외값을 쓴다 — `.topbar` 자신은 더 이상 별도의 `border-radius`를 갖지 않는다(부모 `.ticket-hero`가 모서리를 담당). 자세한 배경은 05번 참고.
 
 ## 색 표기 — HEX와 OKLCH 중 하나로 통일
 

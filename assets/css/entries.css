@@ -71,12 +71,21 @@
 
 * { box-sizing: border-box; }
 
+html {
+  background: var(--bg);
+}
+
 body {
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
   background: var(--bg);
   font-family: 'Pretendard', system-ui, sans-serif;
+}
+
+/* 티켓 화면은 콘텐츠 길이만큼만 차지해야 하므로, body의 뷰포트 강제 높이도 함께 풀어준다. */
+body:has(#screen-ticket:not(.screen--hidden)) {
+  min-height: 0;
 }
 
 .container {
@@ -87,7 +96,7 @@ body {
   min-height: 100dvh;
   margin: 40px auto 0;
   background: var(--bg);
-  border-radius: 24px 24px 0 0;
+  border-radius: 32px 32px 0 0;
   box-shadow: 0 8px 32px rgba(20, 21, 26, 0.12);
 }
 
@@ -96,6 +105,23 @@ body {
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
+}
+
+/* 티켓 화면은 콘텐츠 길이에 맞춰 끝나야 한다(전체 뷰포트를 억지로 채우지 않음) —
+   list 화면(.container 기본 min-height)에는 영향 없도록 :has()로 범위를 좁힌다.
+   바닥이 실제로 콘텐츠에서 끝나므로(list처럼 스크롤로 잘리지 않으므로) 아래쪽
+   모서리도 함께 둥글게 해야 .ticket-wrap의 둥근 바닥과 어긋나지 않는다.
+   그림자도 이 화면에서는 끈다 — 그림자 책임이 .ticket-hero(주황 상단 카드)로
+   옮겨갔으므로, .container까지 그림자를 가지면 이음매 부근에 이중 그림자가
+   생긴다. */
+.container:has(#screen-ticket:not(.screen--hidden)) {
+  min-height: 0;
+  border-radius: 32px;
+  box-shadow: none;
+}
+
+#screen-ticket {
+  min-height: 0;
 }
 
 .screen--hidden {
@@ -361,8 +387,18 @@ body {
 
 /* ---------- 상세(티켓) 화면 ---------- */
 
+/* 상단 주황 영역(topbar+ticket-head)을 떠 있는 카드로 묶는 wrapper.
+   배경/모서리/그림자를 여기서 한 번에 관리하고, 두 자식은 overflow:hidden에
+   맞춰 클리핑된다 — 각자 그림자를 가지면 이음매에 이중 그림자가 생기기 때문. */
+.ticket-hero {
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--accent);
+  box-shadow: 0 12px 28px rgba(20, 21, 26, 0.18);
+}
+
 .topbar {
-  padding: 56px 24px 8px;
+  padding: 40px 24px 8px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -381,44 +417,40 @@ body {
   cursor: pointer;
 }
 
+.topbar .back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
 .topbar-title {
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--ink);
 }
 
+.topbar .topbar-title {
+  color: #ffffff;
+}
+
 .ticket-wrap {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 16px 24px 24px;
+  background: var(--paper);
+  border-radius: 32px;
+  overflow: hidden;
+  padding: 0 0 32px;
 }
 
 .ticket {
   background: var(--paper);
-  border-radius: 24px;
-  overflow: hidden;
 }
 
 .ticket-head {
-  position: relative;
-  background: var(--accent);
   padding: 36px 28px 32px;
 }
 
 .ticket-leaf {
-  position: absolute;
-  top: 28px;
-  right: 28px;
-}
-
-.ticket-eyebrow {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: #ffffff;
+  margin-left: auto;
 }
 
 .ticket-name {
@@ -440,26 +472,6 @@ body {
   color: #ffffff;
 }
 
-.ticket-perf {
-  position: relative;
-  border-top: 2px dashed #e5e3df;
-}
-
-.ticket-perf::before,
-.ticket-perf::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--bg);
-  transform: translateY(-50%);
-}
-
-.ticket-perf::before { left: -10px; }
-.ticket-perf::after { right: -10px; }
-
 .ticket-grid {
   padding: 26px 28px;
   display: grid;
@@ -469,24 +481,48 @@ body {
 
 .grid-label {
   margin: 0 0 4px;
-  font-size: 11px;
+  font-size: 12px;
   color: #a6a39e;
 }
 
 .grid-value {
   margin: 0;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--ink);
 }
+
+/* 절취선 노치 — 보딩패스처럼 티켓이 뜯기는 지점을 표시하는 장식. 점선 자체는 --line
+   토큰을 쓰고, 좌우 원은 .ticket-wrap의 overflow:hidden에 절반이 가려지면서 카드
+   가장자리가 둥글게 파인 것처럼 보인다(카드 "바깥" --bg 색으로 칠해 배경이 비치는 효과). */
+.ticket-perf {
+  position: relative;
+  border-top: 1px dashed var(--line);
+  margin: 4px 0 0;
+}
+
+.ticket-perf::before,
+.ticket-perf::after {
+  content: '';
+  position: absolute;
+  top: -18px;
+  width: 36px;
+  height: 36px;
+  background: var(--bg);
+  border-radius: 50%;
+  box-shadow: none;
+}
+
+.ticket-perf::before { left: -18px; }
+.ticket-perf::after { right: -18px; }
 
 .status-badge {
   display: inline-block;
   border: none;
   border-radius: 999px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   font: inherit;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   cursor: pointer;
   transition: opacity 0.15s ease;
@@ -511,7 +547,7 @@ body {
   justify-content: center;
 }
 
-.stamp { transform: rotate(-9deg); }
+.stamp { color: var(--accent); transform: rotate(-9deg); }
 
 .stamp--done .stamp-ring--outer {
   fill: var(--accent);
@@ -533,6 +569,7 @@ body {
   justify-content: center;
   gap: 6px;
   margin: 20px 0 0;
+  padding: 0 28px;
   font-size: 13px;
   color: var(--muted);
 }
@@ -542,6 +579,7 @@ body {
   display: flex;
   gap: 12px;
   margin: 16px 0 0;
+  padding: 0 28px;
 }
 
 .ticket-owner-actions--hidden {
@@ -653,7 +691,6 @@ body {
   flex-direction: column;
   background: var(--paper);
   border-radius: 24px 24px 0 0;
-  box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.2);
   transform: translate(-50%, 0);
   transition: transform 0.28s ease;
 }
