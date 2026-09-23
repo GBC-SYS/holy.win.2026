@@ -711,10 +711,7 @@ body {
 
 /* dialog-actions/ticket-owner-actions와 같은 두 버튼 가로 배치 원칙 — 주 버튼(cta-btn)
    하나 + 보조 버튼(btn-secondary) 하나, 같은 높이(52px)로 나란히. QR 시트에서 "홈 화면에
-   추가"가 가능한 환경(Android beforeinstallprompt 또는 iOS)일 때만 두 번째 버튼이 보인다.
-   두 버튼을 flex:1로 반씩 나누면 "홈 화면에 추가"가 줄바꿈되므로, 보조 버튼은 내용 폭만큼만
-   차지하게(flex:none) 하고 주 버튼이 나머지 공간을 채운다 — "이미지로 저장"은 글자 수가 짧아
-   어느 폭에서든 한 줄로 넉넉히 들어간다. */
+   추가"가 가능한 환경(Android beforeinstallprompt 또는 iOS)일 때만 두 번째 버튼이 보인다. */
 .qr-actions {
   display: flex;
   width: 100%;
@@ -726,13 +723,6 @@ body {
   flex: 1;
   width: auto;
   box-shadow: none; /* 시트 안에서는 이미 시트 자체가 떠 있어, 버튼에 또 그림자를 얹지 않는다 */
-}
-
-.qr-actions .btn-secondary {
-  flex: none;
-  padding: 0 12px;
-  font-size: 14px;
-  white-space: nowrap;
 }
 
 /* ---------- 알림/확인 다이얼로그 ----------
