@@ -139,13 +139,8 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 /* ---------- 리스트 화면 ---------- */
 
-/* 사진 위에 흰 글자(.title/.subtitle/.group-label)가 카드 없이 바로 얹히므로,
-   사진 내용(밝은 부분이 어디 오는지)과 무관하게 상단 대비를 보장해야 한다.
-   오렌지 틴트만으로는 사진의 크림색 밝은 영역에서 대비가 부족해지므로,
-   무채색 스크림을 틴트와 별도 레이어로 둔다(순서: 스크림 → 오렌지 틴트 → 사진). */
 #screen-list {
   background:
-    linear-gradient(rgba(20, 10, 5, 0.4), rgba(20, 10, 5, 0.4)),
     linear-gradient(rgba(232, 98, 44, 0.5), rgba(232, 98, 44, 0.5)),
     var(--bg) url('../imgs/list-bg.jpg') center top / cover no-repeat;
   border-radius: 32px 32px 0 0;
@@ -474,12 +469,9 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   overflow: hidden;
   /* 다중 배경은 먼저 적은 레이어가 위로 쌓인다 — 오렌지 틴트가 사진(불투명 JPG)
      보다 아래에 있으면 완전히 가려지므로, 틴트를 별도 그라디언트 레이어로 만들어
-     사진보다 위에 둔다(순서: 유리 하이라이트 → 어두운 스크림 → 오렌지 틴트 → 사진
-     베이스). 사진의 크림색 밝은 영역이 흰 글자와 겹치면 대비가 부족해지므로,
-     오렌지 틴트만으로는 부족한 어둡기를 무채색 스크림으로 보충한다. */
+     사진보다 위에 둔다(순서: 유리 하이라이트 → 오렌지 틴트 → 사진 베이스). */
   background:
     var(--glass-sheen),
-    linear-gradient(rgba(20, 10, 5, 0.4), rgba(20, 10, 5, 0.4)),
     linear-gradient(rgba(232, 98, 44, 0.5), rgba(232, 98, 44, 0.5)),
     url('../imgs/list-bg.jpg') center top / cover no-repeat;
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
