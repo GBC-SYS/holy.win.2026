@@ -17,4 +17,4 @@
 - [.btn-secondary hover 전역 삭제](btn_secondary_hover_removal.md) — QR 시트 hover 제거 요청이 전역 `.btn-secondary:hover` 삭제로 확대(2026-09-23, APPROVED). `.cta-btn`은 애초 hover 없어 비대칭이었음, `#btn-edit-entry`도 영향받음. docs 06/07번은 색상 원칙만 규정해 드리프트 아님.
 - [저장소 성격 갱신: "전도 명단"→"전도 대상자"](project_repo_nature.md) — 2026-09-23 프로젝트명 리네이밍 반영.
 - ["전도 명단"→"전도 대상자" 리네이밍 누락](naming_전도명단_전도대상자_rename_gap.md) — assets/manifest.webmanifest의 PWA name 필드(사용자 노출)가 빠짐(2026-09-23, Major 지적). CLAUDE.md/마이그레이션 주석/에이전트 정의 파일은 Minor.
-- [사진 배경+유리질감 전면 적용 리뷰](project_glass_liquid_bg_review_2026-09-25.md) — 1차 BLOCKED(Critical 레이어순서+Major 3) → 2차(2026-09-25) BLOCKED 유지. Critical·이중블러·Minor는 해소, 남은 Major 3: list-bg.jpg 대비 미검증(오히려 짧은 리스트가 더 위험할 수 있음), docs/09 미동기화, docs/06·08 "그림자없음/그라데이션금지" 규칙이 대폭 더 어긋남.
+- [사진 배경+유리질감 전면 적용 리뷰](project_glass_liquid_bg_review_2026-09-25.md) — 1~4차 BLOCKED → 5차(2026-09-25, 스크림 0.35→0.4 통일+320~430px 전구간 재계산+02-colors.md 등록) APPROVED. 남은 Minor(범위 밖): entry-status--praying 누락, group-label--dim no-op.
