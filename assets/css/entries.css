@@ -12,6 +12,15 @@
   --success-soft: #e3f5e6;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
+
+  /* 유리캡(glass) 공통 토큰 — #btn-add에서 시작한 iOS 컨트롤센터 유리 타일 스타일을
+     카드/칩/탭/버튼/티켓 화면 전체로 확장할 때 모든 표면이 공유하는 값.
+     표면마다 색조(배경 rgba)만 다르고 블러·채도·테두리·하이라이트는 항상 동일하다. */
+  --glass-blur: 18px;
+  --glass-sat: 160%;
+  --glass-border: rgba(255, 255, 255, 0.38);
+  --glass-sheen: linear-gradient(155deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 50%);
+  --glass-shadow: 0 10px 24px rgba(58, 20, 8, 0.16);
 }
 
 @font-face {
@@ -72,14 +81,14 @@
 * { box-sizing: border-box; }
 
 html {
-  background: var(--bg);
+  background: #ffffff;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--bg);
+  background: #ffffff;
   font-family: 'Pretendard', system-ui, sans-serif;
 }
 
@@ -95,7 +104,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   min-height: 100vh;
   min-height: 100dvh;
   margin: 40px auto 0;
-  background: var(--bg);
+  background: #ffffff;
   border-radius: 32px 32px 0 0;
   box-shadow: 0 8px 32px rgba(20, 21, 26, 0.12);
 }
@@ -130,6 +139,16 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 /* ---------- 리스트 화면 ---------- */
 
+/* 사진 위에 흰 글자(.title/.subtitle/.group-label)가 카드 없이 바로 얹히므로,
+   사진 내용(밝은 부분이 어디 오는지)과 무관하게 상단 대비를 보장하기 위해
+   고정된 어둡게 하는 그라디언트를 사진보다 위에 겹친다. */
+#screen-list {
+  background:
+    linear-gradient(to bottom, rgba(20, 10, 5, 0.35), rgba(20, 10, 5, 0.05) 220px, transparent 420px),
+    var(--bg) url('../imgs/list-bg.jpg') center top / cover no-repeat;
+  border-radius: 32px 32px 0 0;
+}
+
 .header {
   padding: 56px 24px 20px;
   display: flex;
@@ -148,7 +167,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   font-family: 'Pretendard', sans-serif;
   font-weight: 900;
   font-size: 28px;
-  color: var(--ink);
+  color: var(--paper);
 }
 
 .header-actions {
@@ -161,7 +180,10 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--accent);
+  background: var(--glass-sheen), rgba(232, 98, 44, 0.82);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
   color: var(--ink);
   border-radius: 999px;
   padding: 6px 14px;
@@ -182,7 +204,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .subtitle {
   margin: 0;
   font-size: 14px;
-  color: var(--muted);
+  color: var(--paper);
 }
 
 /* 탭 — 선택됨/선택 안 됨 두 상태. 선택되면 포인트 옅은 색 배경 + 포인트 색 글자(칩과 동일 원칙) */
@@ -193,8 +215,10 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .filter-tab {
-  border: none;
-  background: var(--card-muted);
+  background: var(--glass-sheen), rgba(236, 231, 219, 0.6);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
   border-radius: 999px;
   padding: 6px 14px;
   font-family: inherit;
@@ -205,7 +229,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .filter-tab--active {
-  background: var(--accent-soft);
+  background: var(--glass-sheen), rgba(255, 237, 217, 0.65);
   color: var(--accent);
 }
 
@@ -218,7 +242,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: var(--muted);
+  color: var(--paper);
   margin: 16px 0 10px;
 }
 
@@ -233,7 +257,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin: 40px 0 0;
   text-align: center;
   font-size: 14px;
-  color: var(--muted);
+  color: var(--paper);
 }
 
 /* 범용 표시/숨김 유틸리티 — .screen--hidden(트랜지션 포함)과 달리 즉시 display:none */
@@ -245,19 +269,21 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   display: block;
   width: 100%;
   text-align: left;
-  background: var(--paper);
-  border: 1px solid var(--paper);
+  background: var(--glass-sheen), rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: 18px 20px;
   cursor: pointer;
   font: inherit;
+  box-shadow: var(--glass-shadow);
 }
 
 .entry-card:hover { border-color: var(--accent); }
 
 .entry-card--dark {
-  background: var(--card-muted);
-  border-color: var(--card-muted-line);
+  background: var(--glass-sheen), rgba(236, 231, 219, 0.55);
 }
 
 .entry-top {
@@ -331,7 +357,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   padding-top: 10px;
   border-top: 1px dashed #e5e3df;
   font-size: 12px;
-  color: #a6a39e;
+  color: var(--muted);
 }
 
 .cta-bar {
@@ -360,8 +386,10 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .qr-btn {
   flex: none;
   width: 52px;
-  background: var(--paper);
-  border: none;
+  background: var(--glass-sheen), rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
   border-radius: 14px;
   color: var(--ink);
   display: flex;
@@ -385,6 +413,54 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
+/* 참고 이미지(iOS 컨트롤센터 유리캡 타일) 스타일을 이 버튼 1개에만 적용.
+   위 .cta-btn 공용 규칙은 그대로 두고 #btn-add로 범위를 좁혀, 폼 제출/QR 저장/
+   다이얼로그 확인 등 나머지 cta-btn에는 영향이 없도록 한다. backdrop-filter로
+   버튼 뒤로 스크롤되는 리스트를 흐리게 비쳐 보이게 해 실제 유리질감을 낸다. */
+#btn-add {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 22px;
+  background: var(--glass-sheen), rgba(232, 98, 44, 0.82);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 14px 30px rgba(58, 20, 8, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+#btn-add .cta-icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(20, 20, 19, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+#btn-add .cta-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  text-align: left;
+}
+
+#btn-add .cta-text strong {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+#btn-add .cta-text span {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.72;
+}
+
 /* ---------- 상세(티켓) 화면 ---------- */
 
 /* 상단 주황 영역(topbar+ticket-head)을 떠 있는 카드로 묶는 wrapper.
@@ -394,7 +470,15 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin: 0 16px;
   border-radius: 28px;
   overflow: hidden;
-  background: var(--accent);
+  /* 다중 배경은 먼저 적은 레이어가 위로 쌓인다 — 오렌지 틴트가 사진(불투명 JPG)
+     보다 아래에 있으면 완전히 가려지므로, 틴트를 별도 그라디언트 레이어로 만들어
+     사진보다 위에 둔다(순서: 유리 하이라이트 → 오렌지 틴트 → 사진 베이스). */
+  background:
+    var(--glass-sheen),
+    linear-gradient(rgba(232, 98, 44, 0.82), rgba(232, 98, 44, 0.82)),
+    url('../imgs/list-bg.jpg') center top / cover no-repeat;
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   box-shadow: 0 12px 28px rgba(20, 21, 26, 0.18);
 }
 
@@ -409,8 +493,10 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   width: 36px;
   height: 36px;
   border-radius: 999px;
-  background: var(--card-muted);
-  border: none;
+  background: var(--glass-sheen), rgba(236, 231, 219, 0.6);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
   color: var(--ink);
   display: flex;
   align-items: center;
@@ -418,9 +504,18 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   cursor: pointer;
 }
 
+/* .ticket-hero/.sheet-panel 안에 놓이는 back-btn은 부모가 이미 블러된 표면이라
+   자체 backdrop-filter를 끈다(이중 블러 방지) — 헤더의 새로고침 버튼(.back-btn
+   단독 사용, 블러된 부모 없음)만 기본 규칙의 블러를 그대로 유지한다. */
+.topbar .back-btn,
+.sheet-header .back-btn {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .topbar .back-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  background: var(--glass-sheen), rgba(255, 255, 255, 0.22);
+  color: var(--paper);
 }
 
 .topbar-title {
@@ -430,21 +525,23 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .topbar .topbar-title {
-  color: #ffffff;
+  color: var(--paper);
 }
 
 .ticket-wrap {
   display: flex;
   flex-direction: column;
   margin: 0 16px;
-  background: var(--paper);
+  background: var(--glass-sheen), var(--bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   border-radius: 32px;
   overflow: hidden;
   padding: 0 0 32px;
 }
 
 .ticket {
-  background: var(--paper);
+  background: transparent;
 }
 
 .ticket-head {
@@ -453,6 +550,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .ticket-leaf {
   margin-left: auto;
+  color: var(--paper);
 }
 
 .ticket-name {
@@ -461,7 +559,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   font-weight: 900;
   font-size: 44px;
   line-height: 1.1;
-  color: #ffffff;
+  color: var(--paper);
 }
 
 .ticket-from {
@@ -471,7 +569,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin-top: 22px;
   font-size: 16px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--paper);
 }
 
 .ticket-grid {
@@ -499,7 +597,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
    가장자리가 둥글게 파인 것처럼 보인다(카드 "바깥" --bg 색으로 칠해 배경이 비치는 효과). */
 .ticket-perf {
   position: relative;
-  border-top: 1px dashed var(--line);
+  border-top: 1px dashed var(--muted);
   margin: 4px 0 0;
 }
 
@@ -510,17 +608,20 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   top: -18px;
   width: 36px;
   height: 36px;
-  background: var(--bg);
+  background: #ffffff;
   border-radius: 50%;
-  box-shadow: none;
+  box-shadow: inset 0 0 5px rgba(20, 21, 26, 0.08);
 }
 
 .ticket-perf::before { left: -18px; }
 .ticket-perf::after { right: -18px; }
 
+/* 항상 이미 블러된 .ticket-wrap 안에서만 쓰이므로 자체 backdrop-filter는 두지
+   않는다(이중 블러 방지) — 배경 틴트만으로 유리 느낌을 유지한다. */
 .status-badge {
   display: inline-block;
-  border: none;
+  white-space: nowrap;
+  border: 1px solid var(--glass-border);
   border-radius: 999px;
   padding: 4px 12px;
   font: inherit;
@@ -530,17 +631,53 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   transition: opacity 0.15s ease;
 }
 
+/* "상태" 그리드 칸은 배지 아래에 말풍선 힌트를 쌓는다(다른 3칸은 텍스트 한 줄뿐이라
+   영향 없음). 그리드 칸 폭이 좁아(모바일 375px 기준 약 135px) 배지+말풍선을
+   가로로 나란히 두면 배지 글자 자체가 줄바꿈돼 알약이 아니라 타원으로 깨졌다 —
+   그래서 나란히 배치 대신 세로로 쌓아, 각 줄이 자기 폭만 있으면 되게 한다. */
+#t-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* 상태 배지가 눌러서 바꿀 수 있는 버튼이라는 것을 알려주는 말풍선 힌트.
+   배지를 가리키는 작은 꼬리(::before)가 달린 순수 안내용 말풍선이라 클릭 대상이
+   아니다(aria-hidden, JS에서도 별도 리스너를 달지 않음). */
+.status-hint {
+  position: relative;
+  padding: 5px 10px;
+  margin-top: 4px;
+  border-radius: 10px;
+  background: var(--card-muted);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-hint::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: -5px;
+  border-width: 0 5px 6px 5px;
+  border-style: solid;
+  border-color: transparent transparent var(--card-muted) transparent;
+}
+
 .status-badge:hover { opacity: 0.85; }
 .status-badge:active { opacity: 0.7; }
 
 .status-badge--praying {
   color: #3a1e10;
-  background: var(--accent-soft);
+  background: var(--glass-sheen), rgba(255, 237, 217, 0.68);
 }
 
 .status-badge--done {
   color: var(--success);
-  background: var(--success-soft);
+  background: var(--glass-sheen), rgba(227, 245, 230, 0.68);
 }
 
 .stamp-wrap {
@@ -592,9 +729,11 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .btn-secondary {
   flex: 1;
   height: 52px;
-  background: var(--card-muted);
+  /* 항상 이미 블러된 표면(.ticket-wrap/.sheet-panel/.dialog-panel) 안에서만 쓰이므로
+     자체 backdrop-filter는 두지 않는다 — 부모와 겹치면 블러가 이중으로 누적된다. */
+  background: var(--glass-sheen), rgba(236, 231, 219, 0.6);
   color: var(--ink);
-  border: 1px solid var(--card-muted-line);
+  border: 1px solid var(--glass-border);
   border-radius: 14px;
   font-family: inherit;
   font-size: 16px;
@@ -604,12 +743,15 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 /* 위험 버튼 — 삭제 등 되돌릴 수 없는 동작 전용. showDialog({danger:true, showCancel:true})로 확인 단계를 거친 뒤에만 호출된다.
    --destructive(#dc2626)/--destructive-foreground(#ffffff) 대비 4.83:1, 02번 문서 참고 */
+/* 위험 버튼은 삭제 등 되돌릴 수 없는 동작이라 다른 유리 표면처럼 배경을 반투명하게
+   낮추지 않는다(불투명 빨강을 유지해 위험 신호를 흐리지 않음) — 대신 유리 계열의
+   상단 하이라이트·테두리만 얹어 나머지 버튼들과 같은 스타일 가족으로 보이게 한다. */
 .btn-danger {
   flex: 1;
   height: 52px;
-  background: var(--destructive);
+  background: var(--glass-sheen), var(--destructive);
   color: var(--destructive-foreground);
-  border: none;
+  border: 1px solid var(--glass-border);
   border-radius: 14px;
   font-family: inherit;
   font-size: 16px;
@@ -691,7 +833,11 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   max-width: 430px;
   display: flex;
   flex-direction: column;
-  background: var(--paper);
+  background: var(--glass-sheen), rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
+  border-bottom: none;
   border-radius: 24px 24px 0 0;
   transform: translate(-50%, 0);
   transition: transform 0.28s ease;
@@ -731,13 +877,15 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   padding: 8px 16px calc(24px + env(safe-area-inset-bottom, 0px));
 }
 
+/* 항상 이미 블러된 .sheet-panel 안에서만 쓰이므로 자체 backdrop-filter는 두지
+   않는다(이중 블러 방지). */
 .qr-card {
   width: 100%;
   display: flex;
   justify-content: center;
   padding: 24px;
-  background: var(--paper);
-  border: 1px solid var(--line);
+  background: var(--glass-sheen), rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--glass-border);
   border-radius: 20px;
 }
 
@@ -791,7 +939,10 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   width: calc(100% - 64px);
   max-width: 300px;
   padding: 28px;
-  background: var(--paper);
+  background: var(--glass-sheen), rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
   border-radius: 24px;
   box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.2);
   transform: translate(-50%, -50%) scale(1);

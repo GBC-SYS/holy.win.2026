@@ -28,8 +28,9 @@
 |---|---|
 | #3a1e10 | 포인트 색(`--accent`) 배경 위에 얹는 진한 텍스트 |
 | #e5e3df | 티켓 안쪽 점선 구분선 |
-| #a6a39e | 그리드 라벨(`.grid-label`), 리스트 카드의 제출일(`.entry-date`) 등 아주 옅은 보조 텍스트(대비가 낮은 편이라 향후 개선 후보) |
+| #a6a39e | 그리드 라벨(`.grid-label`) 등 아주 옅은 보조 텍스트(대비가 낮은 편이라 향후 개선 후보). 리스트 카드 제출일(`.entry-date`)은 대비 문제로 `var(--muted)`로 교체해 이 예외에서 빠졌다 |
 | #ddd6c5 (--card-muted-line) | 절제 카드(`.entry-card--dark`) 테두리, 그 안의 칩(`.relation-tag`) 배경 |
+| rgba(255,255,255,.38) (--glass-border) / rgba(255,255,255,.34→0) 그라디언트(--glass-sheen) / rgba(58,20,8,.16) (--glass-shadow) | 배경 사진(`assets/imgs/list-bg.jpg`) 도입과 함께 추가한 "유리캡" 표면 전용 토큰. 리스트 카드·칩·탭·아이콘버튼과 티켓 화면 카드/배지/버튼/시트/다이얼로그가 공유하는 테두리·상단 하이라이트·그림자 값이며, 표면마다 배경 rgba 틴트만 다르게 얹는다. 07번 컴포넌트 문서의 "새 색을 만들지 않는다" 원칙의 예외로 늘어난 것을 여기 명시해 남색으로 남지 않게 한다 |
 | #1f7a37 (--success) / #e3f5e6 (--success-soft) | 상태 배지(`.status-badge--done`/`.entry-status--done`, "완료") 전용 예외 색. `--success` on `--paper` = 5.39:1, `--success` on `--success-soft` = 4.74:1 — 둘 다 4.5:1 기준 통과. 초기값(#3f6b3a/#dddfd1)이 어둡고 탁하다는 피드백으로 더 밝고 선명한 톤으로 교체함(대비 기준은 유지). 07번 "상태 색은 7색 밖 예외(최대 3색)" 조항에 해당하며, 현재 "성공" 1색만 등록되어 있다(경고/오류는 미구현) |
 | #dc2626 (--destructive) / #ffffff (--destructive-foreground) | 위험 버튼(`.btn-danger`, 티켓 상세 화면의 "삭제") 전용 색. 티켓 삭제는 되돌릴 수 없는 동작이라 `showDialog({ danger: true, showCancel: true })` 커스텀 다이얼로그(백드롭 탭으로 안 닫힘, 07번 참고) 확인 단계를 거친 뒤에만 호출된다. `--destructive` 배경 위 `--destructive-foreground` 글자 대비를 WCAG 상대 휘도 공식으로 직접 계산: `#dc2626`의 상대 휘도 ≈ 0.1672, 흰색(#ffffff)의 상대 휘도 = 1.0 → 대비비 = (1.0+0.05)/(0.1672+0.05) ≈ **4.83:1**, 4.5:1 기준 통과. "상태 색"(성공/경고/오류)과는 별도의 "위험 색" 카테고리이며 09번 `--destructive`/`--destructive-foreground` 값과 동일하다 |
 

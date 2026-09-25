@@ -144,6 +144,16 @@ function createStatusBadge(entry) {
   return badge;
 }
 
+// 상태 배지가 버튼이라는 것을 알려주는 말풍선 힌트. 배지 자체는 아이콘 없이 원래
+// 모양 그대로 두고, 옆에 붙는 별도 요소로 안내만 더한다(클릭 대상은 배지만).
+function createStatusHint() {
+  const hint = document.createElement('span');
+  hint.className = 'status-hint';
+  hint.textContent = '눌러서 상태 변경';
+  hint.setAttribute('aria-hidden', 'true');
+  return hint;
+}
+
 // ============ 렌더링 ============
 function renderList() {
   const source = listFilterMine ? entries.filter((entry) => entry.isMine) : entries;
@@ -176,7 +186,7 @@ function renderTicket(entry) {
   ticketFields.relation.textContent = entry.relation;
   ticketFields.date.textContent = entry.date;
   ticketFields.from2.textContent = entry.from;
-  ticketFields.status.replaceChildren(createStatusBadge(entry));
+  ticketFields.status.replaceChildren(createStatusBadge(entry), createStatusHint());
   ticketFields.stamp.classList.toggle('stamp--done', entry.status === '완료');
   ticketFields.stampStatus.textContent = entry.status;
   ticketOwnerActions.classList.toggle('ticket-owner-actions--hidden', !entry.isMine);

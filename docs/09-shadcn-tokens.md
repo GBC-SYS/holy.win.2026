@@ -67,6 +67,12 @@
   --border: #e6e1d5;
   --input: #e6e1d5;
   --ring: #e8622c;
+
+  --glass-blur: 18px;
+  --glass-sat: 160%;
+  --glass-border: rgba(255, 255, 255, 0.38);
+  --glass-sheen: linear-gradient(155deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 50%);
+  --glass-shadow: 0 10px 24px rgba(58, 20, 8, 0.16);
 }
 ```
 
@@ -78,6 +84,7 @@
 - `--destructive`는 실제로 쓰인다 — 티켓 상세 화면의 위험 버튼(`.btn-danger`, "삭제")이 `entries.css`의 `--destructive`(#dc2626, 배경)/`--destructive-foreground`(#ffffff, 글자)로 구현되어 있다. 대비 4.83:1(02번 "코드에 남아있는 추가 색" 표 참고)로 4.5:1 기준을 통과하며, 삭제는 `showDialog()` 커스텀 다이얼로그(백드롭 탭으로 안 닫힘) 확인 단계를 거친 뒤에만 실행된다. 02번 7색 밖의 예외로 취급되는 것은 동일하다.
 - `--success`/`--success-foreground`는 `--destructive`와 달리 실제로 쓰인다 — 티켓 상세 화면과 리스트 카드의 상태 배지(`.status-badge--done`/`.entry-status--done`, "완료")가 `entries.css`의 `--success`(#1f7a37, 글자)/`--success-soft`(#e3f5e6, 배경)로 구현되어 있다. 여기서는 shadcn 명명 규칙(`--이름`=배경, `--이름-foreground`=글자)을 따르므로 순서가 반대로 매핑된다: `--success`(배경 #e3f5e6) / `--success-foreground`(글자 #1f7a37). 02번 "상태 색은 7색 밖 예외(최대 3색)" 조항의 1번째 색이며, 경고/오류 색은 아직 추가하지 않았다.
 - `--primary-foreground`(#141413)는 `.cta-btn { color: var(--ink) }`의 실측값과 일치한다.
+- `--glass-*` 5개는 shadcn 명명 규칙 밖의 예외다 — 배경 사진(`assets/imgs/list-bg.jpg`) 위에 얹는 "유리캡" 표면(리스트 카드·칩·탭·버튼, 티켓 화면 카드/배지/시트/다이얼로그) 전용 공유 토큰이며, 02번 "코드에 남아있는 추가 색" 예외 표에도 동일하게 등록되어 있다. 표면마다 `background`의 두 번째 레이어(rgba 틴트)만 다르게 얹고, `--glass-blur`/`--glass-sat`/`--glass-border`/`--glass-sheen`/`--glass-shadow` 자체는 공유한다.
 
 ## 모서리 파생값 (05번 방식 2를 골랐다면)
 
