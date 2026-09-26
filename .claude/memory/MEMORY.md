@@ -12,5 +12,8 @@
 - [QR 공유 기능 리뷰 이력](project_qr-share-feature-review.md) — SRI 미고정·iOS Safari 저장 실패 두 Major 2026-09-23 재검토에서 해결·APPROVED. 남은 Minor: QR 렌더 전 저장 버튼 활성 상태(빈 이미지 저장 가능), toBlob 비동기 갭으로 인한 user-activation 소실 시 원래 문제로 조용히 회귀할 이론적 가능성
 - [PWA 설치 버튼은 QR 시트에 통합됨](project_install-prompt-qr-integration.md) — 독립 배너(1세대) 폐기, #btn-qr-install이 최종 구조. install-prompt.js가 entries.js보다 먼저 로드돼야 함. iOS는 설치 후에도 브라우저 탭에서 버튼이 다시 뜰 수 있음(플랫폼 한계)
 - [classic script 로드 순서 의존성](project_classic-script-load-order.md) — 번들러 없음, 다른 파일 함수를 top-level에서 즉시 참조하면 index.html의 script 태그 순서가 실행을 좌우함(함수 바디 안 참조는 순서 무관)
-- [승인된 기능도 즉시 재설계될 수 있음](feedback_post-approval-redesign-expected.md) — code-reviewer 2회 APPROVED 받은 전면 색상 리브랜딩도 "컨셉과 다르다"며 통째로 롤백됨. 참고 이미지까지 첨부된 요청을 정확히 구현해도 곧바로 되돌려달라 할 수 있음
+- [승인된 기능도 즉시 재설계될 수 있음](feedback_post-approval-redesign-expected.md) — code-reviewer 2회 APPROVED 받은 전면 색상 리브랜딩도 "컨셉과 다르다"며 통째로 롤백됨. 참고 이미지까지 첨부된 요청을 정확히 구현해도 곧바로 되돌려달라 할 수 있음. 대비 안전 마진 같은 접근성 트레이드오프도 한 번 안내하면 재경고 없이 그대로 따를 것
 - [티켓 상세는 "두 개의 뜬 카드" 구조로 확정](project_ticket-detail-two-card-layout.md) — 주황/흰 카드 사이 틈은 버그 아님, 하나로 합쳤다가 바로 거부당한 전례 있음. 정확한 margin 값은 계속 바뀌므로 코드에서 직접 확인
+- [사진 배경 대비는 픽셀 계산으로만 증명됨](feedback_photo-bg-contrast-needs-pixel-math.md) — list-bg.jpg 위 텍스트 대비는 스크린샷 육안 확인 3회 연속 BLOCKED, 320~430px 전 구간 PIL 픽셀 합성 계산 제시 후에야 APPROVED
+- [list-bg.jpg의 cover 크롭 수식](project_list-bg-cover-crop-math.md) — 720×1280 보케톤 사진(선명한 텍스처 없음), 박스 종횡비 vs 1.778에 따라 폭 기준/높이 기준 크롭이 갈림. 현재 스크림 없이 오렌지 틴트만 남은 상태(사용자가 대비보다 사진 노출 우선)
+- [사용자는 세션 중 파일을 직접 편집함](user_direct-file-edits-outside-session.md) — appIcon.png/ico, #screen-list CSS가 내 도구 호출 사이에 조용히 바뀐 전례 3회. 원인 불명 diff는 버그 단정 전에 먼저 git diff/타임스탬프로 확인
