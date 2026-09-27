@@ -239,8 +239,14 @@
       </div>
 
       <div class="qr-sheet-body">
-        <div class="qr-card">
-          <canvas id="qr-canvas"></canvas>
+        <div class="qr-share-row">
+          <div class="qr-card qr-card--compact">
+            <canvas id="qr-canvas"></canvas>
+          </div>
+          <button type="button" class="kakao-share-btn" id="btn-kakao-share">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.61 1.68 4.93 4.27 6.36-.16.86-.57 2.27-1.27 3.64 1.53-.37 3.13-1.14 4.24-1.9.9.19 1.84.3 2.76.3 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>
+            <span>카카오톡<br>공유하기</span>
+          </button>
         </div>
         <p class="qr-caption" id="qr-caption">카메라로 스캔하면 전도 대상자로 연결돼요</p>
         <p class="qr-url" id="qr-url-text">-</p>

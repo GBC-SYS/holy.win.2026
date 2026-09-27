@@ -892,6 +892,44 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   height: auto;
 }
 
+/* QR을 전체 폭으로 크게 보여주던 것 대신, 카카오톡 공유 버튼과 한 줄에 나란히
+   두기 위해 두 요소를 절반씩 나눠 갖는 행. qr-card--compact는 같은 유리질감
+   카드를 절반 폭에 맞게 패딩/캔버스 크기만 줄인 변형이다. */
+.qr-share-row {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+}
+
+.qr-share-row .qr-card {
+  width: auto;
+  flex: 1;
+  padding: 16px;
+}
+
+.qr-share-row .qr-card canvas {
+  max-width: 108px;
+}
+
+.kakao-share-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 8px;
+  background: var(--glass-sheen), rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  cursor: pointer;
+}
+
 .qr-caption {
   margin: 0;
   font-size: 14px;

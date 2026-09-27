@@ -60,6 +60,7 @@ const qrCaption = document.getElementById('qr-caption');
 const qrCaptionDefaultText = qrCaption.textContent;
 const btnQrSave = document.getElementById('btn-qr-save');
 const btnQrInstall = document.getElementById('btn-qr-install');
+const btnKakaoShare = document.getElementById('btn-kakao-share');
 
 // ============ DOM 참조 — 티켓 소유자 액션(수정/삭제) ============
 const ticketOwnerActions = document.getElementById('ticket-owner-actions');
@@ -473,6 +474,26 @@ function handleQrSave() {
   }, 'image/png');
 }
 
+// 카카오톡 공유 버튼 — 아직 Kakao JavaScript SDK 앱 키가 없어(도메인 등록 필요)
+// 실제 카카오톡 공유(Kakao.Share.sendDefault)는 붙이지 못했다. 키가 준비되면
+// 이 핸들러만 SDK 호출로 교체하면 된다. 지금은 링크를 클립보드에 복사해서
+// 사용자가 직접 카카오톡에 붙여넣도록 안내한다.
+async function handleKakaoShare() {
+  try {
+    await navigator.clipboard.writeText(QR_SHARE_URL);
+    showDialog({
+      title: '링크가 복사되었어요',
+      description: '카카오톡 채팅방에 붙여넣어 공유해보세요.',
+    });
+  } catch (err) {
+    console.error('링크 복사에 실패했습니다.', err);
+    showDialog({
+      title: '링크 복사에 실패했어요',
+      description: QR_SHARE_URL,
+    });
+  }
+}
+
 // ============ 알림/확인 다이얼로그 ============
 // 바텀시트(sheet-backdrop/sheet-panel)와 완전히 별개의 오버레이다. 화면 중앙에
 // fade+scale로 뜨고, 백드롭을 탭해도 닫히지 않는다 — 실수로 알림을 놓치지 않도록
@@ -580,6 +601,8 @@ qrSheetBackdrop.addEventListener('click', (event) => {
 btnQrSave.addEventListener('click', handleQrSave);
 
 btnQrInstall.addEventListener('click', triggerInstallPrompt);
+
+btnKakaoShare.addEventListener('click', handleKakaoShare);
 
 btnRefresh.addEventListener('click', async () => {
   if (btnRefresh.disabled) return;
