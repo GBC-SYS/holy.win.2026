@@ -1,5 +1,5 @@
-- [애매한 시각 요청은 후보 확인 후 수정](feedback_ambiguous-visual-requests.md) — Chrome 자동화는 2026-09-23부터 정상 연결됨(직접 스크린샷 검증 가능), 단 탭 재연결 시 캐시로 인해 강력 새로고침 필요
-- [git-commit-pusher 신뢰 불가](feedback_git-commit-pusher-unreliable.md) — 도구 목록에 Bash 자체가 없음(구조적 원인, 3회 재현), 커밋/푸시 후 git status/log로 직접 검증
+- [애매한 시각 요청은 후보 확인 후 수정](feedback_ambiguous-visual-requests.md) — Chrome 자동화는 2026-09-23부터 정상 연결됨(직접 스크린샷 검증 가능). 이미지가 첨부돼도 두 이미지 내용이 구조적으로 안 맞으면 여전히 AskUserQuestion으로 확인
+- [git-commit-pusher 신뢰 불가](feedback_git-commit-pusher-unreliable.md) — 도구 목록에 Bash 자체가 없음(구조적 원인, 4회 재현). code-reviewer APPROVED 후 호출 생략하고 바로 직접 git 실행 권장
 - [CSS 튜닝 전 인라인 스타일부터 확인](feedback_check-inline-styles-before-css-tuning.md) — padding 반복 증가로 안 고쳐지면 JS의 .style.* 강제 대입부터 grep
 - [Supabase CRUD 마이그레이션 완료](project_supabase-crud-migration.md) — 6단계 전부 완료·배포(커밋 db5e447), holywin_ 접두사·소프트삭제 RPC 등 확정 규칙만 남음
 - [Supabase 프로젝트를 statkit.cms.api와 공유](project_supabase-shared-project-conflict.md) — 다른 앱 트리거가 익명 로그인과 충돌한 전례, 새 DB 작업 전 기존 트리거 확인 필요
@@ -17,3 +17,4 @@
 - [사진 배경 대비는 픽셀 계산으로만 증명됨](feedback_photo-bg-contrast-needs-pixel-math.md) — list-bg.jpg 위 텍스트 대비는 스크린샷 육안 확인 3회 연속 BLOCKED, 320~430px 전 구간 PIL 픽셀 합성 계산 제시 후에야 APPROVED
 - [list-bg.jpg의 cover 크롭 수식](project_list-bg-cover-crop-math.md) — 720×1280 보케톤 사진(선명한 텍스처 없음), 박스 종횡비 vs 1.778에 따라 폭 기준/높이 기준 크롭이 갈림. 현재 스크림 없이 오렌지 틴트만 남은 상태(사용자가 대비보다 사진 노출 우선)
 - [사용자는 세션 중 파일을 직접 편집함](user_direct-file-edits-outside-session.md) — appIcon.png/ico, #screen-list CSS가 내 도구 호출 사이에 조용히 바뀐 전례 3회. 원인 불명 diff는 버그 단정 전에 먼저 git diff/타임스탬프로 확인
+- [QR 시트가 유리질감 대신 순백 카드로 재설계됨](project_qr-sheet-flat-card-redesign.md) — 2026-09-27, 사용자 요청으로 의도적 예외. .qr-info-card radius 20px가 05번 문서 스케일(16/24)과 안 맞아 커밋 전 수정 또는 문서 예외 등록 필요

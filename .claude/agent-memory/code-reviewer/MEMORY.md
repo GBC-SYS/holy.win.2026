@@ -18,3 +18,5 @@
 - [저장소 성격 갱신: "전도 명단"→"전도 대상자"](project_repo_nature.md) — 2026-09-23 프로젝트명 리네이밍 반영.
 - ["전도 명단"→"전도 대상자" 리네이밍 누락](naming_전도명단_전도대상자_rename_gap.md) — assets/manifest.webmanifest의 PWA name 필드(사용자 노출)가 빠짐(2026-09-23, Major 지적). CLAUDE.md/마이그레이션 주석/에이전트 정의 파일은 Minor.
 - [사진 배경+유리질감 전면 적용 리뷰](project_glass_liquid_bg_review_2026-09-25.md) — 1~4차 BLOCKED → 5차(2026-09-25, 스크림 0.35→0.4 통일+320~430px 전구간 재계산+02-colors.md 등록) APPROVED. 남은 Minor(범위 밖): entry-status--praying 누락, group-label--dim no-op.
+- [holywin(_slim).json 인트로 Lottie 자산](orphan_holywin_json_lottie_asset.md) — 1차 BLOCKED(3MB+ 미참조 단일파일, 2026-09-27) → 2차 사용자가 AskUserQuestion으로 "자산만 커밋" 승인, holywin_slim.json+intro PNG 6장으로 교체(APPROVED 조건부, 2026-09-27). 로딩 코드 부재는 이제 blocking 사유 아님.
+- [holywin_slim.json 자산 경로 불일치](holywin_slim_asset_path_mismatch.md) — assets[].p/u가 실제 PNG 파일명·경로와 다름(Major, 현재 미참조라 비차단, 2026-09-27). 나중에 로딩 코드 추가 시 반드시 재확인.
