@@ -431,6 +431,12 @@ function openQrSheet() {
         console.error('QR 코드를 생성하지 못했습니다.', err);
         qrCaption.textContent = 'QR 코드를 불러오지 못했어요. 네트워크를 확인해주세요.';
       }
+      // qrcode.js가 캔버스에 심는 인라인 width/height(px)를 지워, CSS의
+      // width:100%/height:auto가 정사각형 비율을 그대로 유지하도록 한다.
+      // (지우지 않으면 좁은 qr-card 안에서 폭만 줄어들고 높이는 220px로
+      // 고정돼 QR이 세로로 눌린 직사각형으로 찌그러진다.)
+      qrCanvas.style.removeProperty('width');
+      qrCanvas.style.removeProperty('height');
     });
   }
 
