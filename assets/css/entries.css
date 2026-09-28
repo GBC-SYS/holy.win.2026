@@ -1054,18 +1054,25 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   display: block;
 }
 
+/* 실제로 누를 수 있는 요소가 아니라 "탭하면 이렇게 보인다"는 설명용 미리보기다.
+   실제 동작하는 버튼은 아래 #btn-ig-open 하나뿐임을 명확히 하기 위함.
+   배경은 #btn-add(iOS 컨트롤센터 유리캡 타일)와 동일한 값을 그대로 재사용한다. */
 .ig-story-action {
   flex: 1;
-  background: var(--accent-soft);
   border-radius: 999px;
-  padding: 14px 16px;
+  padding: 10px 16px;
   text-align: center;
+  background: var(--glass-sheen), rgba(232, 98, 44, 0.82);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 14px 30px rgba(58, 20, 8, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .ig-story-action-text {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--ink);
 }
 
 .ig-guide-text {
