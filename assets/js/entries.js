@@ -68,6 +68,13 @@ const igSheetBackdrop = document.getElementById('ig-sheet-backdrop');
 const igSheetPanel = document.getElementById('ig-sheet-panel');
 const btnIgClose = document.getElementById('btn-ig-close');
 const btnIgOpen = document.getElementById('btn-ig-open');
+const igExampleCarousel = document.getElementById('ig-example-carousel');
+const igExampleWrapper = document.getElementById('ig-example-wrapper');
+const igExamplePrev = document.getElementById('ig-example-prev');
+const igExampleNext = document.getElementById('ig-example-next');
+const igLightboxBackdrop = document.getElementById('ig-lightbox-backdrop');
+const igLightboxContent = document.getElementById('ig-lightbox-content');
+const btnIgLightboxClose = document.getElementById('btn-ig-lightbox-close');
 
 // ============ DOM 참조 — 티켓 소유자 액션(수정/삭제) ============
 const ticketOwnerActions = document.getElementById('ticket-owner-actions');
@@ -562,6 +569,128 @@ function handleIgOpen() {
   window.open(IG_PROFILE_URL, '_blank', 'noopener');
 }
 
+// ============ 인스타그램 예시 캐러셀 + 라이트박스 ============
+// "이렇게 찍어서 공유해주세요"의 예시 컷. assets/imgs/holywin_reference/의 실제
+// 현장 사진 9장을 사용한다. 영상 예시가 추가되면 항목에 src 대신 video(영상 경로)를
+// 채우면 카드와 라이트박스 모두 자동으로 영상으로 렌더링한다.
+const IG_EXAMPLE_ITEMS = Array.from({ length: 9 }, (_, i) => ({
+  type: 'image',
+  src: `./assets/imgs/holywin_reference/holywin_reference${String(i + 1).padStart(2, '0')}.png`,
+  label: 'HolyWin POP-UP 현장',
+}));
+
+const IG_EXAMPLE_ICON = {
+  image: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
+  video: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor" stroke="none"/></svg>',
+};
+
+const IG_PLAY_BADGE = '<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+
+function createExampleTile(item, index) {
+  const slide = document.createElement('div');
+  slide.className = 'swiper-slide';
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'ig-example-tile';
+  btn.dataset.index = String(index);
+
+  if (item.src) {
+    btn.classList.add('ig-example-tile--photo');
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.alt = item.label;
+    img.loading = 'lazy';
+    btn.appendChild(img);
+  } else {
+    const icon = document.createElement('span');
+    icon.className = 'ig-example-icon';
+    icon.innerHTML = IG_EXAMPLE_ICON[item.type];
+    btn.appendChild(icon);
+
+    const label = document.createElement('span');
+    label.className = 'ig-example-label';
+    label.textContent = item.label;
+    btn.appendChild(label);
+  }
+
+  if (item.type === 'video') {
+    const badge = document.createElement('span');
+    badge.className = 'ig-example-badge';
+    badge.innerHTML = IG_PLAY_BADGE;
+    btn.appendChild(badge);
+  }
+
+  slide.appendChild(btn);
+  return slide;
+}
+
+// Swiper 인스턴스는 슬라이드가 DOM에 이미 있어야 폭을 올바르게 계산하므로,
+// replaceChildren으로 슬라이드를 먼저 채운 뒤에 생성한다. 이 시트는
+// sheet-panel--hidden이어도 display:none이 아니라 transform으로만 화면 밖으로
+// 밀려나 있어(entries.css) 페이지 로드 시점에 바로 만들어도 폭이 0으로 잡히지 않는다.
+function renderExampleCarousel() {
+  igExampleWrapper.replaceChildren(...IG_EXAMPLE_ITEMS.map(createExampleTile));
+
+  if (typeof Swiper === 'undefined') {
+    console.error('Swiper 라이브러리를 불러오지 못했습니다.');
+    return;
+  }
+
+  new Swiper(igExampleCarousel, {
+    slidesPerView: 'auto',
+    slidesPerGroup: 4,
+    spaceBetween: 8,
+    freeMode: true,
+    grabCursor: true,
+    mousewheel: { forceToAxis: true },
+    navigation: {
+      nextEl: igExampleNext,
+      prevEl: igExamplePrev,
+    },
+  });
+}
+
+function openIgLightbox(item) {
+  igLightboxContent.replaceChildren();
+
+  if (item.src) {
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.alt = item.label;
+    igLightboxContent.appendChild(img);
+  } else if (item.video) {
+    const video = document.createElement('video');
+    video.src = item.video;
+    video.controls = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    igLightboxContent.appendChild(video);
+  } else {
+    // 실제 파일이 아직 없는 자리표시 상태 — 타일과 같은 아이콘을 크게 보여준다.
+    const icon = document.createElement('span');
+    icon.className = 'ig-example-icon';
+    icon.innerHTML = IG_EXAMPLE_ICON[item.type];
+    igLightboxContent.appendChild(icon);
+  }
+
+  const label = document.createElement('span');
+  label.className = 'ig-example-label';
+  label.textContent = item.label;
+  igLightboxContent.appendChild(label);
+
+  igLightboxBackdrop.classList.remove('lightbox-backdrop--hidden');
+  lockBodyScroll();
+}
+
+function closeIgLightbox() {
+  igLightboxBackdrop.classList.add('lightbox-backdrop--hidden');
+  unlockBodyScroll();
+  // 영상이 재생 중이면 백드롭이 사라진 뒤에도 소리가 계속 나오지 않도록 정지한다.
+  const video = igLightboxContent.querySelector('video');
+  if (video) video.pause();
+}
+
 // ============ 알림/확인 다이얼로그 ============
 // 바텀시트(sheet-backdrop/sheet-panel)와 완전히 별개의 오버레이다. 화면 중앙에
 // fade+scale로 뜨고, 백드롭을 탭해도 닫히지 않는다 — 실수로 알림을 놓치지 않도록
@@ -683,6 +812,22 @@ igSheetBackdrop.addEventListener('click', (event) => {
 });
 
 btnIgOpen.addEventListener('click', handleIgOpen);
+
+renderExampleCarousel();
+
+igExampleCarousel.addEventListener('click', (event) => {
+  const tile = event.target.closest('.ig-example-tile');
+  if (!tile) return;
+  openIgLightbox(IG_EXAMPLE_ITEMS[Number(tile.dataset.index)]);
+});
+
+btnIgLightboxClose.addEventListener('click', closeIgLightbox);
+
+igLightboxBackdrop.addEventListener('click', (event) => {
+  if (event.target === igLightboxBackdrop) {
+    closeIgLightbox();
+  }
+});
 
 btnRefresh.addEventListener('click', async () => {
   if (btnRefresh.disabled) return;

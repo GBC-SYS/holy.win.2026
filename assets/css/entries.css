@@ -1090,11 +1090,24 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .ig-tag-text {
-  margin: 0;
   font-size: 13px;
+  font-weight: 400;
   line-height: 1.6;
   color: var(--muted);
+}
+
+.ig-example-disclaimer {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
   text-align: center;
+}
+
+.ig-example-disclaimer-indent {
+  display: inline-block;
+  padding-left: 12px;
 }
 
 .ig-tag-chip {
@@ -1109,6 +1122,187 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .ig-sheet-body .cta-btn {
   box-shadow: none; /* qr-actions와 같은 이유 — 시트 자체가 이미 떠 있다 */
+}
+
+/* ---------- 예시 사진/영상 캐러셀 ----------
+   네이버 플레이스류 가로 스크롤 갤러리 레이아웃만 참고하고, 색은 이 사이트
+   팔레트(--card-muted, --card-muted-line, --muted)만 쓴다.
+   overflow-x:auto + 숨긴 스크롤바만으로는 터치가 없는 PC에서 "가로로 넘길 수
+   있다"는 단서가 전혀 없어(마우스 휠은 세로로만 반응) Swiper로 교체했다 —
+   모바일은 기존과 동일하게 터치 스와이프로 넘기고, PC는 그랩 커서로 드래그하거나
+   화살표 버튼(.ig-example-nav, hover 가능한 포인터 환경에서만 노출)을 쓴다.
+   화살표는 .ig-example-carousel(Swiper 루트, overflow:hidden) 안이 아니라 이
+   바깥의 .ig-example-carousel-wrap을 기준으로 위치시킨다 — Swiper 컨테이너 안에
+   두면 살짝 밖으로 걸치게 배치한 버튼 절반이 overflow:hidden에 잘려나간다. */
+
+.ig-example-carousel-wrap {
+  position: relative;
+}
+
+.ig-example-carousel {
+  /* .ig-sheet-body(flex column)의 align-items가 기본값 normal이라 자동으로
+     stretch되지 않고, 내부 슬라이드 전체 폭(920px+)만큼 이 박스 자체가 늘어나
+     시트 밖으로 넘쳐버린다. overflow:hidden은 "박스 자체의 크기"는 못 줄여주므로
+     width:100%로 부모 폭에 맞춰 명시적으로 고정한다(흔한 flex+swiper 조합 함정). */
+  width: 100%;
+  min-width: 0;
+  padding: 2px 4px;
+}
+
+.ig-example-carousel .swiper-slide {
+  width: auto;
+}
+
+.ig-example-tile {
+  position: relative;
+  width: 84px;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  background: var(--card-muted);
+  border: 1px solid var(--card-muted-line);
+  border-radius: 14px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+/* 화살표 버튼 — 터치 기기에는 스와이프만으로 충분하고 버튼이 손가락에 가려지므로,
+   호버 가능한 포인터 환경(PC 마우스)에서만 보인다. */
+.ig-example-nav {
+  display: none;
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  transform: translateY(-50%);
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  border: 1px solid var(--card-muted-line);
+  border-radius: 999px;
+  /* 카드 위에 떠 있는 버튼임을 알려주는 그림자 — 새 값을 만들지 않고 이 시트
+     안의 .ig-story-preview/.qr-info-card와 같은 값을 그대로 재사용한다. */
+  box-shadow: 0 12px 28px rgba(20, 21, 26, 0.12);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.ig-example-nav--prev {
+  left: -4px;
+}
+
+.ig-example-nav--next {
+  right: -4px;
+}
+
+.ig-example-nav.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ig-example-nav {
+    display: flex;
+  }
+}
+
+.ig-example-tile--photo {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ig-example-tile--photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ig-example-icon {
+  display: flex;
+}
+
+.ig-example-label {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.ig-example-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(20, 21, 26, 0.55);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- 인스타그램 예시 라이트박스 ----------
+   탭한 예시를 확대해서 보여주는 용도라, 시트보다 위(70 이상)에 떠야 한다.
+   백드롭 색은 새로 만들지 않고 .sheet-backdrop과 같은 rgba(0,0,0,0.5)를 그대로 쓴다. */
+
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.lightbox-backdrop--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lightbox-frame {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  z-index: 1;
+}
+
+.lightbox-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 32px 24px;
+  background: var(--paper);
+  border-radius: 16px;
+  color: var(--muted);
+}
+
+.lightbox-content img,
+.lightbox-content video {
+  width: 100%;
+  border-radius: 14px;
+}
+
+.lightbox-content .ig-example-label {
+  font-size: 14px;
 }
 
 /* ---------- 알림/확인 다이얼로그 ----------

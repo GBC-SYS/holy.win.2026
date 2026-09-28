@@ -19,6 +19,7 @@
   <meta name="theme-color" content="#e8622c">
   <link rel="stylesheet" href="./assets/css/init.css" />
   <link rel="stylesheet" href="./assets/css/entries.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 <body>
 
@@ -301,10 +302,37 @@
           </div>
         </div>
 
-        <p class="ig-guide-text">"홀리윈 POP-UP" 현장을 자연스럽게<br>사진으로 찍어서 개인 스토리를 통해<br>공유해 주세요!</p>
-        <p class="ig-tag-text"><span class="ig-tag-chip">@gangchung_gbc</span>를 태그해주시면<br>무한 리그램 해드립니다!</p>
+        <p class="ig-guide-text">"홀리윈 POP-UP" 현장을 자연스럽게<br>사진으로 찍어서 개인 스토리를 통해<br>공유해 주세요!<br><br><span class="ig-tag-text"><span class="ig-tag-chip">@gangchung_gbc</span>를 태그해주시면<br>무한 리그램 해드립니다!</span></p>
+
+        <!-- 예시 사진/영상 캐러셀. Swiper로 구현해 모바일 터치 스와이프뿐 아니라
+             PC 마우스 드래그(grabCursor)·휠·화살표 버튼으로도 넘길 수 있게 한다
+             (기존 overflow-x:auto만으로는 스크롤바를 숨겨서 PC에서 넘길 단서가
+             전혀 없었다). assets/imgs/holywin_reference/의 실제 현장 사진을
+             assets/js/entries.js의 IG_EXAMPLE_ITEMS 배열에서 렌더링한다. -->
+        <div class="ig-example-carousel-wrap">
+          <div class="ig-example-carousel swiper" id="ig-example-carousel">
+            <div class="swiper-wrapper" id="ig-example-wrapper"></div>
+          </div>
+          <button type="button" class="ig-example-nav ig-example-nav--prev" id="ig-example-prev" aria-label="이전 예시">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button type="button" class="ig-example-nav ig-example-nav--next" id="ig-example-next" aria-label="다음 예시">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+        <p class="ig-example-disclaimer">본 콘텐츠의 이미지는 인스타그램 게시 예시를 보여드리기 위한 샘플이며,<br><span class="ig-example-disclaimer-indent">AI로 제작되었습니다.</span></p>
 
         <button type="button" class="cta-btn" id="btn-ig-open">인스타그램 열기</button>
+      </div>
+    </div>
+
+    <!-- ============ 인스타그램 예시 라이트박스 ============ -->
+    <div class="lightbox-backdrop lightbox-backdrop--hidden" id="ig-lightbox-backdrop">
+      <div class="lightbox-frame">
+        <button type="button" class="back-btn lightbox-close" id="btn-ig-lightbox-close" aria-label="닫기">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <div class="lightbox-content" id="ig-lightbox-content"></div>
       </div>
     </div>
 
@@ -325,6 +353,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
 <!-- QR Code 라이브러리 -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js" integrity="sha384-HGmnkDZJy7mRkoARekrrj0VjEFSh9a0Z8qxGri/kTTAJkgR8hqD1lHsYSh3JdzRi" crossorigin="anonymous"></script>
+<!-- 인스타그램 예시 캐러셀(마우스 드래그/휠 지원) -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="./assets/js/supabase-client.js"></script>
 <script src="./assets/js/install-prompt.js"></script>
 <script src="./assets/js/entries.js"></script>
