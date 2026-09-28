@@ -21,3 +21,4 @@
 - [holywin(_slim).json 인트로 Lottie 자산](orphan_holywin_json_lottie_asset.md) — 1차 BLOCKED(3MB+ 미참조 단일파일, 2026-09-27) → 2차 사용자가 AskUserQuestion으로 "자산만 커밋" 승인, holywin_slim.json+intro PNG 6장으로 교체(APPROVED 조건부, 2026-09-27). 로딩 코드 부재는 이제 blocking 사유 아님.
 - [holywin_slim.json 자산 경로 불일치](holywin_slim_asset_path_mismatch.md) — assets[].p/u가 실제 PNG 파일명·경로와 다름(Major, 현재 미참조라 비차단, 2026-09-27). 나중에 로딩 코드 추가 시 반드시 재확인.
 - [인스타그램 스토리 공유 바텀시트 리뷰](project_ig_story_share_feature_review.md) — QR 시트 패턴 그대로 복제, 새 토큰 없음(APPROVED 조건부, 2026-09-28). 잔여 Minor: cta-bar 3버튼째로 320px 줄바꿈 미검증(최우선 재검증 대상), 로고 이미지 과대 용량, 시트 open/close 4중 중복.
+- [IG 예시 캐러셀 실제 mp4 자동재생 리뷰](project_ig_example_video_tile_autoplay_review.md) — 1차 BLOCKED(2026-09-28, 시트 미개방 방문자에게도 10MB 영상 무조건 자동재생+전체다운로드 Critical + pause/aria-label 누락 Major 2건) → 2차 APPROVED 조건부(같은 날, play/pause를 openIgSheet/closeIgSheet로 이동+aria-label 추가 전부 확인). 남은 Minor: console.warn 미추가, poster 없음, docs 미등재, 라이트박스 오픈 시 배경 영상 미정지.

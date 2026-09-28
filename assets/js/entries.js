@@ -557,12 +557,17 @@ function openIgSheet() {
   igSheetBackdrop.classList.remove('sheet-backdrop--hidden');
   igSheetPanel.classList.remove('sheet-panel--hidden');
   lockBodyScroll();
+  // 캐러셀 타일 영상은 시트가 실제로 열릴 때만 재생한다 — 시트는 display:none이
+  // 아니라 transform으로만 화면 밖에 있어(entries.css), 페이지 로드 시점부터
+  // 재생을 걸어두면 시트를 열어본 적 없는 방문자에게도 영상이 통째로 받아진다.
+  igExampleWrapper.querySelectorAll('video').forEach((video) => video.play().catch(() => {}));
 }
 
 function closeIgSheet() {
   igSheetBackdrop.classList.add('sheet-backdrop--hidden');
   igSheetPanel.classList.add('sheet-panel--hidden');
   unlockBodyScroll();
+  igExampleWrapper.querySelectorAll('video').forEach((video) => video.pause());
 }
 
 function handleIgOpen() {
@@ -578,6 +583,11 @@ const IG_EXAMPLE_ITEMS = Array.from({ length: 9 }, (_, i) => ({
   src: `./assets/imgs/holywin_reference/holywin_reference${String(i + 1).padStart(2, '0')}.png`,
   label: 'HolyWin POP-UP 현장',
 }));
+IG_EXAMPLE_ITEMS.splice(1, 0, {
+  type: 'video',
+  video: './assets/video/holywin_15s.mp4',
+  label: 'HolyWin POP-UP 현장',
+});
 
 const IG_EXAMPLE_ICON = {
   image: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
@@ -602,6 +612,22 @@ function createExampleTile(item, index) {
     img.alt = item.label;
     img.loading = 'lazy';
     btn.appendChild(img);
+  } else if (item.video) {
+    // 썸네일 자체가 무음으로 반복 재생되는 미리보기 — 탭하면 라이트박스에서
+    // 소리 있는 원본이 다시 autoplay된다(openIgLightbox). 재생은 여기서 바로
+    // 시작하지 않는다 — 이 슬라이드는 시트가 닫혀 있어도(transform으로만
+    // 화면 밖에 있을 뿐 DOM에는 존재) 페이지 로드 시점에 만들어지므로, 여기서
+    // play()를 걸면 시트를 열어본 적 없는 방문자에게도 영상이 재생·다운로드된다.
+    // 실제 재생/정지는 openIgSheet/closeIgSheet가 담당한다.
+    btn.classList.add('ig-example-tile--photo');
+    btn.setAttribute('aria-label', item.label);
+    const video = document.createElement('video');
+    video.src = item.video;
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    btn.appendChild(video);
   } else {
     const icon = document.createElement('span');
     icon.className = 'ig-example-icon';
