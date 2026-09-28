@@ -580,7 +580,7 @@ function handleIgOpen() {
 // 채우면 카드와 라이트박스 모두 자동으로 영상으로 렌더링한다.
 const IG_EXAMPLE_ITEMS = Array.from({ length: 9 }, (_, i) => ({
   type: 'image',
-  src: `./assets/imgs/holywin_reference/holywin_reference${String(i + 1).padStart(2, '0')}.png`,
+  src: `./assets/imgs/holywin_reference/holywin_reference${String(i + 1).padStart(2, '0')}.avif`,
   label: 'HolyWin POP-UP 현장',
 }));
 IG_EXAMPLE_ITEMS.splice(1, 0, {
