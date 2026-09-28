@@ -16,5 +16,7 @@
 - [티켓 상세는 "두 개의 뜬 카드" 구조로 확정](project_ticket-detail-two-card-layout.md) — 주황/흰 카드 사이 틈은 버그 아님, 하나로 합쳤다가 바로 거부당한 전례 있음. 정확한 margin 값은 계속 바뀌므로 코드에서 직접 확인
 - [사진 배경 대비는 픽셀 계산으로만 증명됨](feedback_photo-bg-contrast-needs-pixel-math.md) — list-bg.jpg 위 텍스트 대비는 스크린샷 육안 확인 3회 연속 BLOCKED, 320~430px 전 구간 PIL 픽셀 합성 계산 제시 후에야 APPROVED
 - [list-bg.jpg의 cover 크롭 수식](project_list-bg-cover-crop-math.md) — 720×1280 보케톤 사진(선명한 텍스처 없음), 박스 종횡비 vs 1.778에 따라 폭 기준/높이 기준 크롭이 갈림. 현재 스크림 없이 오렌지 틴트만 남은 상태(사용자가 대비보다 사진 노출 우선)
-- [사용자는 세션 중 파일을 직접 편집함](user_direct-file-edits-outside-session.md) — appIcon.png/ico, #screen-list CSS가 내 도구 호출 사이에 조용히 바뀐 전례 3회. 원인 불명 diff는 버그 단정 전에 먼저 git diff/타임스탬프로 확인
+- [사용자는 세션 중 파일을 직접 편집함](user_direct-file-edits-outside-session.md) — appIcon.png/ico, #screen-list CSS, PNG→AVIF 교체까지 내 도구 호출 사이에 조용히 바뀐 전례 4회. 원인 불명 diff는 버그 단정 전에 먼저 git diff/타임스탬프로 확인
 - [QR 시트가 유리질감 대신 순백 카드로 재설계됨](project_qr-sheet-flat-card-redesign.md) — 2026-09-27, 사용자 요청으로 의도적 예외. .qr-info-card radius 20px가 05번 문서 스케일(16/24)과 안 맞아 커밋 전 수정 또는 문서 예외 등록 필요
+- [IG 예시 캐러셀 미디어 생명주기](project_ig-example-carousel-media-lifecycle.md) — 시트는 display:none 아닌 transform으로 숨겨짐 → 자동재생 영상은 DOM 생성 시점이 아니라 반드시 openIgSheet/closeIgSheet에 묶을 것. AVIF 선례 있음, mp4는 아직 미압축
+- [code-reviewer도 Bash 없음](feedback_code-reviewer-no-bash.md) — git diff 못 돌림, Read/Grep/Glob으로 대체. 호출 시 변경 파일·diff·배경을 프롬프트에 직접 요약해서 줄 것
