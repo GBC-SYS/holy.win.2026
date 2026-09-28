@@ -382,6 +382,32 @@ function backToList() {
   setScreen(screenList, screenTicket);
 }
 
+// ============ 바텀시트 스크롤 잠금 ============
+// 시트가 리스트 화면 위에 오버레이로 뜨는 동안, 뒤에 깔린 문서가 같이 스크롤되면
+// 시트는 그대로인데 배경만 밀려 올라가는 어색한 상태가 된다. 이 사이트는 .container에
+// 별도 스크롤 박스가 없는 네이티브 문서 스크롤 구조라(CLAUDE.md 참고),
+// document.scrollingElement가 body가 아니라 html이다 — 브라우저마다 실제 스크롤
+// 컨테이너로 취급하는 요소가 갈릴 수 있어(html 단독으로는 일부 환경에서 휠 스크롤이
+// 새어나감) html과 body 양쪽에 모두 overflow:hidden을 건다. 지금은 시트끼리
+// 서로 배타적으로 열려(동시에 두 시트가 열리는 경로가 없음) 카운터가 1을 넘을 일이
+// 없지만, boolean 대신 카운터로 짜두면 나중에 시트 위에 또 다른 잠금이 필요한
+// 오버레이가 추가돼도 언밸런스한 open/close로 스크롤이 풀리지 않는다.
+let sheetScrollLockCount = 0;
+
+function lockBodyScroll() {
+  sheetScrollLockCount += 1;
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+}
+
+function unlockBodyScroll() {
+  sheetScrollLockCount = Math.max(0, sheetScrollLockCount - 1);
+  if (sheetScrollLockCount === 0) {
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  }
+}
+
 // ============ 명단 등록 바텀시트 ============
 // setScreen()의 list↔ticket 전환과는 별개의 메커니즘이다 — 바텀시트는 리스트
 // 화면을 가리지 않고 그 위에 오버레이로 뜨므로, 백드롭/패널의 hidden 클래스만
@@ -389,6 +415,7 @@ function backToList() {
 function openEntryForm() {
   sheetBackdrop.classList.remove('sheet-backdrop--hidden');
   sheetPanel.classList.remove('sheet-panel--hidden');
+  lockBodyScroll();
   // 슬라이드 업 트랜지션(0.28s)이 끝난 뒤에 포커스를 줘서, 시트가 자리잡기 전에
   // 모바일 키보드가 먼저 튀어 올라와 화면이 들썩이는 것을 막는다.
   setTimeout(() => formFields.to.focus(), 280);
@@ -397,6 +424,7 @@ function openEntryForm() {
 function closeEntryForm() {
   sheetBackdrop.classList.add('sheet-backdrop--hidden');
   sheetPanel.classList.add('sheet-panel--hidden');
+  unlockBodyScroll();
 }
 
 // ============ 명단 수정 바텀시트 ============
@@ -408,11 +436,13 @@ function openEditForm(entry) {
   editFormFields.relation.value = entry.relation;
   editSheetBackdrop.classList.remove('sheet-backdrop--hidden');
   editSheetPanel.classList.remove('sheet-panel--hidden');
+  lockBodyScroll();
 }
 
 function closeEditForm() {
   editSheetBackdrop.classList.add('sheet-backdrop--hidden');
   editSheetPanel.classList.add('sheet-panel--hidden');
+  unlockBodyScroll();
 }
 
 // ============ QR 코드 공유 바텀시트 ============
@@ -453,11 +483,13 @@ function openQrSheet() {
 
   qrSheetBackdrop.classList.remove('sheet-backdrop--hidden');
   qrSheetPanel.classList.remove('sheet-panel--hidden');
+  lockBodyScroll();
 }
 
 function closeQrSheet() {
   qrSheetBackdrop.classList.add('sheet-backdrop--hidden');
   qrSheetPanel.classList.add('sheet-panel--hidden');
+  unlockBodyScroll();
 }
 
 // 캔버스를 PNG로 저장한다. canvas.toDataURL + <a download> 조합은 iOS Safari에서
@@ -517,11 +549,13 @@ const IG_PROFILE_URL = 'https://www.instagram.com/gangchung_gbc';
 function openIgSheet() {
   igSheetBackdrop.classList.remove('sheet-backdrop--hidden');
   igSheetPanel.classList.remove('sheet-panel--hidden');
+  lockBodyScroll();
 }
 
 function closeIgSheet() {
   igSheetBackdrop.classList.add('sheet-backdrop--hidden');
   igSheetPanel.classList.add('sheet-panel--hidden');
+  unlockBodyScroll();
 }
 
 function handleIgOpen() {
