@@ -62,6 +62,13 @@ const btnQrSave = document.getElementById('btn-qr-save');
 const btnQrInstall = document.getElementById('btn-qr-install');
 const btnKakaoShare = document.getElementById('btn-kakao-share');
 
+// ============ DOM 참조 — 인스타그램 스토리 공유 바텀시트 ============
+const btnIgShare = document.getElementById('btn-ig-share');
+const igSheetBackdrop = document.getElementById('ig-sheet-backdrop');
+const igSheetPanel = document.getElementById('ig-sheet-panel');
+const btnIgClose = document.getElementById('btn-ig-close');
+const btnIgOpen = document.getElementById('btn-ig-open');
+
 // ============ DOM 참조 — 티켓 소유자 액션(수정/삭제) ============
 const ticketOwnerActions = document.getElementById('ticket-owner-actions');
 const btnEditEntry = document.getElementById('btn-edit-entry');
@@ -500,6 +507,27 @@ async function handleKakaoShare() {
   }
 }
 
+// ============ 인스타그램 스토리 공유 바텀시트 ============
+// QR 공유 바텀시트와 같은 오버레이 메커니즘을 그대로 재사용한다. Instagram Stories
+// Sharing API(대상 앱을 지정해 스토리 작성 화면으로 바로 넘기는 방식)는 iOS/Android
+// 네이티브 앱 URL 스킴이 필요해 순수 웹에서는 호출할 수 없다 — 대신 계정 프로필
+// 페이지로 이동시켜, 사용자가 이미 찍어둔 사진을 직접 스토리에 올리고 태그하도록 안내한다.
+const IG_PROFILE_URL = 'https://www.instagram.com/gangchung_gbc';
+
+function openIgSheet() {
+  igSheetBackdrop.classList.remove('sheet-backdrop--hidden');
+  igSheetPanel.classList.remove('sheet-panel--hidden');
+}
+
+function closeIgSheet() {
+  igSheetBackdrop.classList.add('sheet-backdrop--hidden');
+  igSheetPanel.classList.add('sheet-panel--hidden');
+}
+
+function handleIgOpen() {
+  window.open(IG_PROFILE_URL, '_blank', 'noopener');
+}
+
 // ============ 알림/확인 다이얼로그 ============
 // 바텀시트(sheet-backdrop/sheet-panel)와 완전히 별개의 오버레이다. 화면 중앙에
 // fade+scale로 뜨고, 백드롭을 탭해도 닫히지 않는다 — 실수로 알림을 놓치지 않도록
@@ -609,6 +637,18 @@ btnQrSave.addEventListener('click', handleQrSave);
 btnQrInstall.addEventListener('click', triggerInstallPrompt);
 
 btnKakaoShare.addEventListener('click', handleKakaoShare);
+
+btnIgShare.addEventListener('click', openIgSheet);
+
+btnIgClose.addEventListener('click', closeIgSheet);
+
+igSheetBackdrop.addEventListener('click', (event) => {
+  if (event.target === igSheetBackdrop) {
+    closeIgSheet();
+  }
+});
+
+btnIgOpen.addEventListener('click', handleIgOpen);
 
 btnRefresh.addEventListener('click', async () => {
   if (btnRefresh.disabled) return;
