@@ -267,6 +267,76 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   display: none;
 }
 
+/* 시각적으로는 숨기되 스크린 리더에는 읽히는 상태 텍스트. list-skeleton 자체는
+   장식용이라 aria-hidden이지만, "명단을 불러오는 중" 같은 로딩 상태는 스크린
+   리더 사용자에게도 전달돼야 하므로 이 클래스를 별도로 둔다. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============ 리스트 로딩 스켈레톤 ============ */
+/* entries.js의 loadEntries()가 Supabase 응답을 기다리는 동안(최초 로딩에만 — 새로고침은
+   기존 리스트를 유지한 채 .is-spinning 아이콘만 돈다) group-recent/group-past 자리에
+   노출되는 자리표시자. entry-card와 같은 유리 표면
+   톤(--glass-*)을 그대로 쓰되, 카드 내용 대신 빛이 좌→우로 흐르는 shimmer로
+   "불러오는 중"임을 알린다. */
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* .is-hidden(단일 클래스, display:none)과 .skeleton-list(단일 클래스, display:flex)는
+   명시도가 같아서 스타일시트에 나중에 나오는 쪽이 이긴다 — 여기서 결합 선택자로
+   명시도를 한 단계 올려, 이 요소에 한해서는 숨김이 항상 이기도록 고정한다. */
+.skeleton-list.is-hidden {
+  display: none;
+}
+
+.skeleton-label {
+  width: 88px;
+  height: 12px;
+  border-radius: 999px;
+  margin: 4px 0 6px;
+}
+
+.skeleton-card {
+  height: 90px;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.skeleton-label,
+.skeleton-card {
+  background-image:
+    linear-gradient(100deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.65) 50%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+  background-repeat: no-repeat;
+  background-size: 200% 100%, 100% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 150% 0, 0 0; }
+  100% { background-position: -50% 0, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-label,
+  .skeleton-card {
+    animation: none;
+  }
+}
+
 .entry-card {
   display: block;
   width: 100%;

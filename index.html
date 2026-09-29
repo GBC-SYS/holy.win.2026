@@ -55,11 +55,18 @@
       </header>
 
       <div class="list-scroll">
-        <div id="group-recent">
+        <p class="sr-only" id="list-loading-status" role="status" aria-live="polite"></p>
+        <div class="skeleton-list" id="list-skeleton" aria-hidden="true">
+          <div class="skeleton-label"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+        <div id="group-recent" class="is-hidden">
           <p class="group-label">이번 주 제출</p>
           <div class="group-list" id="list-recent"></div>
         </div>
-        <div id="group-past">
+        <div id="group-past" class="is-hidden">
           <p class="group-label group-label--dim">이전 명단</p>
           <div class="group-list" id="list-past"></div>
         </div>

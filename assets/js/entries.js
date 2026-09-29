@@ -10,6 +10,8 @@ const btnRefresh = document.getElementById('btn-refresh');
 const groupRecentEl = document.getElementById('group-recent');
 const groupPastEl = document.getElementById('group-past');
 const listEmptyEl = document.getElementById('list-empty');
+const listSkeletonEl = document.getElementById('list-skeleton');
+const listLoadingStatusEl = document.getElementById('list-loading-status');
 const filterTabAll = document.getElementById('filter-tab-all');
 const filterTabMine = document.getElementById('filter-tab-mine');
 
@@ -904,8 +906,32 @@ function mapRowToEntry(row) {
 }
 
 // ============ 데이터 로딩 ============
-// 최초 로딩과 새로고침 버튼(btn-refresh)이 이 함수를 공유한다.
+// group-recent/group-past 자리에 뜨는 skeleton 카드로 전환한다. renderList()가
+// 끝나면 실제 상태(비어있음 포함)에 맞춰 이 is-hidden들을 다시 정확히 계산해
+// 덮어쓰므로, 여기서는 로딩 중 화면만 신경 쓰면 된다.
+function showListSkeleton() {
+  listSkeletonEl.classList.remove('is-hidden');
+  groupRecentEl.classList.add('is-hidden');
+  groupPastEl.classList.add('is-hidden');
+  listEmptyEl.classList.add('is-hidden');
+  // 스켈레톤 자체는 장식용(aria-hidden)이라 스크린 리더가 읽지 않으므로,
+  // 별도의 sr-only 상태 텍스트로 로딩 중임을 알린다.
+  listLoadingStatusEl.textContent = '명단을 불러오는 중입니다';
+}
+
+function hideListSkeleton() {
+  listSkeletonEl.classList.add('is-hidden');
+  listLoadingStatusEl.textContent = '';
+}
+
+// 최초 로딩과 새로고침 버튼(btn-refresh)이 이 함수를 공유한다. 새로고침은
+// btn-refresh 자체의 회전 아이콘(.is-spinning, entries.css)으로 이미 진행 중임을
+// 알리고 있으므로, 화면에 아직 아무 카드도 없는 최초 로딩일 때만 스켈레톤을
+// 띄운다 — 그렇지 않으면 새로고침을 누를 때마다 이미 떠 있던 카드들이 스켈레톤으로
+// 지워졌다 다시 나타나는 플래시가 생긴다.
 async function loadEntries() {
+  const isInitialLoad = entries.length === 0;
+  if (isInitialLoad) showListSkeleton();
   try {
     const session = await window.supabaseReady;
     currentUserId = session?.user?.id ?? null;
@@ -926,6 +952,7 @@ async function loadEntries() {
     entries = [];
   }
 
+  if (isInitialLoad) hideListSkeleton();
   renderList();
 }
 
