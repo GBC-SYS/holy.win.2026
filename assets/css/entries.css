@@ -270,7 +270,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin: 40px 0 0;
   text-align: center;
   font-size: 14px;
-  color: var(--paper);
+  color: var(--ink);
 }
 
 /* 범용 표시/숨김 유틸리티 — .screen--hidden(트랜지션 포함)과 달리 즉시 display:none */
