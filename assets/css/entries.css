@@ -586,17 +586,12 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .topbar .back-btn {
   background: var(--glass-sheen), rgba(255, 255, 255, 0.22);
-  color: var(--paper);
 }
 
 .topbar-title {
   font-size: 20px;
   font-weight: 700;
   color: var(--ink);
-}
-
-.topbar .topbar-title {
-  color: var(--paper);
 }
 
 .ticket-wrap {
@@ -621,7 +616,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .ticket-leaf {
   margin-left: auto;
-  color: var(--paper);
+  color: var(--ink);
 }
 
 .ticket-name {
@@ -630,7 +625,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   font-weight: 900;
   font-size: 44px;
   line-height: 1.1;
-  color: var(--paper);
+  color: var(--ink);
 }
 
 .ticket-from {
@@ -640,7 +635,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin-top: 22px;
   font-size: 16px;
   font-weight: 600;
-  color: var(--paper);
+  color: var(--ink);
 }
 
 .ticket-grid {
