@@ -20,7 +20,7 @@ Then open `http://localhost:8080/index.html`. Opening `index.html` directly via 
 
 **Entry point:** `index.html` at the repo root contains both screens' markup (list screen + ticket detail screen) inside one `.container` container, and loads `assets/css/init.css` + `assets/css/entries.css` + `assets/js/entries.js`.
 
-**Screen flow (`assets/js/entries.js`):** fetches `./assets/data/entries.json` (fetch paths resolve relative to `index.html`, not to the script file), renders list cards into `#list-recent`/`#list-past`, and toggles screens via the `.screen--hidden` class rather than routing — there is no router or multi-page navigation.
+**Screen flow (`assets/js/entries.js`):** fetches `./assets/data/entries.json` (fetch paths resolve relative to `index.html`, not to the script file), renders list cards into `#list-recent`, and toggles screens via the `.screen--hidden` class rather than routing — there is no router or multi-page navigation.
 
 **Asset layout is organized by file type, not by feature:** `assets/css/`, `assets/js/`, `assets/data/`, `assets/fonts/`, `assets/imgs/`. When adding a new feature/screen, follow this convention (e.g. a new feature gets `assets/css/<feature>.css`, `assets/js/<feature>.js`, `assets/data/<feature>.json`) rather than grouping by feature folder.
 

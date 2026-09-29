@@ -144,10 +144,13 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 /* ---------- 리스트 화면 ---------- */
 
+/* 원래 배경 사진(list-bg.jpg, 9:16 한 화면 분량 비율)을 cover로 씌웠으나, 이 화면은
+   카드가 쌓일수록 세로로 한없이 길어지는 요소라 cover가 그 비율을 맞추려고 사진을
+   계속 확대해 갈수록 심하게 깨져 보였다. 사진을 완전히 걷어내고, 이미 이 앱의
+   다른 유리질감 버튼(.ig-story-action)과 같은 단색+유리 하이라이트 레시피로
+   통일했다 — 데이터가 아무리 늘어나도 색은 절대 늘어지거나 깨지지 않는다. */
 #screen-list {
-  background:
-    linear-gradient(rgba(232, 98, 44, 0.5), rgba(232, 98, 44, 0.5)),
-    var(--bg) url('../imgs/list-bg.jpg') center top / cover no-repeat;
+  background: var(--glass-sheen), rgba(232, 98, 44, 0.82);
   border-radius: 32px 32px 0 0;
 }
 
@@ -169,7 +172,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   font-family: 'Pretendard', sans-serif;
   font-weight: 900;
   font-size: 28px;
-  color: var(--paper);
+  color: var(--ink);
 }
 
 .header-actions {
@@ -206,7 +209,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .subtitle {
   margin: 0;
   font-size: 14px;
-  color: var(--paper);
+  color: var(--ink);
 }
 
 /* 탭 — 선택됨/선택 안 됨 두 상태. 선택되면 포인트 옅은 색 배경 + 포인트 색 글자(칩과 동일 원칙) */
@@ -214,6 +217,12 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   display: flex;
   gap: 8px;
   margin-top: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filter-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .filter-tab {
@@ -224,10 +233,12 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   border-radius: 999px;
   padding: 6px 14px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--muted);
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .filter-tab--active {
@@ -244,7 +255,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: var(--paper);
+  color: var(--ink);
   margin: 16px 0 10px;
 }
 
@@ -282,9 +293,15 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   border: 0;
 }
 
+/* 무한 스크롤 트리거 — entries.js가 IntersectionObserver로 관찰하는, 화면에 보이지
+   않는 지점. 너비/높이만 있으면 되고 내용은 없다. */
+#list-load-more-sentinel {
+  height: 1px;
+}
+
 /* ============ 리스트 로딩 스켈레톤 ============ */
 /* entries.js의 loadEntries()가 Supabase 응답을 기다리는 동안(최초 로딩에만 — 새로고침은
-   기존 리스트를 유지한 채 .is-spinning 아이콘만 돈다) group-recent/group-past 자리에
+   기존 리스트를 유지한 채 .is-spinning 아이콘만 돈다) group-recent 자리에
    노출되는 자리표시자. entry-card와 같은 유리 표면
    톤(--glass-*)을 그대로 쓰되, 카드 내용 대신 빛이 좌→우로 흐르는 shimmer로
    "불러오는 중"임을 알린다. */
@@ -354,10 +371,6 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .entry-card:hover { border-color: var(--accent); }
 
-.entry-card--dark {
-  background: var(--glass-sheen), rgba(236, 231, 219, 0.55);
-}
-
 .entry-top {
   display: flex;
   align-items: center;
@@ -378,8 +391,6 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin: 0;
 }
 
-.entry-card--dark .entry-to { color: var(--ink); font-size: 18px; }
-
 .entry-right {
   display: flex;
   flex-direction: row;
@@ -394,11 +405,6 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   background: var(--accent-soft);
   border-radius: 999px;
   padding: 3px 10px;
-}
-
-.entry-card--dark .relation-tag {
-  color: var(--muted);
-  background: var(--card-muted-line);
 }
 
 .entry-status {
@@ -416,12 +422,6 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .entry-status--done {
   color: var(--success);
   background: var(--success-soft);
-}
-
-.entry-card--dark .entry-status--praying,
-.entry-card--dark .entry-status--done {
-  color: var(--muted);
-  background: var(--card-muted-line);
 }
 
 .entry-date {
@@ -544,15 +544,12 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin: 0 16px;
   border-radius: 28px;
   overflow: hidden;
-  /* 다중 배경은 먼저 적은 레이어가 위로 쌓인다 — 오렌지 틴트가 사진(불투명 JPG)
-     보다 아래에 있으면 완전히 가려지므로, 틴트를 별도 그라디언트 레이어로 만들어
-     사진보다 위에 둔다(순서: 유리 하이라이트 → 오렌지 틴트 → 사진 베이스). */
-  background:
-    var(--glass-sheen),
-    linear-gradient(rgba(232, 98, 44, 0.5), rgba(232, 98, 44, 0.5)),
-    url('../imgs/list-bg.jpg') center top / cover no-repeat;
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  /* 원래는 배경 사진(list-bg.jpg) 위에 유리 하이라이트+오렌지 틴트를 얹었으나,
+     리스트 화면(#screen-list)의 같은 사진이 데이터가 늘어날수록 깨져 보이는
+     문제로 사진 자체를 걷어내면서, 이 화면도 같은 단색+유리 하이라이트
+     레시피(.ig-story-action과 동일)로 통일했다. backdrop-filter는 사진을
+     흐리게 비치던 용도였는데 이제 뒤에 흐릴 사진이 없어 제거했다. */
+  background: var(--glass-sheen), rgba(232, 98, 44, 0.82);
   box-shadow: 0 12px 28px rgba(20, 21, 26, 0.18);
 }
 

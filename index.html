@@ -50,6 +50,8 @@
         <p class="subtitle">함께 기도해요 · 홀리윈 전도 대상자</p>
         <div class="filter-tabs" role="tablist" aria-label="명단 필터">
           <button type="button" class="filter-tab filter-tab--active" id="filter-tab-all" role="tab" aria-selected="true">전체</button>
+          <button type="button" class="filter-tab" id="filter-tab-praying" role="tab" aria-selected="false">기도 중</button>
+          <button type="button" class="filter-tab" id="filter-tab-done" role="tab" aria-selected="false">완료</button>
           <button type="button" class="filter-tab" id="filter-tab-mine" role="tab" aria-selected="false">내가 쓴 글</button>
         </div>
       </header>
@@ -63,14 +65,11 @@
           <div class="skeleton-card"></div>
         </div>
         <div id="group-recent" class="is-hidden">
-          <p class="group-label">이번 주 제출</p>
+          <p class="group-label">전도 대상자 리스트</p>
           <div class="group-list" id="list-recent"></div>
         </div>
-        <div id="group-past" class="is-hidden">
-          <p class="group-label group-label--dim">이전 명단</p>
-          <div class="group-list" id="list-past"></div>
-        </div>
-        <p class="list-empty is-hidden" id="list-empty">아직 작성한 글이 없어요</p>
+        <p class="list-empty is-hidden" id="list-empty">등록된 전도 대상자가 없어요</p>
+        <div id="list-load-more-sentinel" class="is-hidden" aria-hidden="true"></div>
       </div>
 
       <footer class="cta-bar">

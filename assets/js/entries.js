@@ -3,16 +3,17 @@
 // ============ DOM 참조 — 리스트 화면 ============
 const screenList = document.getElementById('screen-list');
 const listRecent = document.getElementById('list-recent');
-const listPast = document.getElementById('list-past');
 const countText = document.getElementById('count-text');
 const btnAdd = document.getElementById('btn-add');
 const btnRefresh = document.getElementById('btn-refresh');
 const groupRecentEl = document.getElementById('group-recent');
-const groupPastEl = document.getElementById('group-past');
 const listEmptyEl = document.getElementById('list-empty');
 const listSkeletonEl = document.getElementById('list-skeleton');
 const listLoadingStatusEl = document.getElementById('list-loading-status');
+const listLoadMoreSentinel = document.getElementById('list-load-more-sentinel');
 const filterTabAll = document.getElementById('filter-tab-all');
+const filterTabPraying = document.getElementById('filter-tab-praying');
+const filterTabDone = document.getElementById('filter-tab-done');
 const filterTabMine = document.getElementById('filter-tab-mine');
 
 // ============ DOM 참조 — 티켓 상세 화면 ============
@@ -94,8 +95,19 @@ const dialogConfirmBtn = document.getElementById('dialog-confirm-btn');
 // ============ 상태 ============
 let entries = [];
 let currentUserId = null;
-let listFilterMine = false;
+// "전체"/"기도 중"/"완료"/"내가 쓴 글" 중 하나만 선택되는 단일 필터. 처음엔 작성자
+// 필터("전체"/"내가 쓴 글")와 상태 필터("전체"/"기도 중"/"완료")를 별도 탭 줄 두 개로
+// 나눠 AND로 결합했으나, 탭이 두 줄로 겹쳐 보인다는 피드백으로 한 줄·단일 선택으로
+// 합쳤다 — "기도 중"/"완료"는 entry.status 값과 그대로 비교하므로 STATUS_OPTIONS와
+// 다른 문자열 집합을 만들지 않는다.
+let activeFilter = '전체';
 let currentTicketEntry = null;
+
+// ============ 무한 스크롤 상태 ============
+// 데이터(entries)는 여전히 한 번에 다 불러오지만, 카드 DOM은 listVisibleCount만큼만
+// 그린다 — 항목이 많아질수록 매번 전체를 다 그리는 비용이 커지는 것을 피하기 위함.
+const LIST_PAGE_SIZE = 20;
+let listVisibleCount = LIST_PAGE_SIZE;
 
 // ============ 상태값 ============
 const STATUS_OPTIONS = ['기도 중', '완료'];
@@ -107,10 +119,12 @@ function cycleStatus(current) {
 }
 
 // ============ 컴포넌트 팩토리 ============
-function createEntryCard(entry, variant = 'light') {
+// 절제 카드(entry-card--dark) variant를 쓰던 호출부가 없어졌다 — 카드는 이제
+// 항상 이 하나의 모양(entry-date 포함)으로만 그려진다.
+function createEntryCard(entry) {
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.className = `entry-card${variant === 'dark' ? ' entry-card--dark' : ''}`;
+  btn.className = 'entry-card';
 
   const top = document.createElement('div');
   top.className = 'entry-top';
@@ -137,12 +151,10 @@ function createEntryCard(entry, variant = 'light') {
   top.append(left, right);
   btn.appendChild(top);
 
-  if (variant !== 'dark') {
-    const date = document.createElement('p');
-    date.className = 'entry-date';
-    date.textContent = `${entry.date} 제출`;
-    btn.appendChild(date);
-  }
+  const date = document.createElement('p');
+  date.className = 'entry-date';
+  date.textContent = `${entry.date} 제출`;
+  btn.appendChild(date);
 
   btn.addEventListener('click', () => openTicket(entry.id));
   return btn;
@@ -172,28 +184,49 @@ function createStatusHint() {
 }
 
 // ============ 렌더링 ============
+// entries는 submitted_at 내림차순으로 정렬돼 있다.
+//
+// 무한 스크롤로 페이지가 늘어날 때마다 이 함수는 새로 노출되는 구간뿐 아니라
+// 이미 그려져 있던 카드까지 replaceChildren()으로 통째로 다시 만든다 — append만
+// 하는 방식보다 단순하지만, listVisibleCount가 아주 커지면(예: 수천 건을 끝까지
+// 스크롤) 페이지를 넘길 때마다 그 시점까지의 전체 카드를 다시 그리는 비용이 쌓인다.
+// 지금은 행사 명단 규모가 작아 문제되지 않는다는 전제로 단순함을 택했다 — 데이터가
+// 크게 늘어나면 "새로 늘어난 구간만 append"하는 방식으로 바꾸는 걸 재검토할 것.
 function renderList() {
-  const source = listFilterMine ? entries.filter((entry) => entry.isMine) : entries;
+  const source =
+    activeFilter === '전체'
+      ? entries
+      : activeFilter === '내가 쓴 글'
+        ? entries.filter((entry) => entry.isMine)
+        : entries.filter((entry) => entry.status === activeFilter);
   countText.textContent = `${source.length}명`;
 
+  const visibleSource = source.slice(0, listVisibleCount);
+
   listRecent.replaceChildren();
-  listPast.replaceChildren();
+  visibleSource.forEach((entry) => listRecent.appendChild(createEntryCard(entry)));
 
-  source
-    .filter((entry) => entry.group === 'recent')
-    .forEach((entry) => listRecent.appendChild(createEntryCard(entry, 'light')));
-
-  source
-    .filter((entry) => entry.group === 'past')
-    .forEach((entry) => listPast.appendChild(createEntryCard(entry, 'dark')));
-
-  const isEmpty = listFilterMine && source.length === 0;
+  const isEmpty = source.length === 0;
   groupRecentEl.classList.toggle('is-hidden', isEmpty);
-  groupPastEl.classList.toggle('is-hidden', isEmpty);
   listEmptyEl.classList.toggle('is-hidden', !isEmpty);
 
-  filterTabAll.classList.toggle('filter-tab--active', !listFilterMine);
-  filterTabMine.classList.toggle('filter-tab--active', listFilterMine);
+  // 무한 스크롤 트리거 — 아직 안 그린 항목이 남아있을 때만 관찰 대상을 노출한다.
+  // IntersectionObserver는 display:none(레이아웃 밖)인 요소와는 교차하지 않으므로,
+  // 이 토글 하나만으로 "더 불러올 게 없으면 자동으로 멈춘다"가 성립한다.
+  listLoadMoreSentinel.classList.toggle('is-hidden', isEmpty || listVisibleCount >= source.length);
+
+  // filter-tab--active(시각적 표시)와 aria-selected(스크린 리더용) 둘 다 같은
+  // 조건으로 갱신한다 — 하나만 갱신하면 시각 상태와 접근성 트리 상태가 어긋난다.
+  [
+    [filterTabAll, '전체'],
+    [filterTabPraying, '기도 중'],
+    [filterTabDone, '완료'],
+    [filterTabMine, '내가 쓴 글'],
+  ].forEach(([tab, value]) => {
+    const selected = activeFilter === value;
+    tab.classList.toggle('filter-tab--active', selected);
+    tab.setAttribute('aria-selected', String(selected));
+  });
 }
 
 function renderTicket(entry) {
@@ -274,6 +307,10 @@ async function handleEntryFormSubmit(event) {
   const [newRow] = data ?? [];
   if (newRow) {
     entries.unshift(mapRowToEntry(newRow));
+    // entries가 1개 늘어난 만큼 listVisibleCount도 같이 늘려야 한다. 안 그러면
+    // slice(0, listVisibleCount) 경계에 걸려있던, 방금까지 화면에 보이던 마지막
+    // 카드가 새 글 등록 직후 설명 없이 사라져 보인다.
+    listVisibleCount += 1;
     renderList();
   }
 
@@ -366,9 +403,10 @@ async function handleDeleteEntry(entry) {
   renderList();
 }
 
-// ============ 리스트 필터(전체/내가 쓴 글) ============
-function setListFilter(mine) {
-  listFilterMine = mine;
+// ============ 리스트 필터(전체/기도 중/완료/내가 쓴 글, 단일 선택) ============
+function setActiveFilter(filter) {
+  activeFilter = filter;
+  listVisibleCount = LIST_PAGE_SIZE;
   renderList();
 }
 
@@ -810,8 +848,10 @@ editSheetBackdrop.addEventListener('click', (event) => {
 
 editEntryForm.addEventListener('submit', handleEditFormSubmit);
 
-filterTabAll.addEventListener('click', () => setListFilter(false));
-filterTabMine.addEventListener('click', () => setListFilter(true));
+filterTabAll.addEventListener('click', () => setActiveFilter('전체'));
+filterTabPraying.addEventListener('click', () => setActiveFilter('기도 중'));
+filterTabDone.addEventListener('click', () => setActiveFilter('완료'));
+filterTabMine.addEventListener('click', () => setActiveFilter('내가 쓴 글'));
 
 btnQrShare.addEventListener('click', openQrSheet);
 
@@ -866,11 +906,32 @@ btnRefresh.addEventListener('click', async () => {
   btnRefresh.disabled = false;
 });
 
+// ============ 무한 스크롤 ============
+// entries는 이미 메모리에 전부 있지만 카드 DOM은 listVisibleCount만큼만 그려져 있다.
+// 화면 하단의 sentinel(#list-load-more-sentinel)이 뷰포트 근처(rootMargin)에 들어오면
+// 다음 페이지만큼 늘려서 renderList()를 다시 부른다. 이 사이트는 .container에 별도
+// 스크롤 박스가 없는 네이티브 문서 스크롤이라(CLAUDE.md 참고) observer의 root는
+// 뷰포트(null)를 그대로 쓴다. sentinel은 renderList()가 더 그릴 항목이 없을 때
+// is-hidden(display:none)으로 감춘다 — 이때도 콜백 자체는 (교차 해제로) 한 번 더
+// 불릴 수 있지만, 아래 isIntersecting 가드가 그 호출을 무시한다.
+const listLoadMoreObserver = new IntersectionObserver(
+  ([sentinelEntry]) => {
+    if (!sentinelEntry.isIntersecting) return;
+    listVisibleCount += LIST_PAGE_SIZE;
+    renderList();
+    // sentinel 자체는 장식용(aria-hidden)이라 스크린 리더가 교차 이벤트를 알 길이
+    // 없으므로, 로딩 스켈레톤과 같은 sr-only 상태 텍스트로 "더 불러왔다"는 신호를
+    // 남긴다(showListSkeleton()의 안내문과 같은 요소를 재사용).
+    listLoadingStatusEl.textContent = `명단 ${LIST_PAGE_SIZE}개를 더 불러왔습니다`;
+  },
+  { rootMargin: '600px 0px' }
+);
+listLoadMoreObserver.observe(listLoadMoreSentinel);
+
 // ============ Supabase row → entries.js 필드 매핑 ============
 // createEntryCard/renderList/renderTicket 등 렌더링 함수들은 entry.to/from/relation/
-// date/status/id/group 필드명을 그대로 기대한다. 그 함수들은 건드리지 않고, DB의
+// date/status/id 필드명을 그대로 기대한다. 그 함수들은 건드리지 않고, DB의
 // to_name/from_name/submitted_at 등을 이 구조로 변환하는 어댑터만 데이터 로딩 단계에 둔다.
-const RECENT_GROUP_WINDOW_MS = 7 * 24 * 60 * 60 * 1000; // 7일
 
 // entries.json 원본이 쓰던 "연.월.일"(점 구분, 앞자리 0 없음) 포맷을 그대로 재현한다.
 // toLocaleDateString 등은 로케일/브라우저에 따라 구분자가 달라질 수 있어 직접 조합한다.
@@ -880,13 +941,6 @@ function formatEntryDate(submittedAt) {
   const month = parsed.getMonth() + 1;
   const day = parsed.getDate();
   return `${year}.${month}.${day}`;
-}
-
-// group 컬럼은 DB에 없으므로, submitted_at이 현재 시각 기준 7일 이내인지로
-// 클라이언트에서 파생 계산한다.
-function resolveEntryGroup(submittedAt) {
-  const elapsed = Date.now() - new Date(submittedAt).getTime();
-  return elapsed <= RECENT_GROUP_WINDOW_MS ? 'recent' : 'past';
 }
 
 // currentUserId가 null인 극단적 케이스(익명 세션 발급 자체가 실패한 경우)에는
@@ -899,20 +953,18 @@ function mapRowToEntry(row) {
     relation: row.relation,
     status: row.status,
     date: formatEntryDate(row.submitted_at),
-    group: resolveEntryGroup(row.submitted_at),
     ownerId: row.owner_id,
     isMine: currentUserId != null && row.owner_id === currentUserId,
   };
 }
 
 // ============ 데이터 로딩 ============
-// group-recent/group-past 자리에 뜨는 skeleton 카드로 전환한다. renderList()가
+// group-recent 자리에 뜨는 skeleton 카드로 전환한다. renderList()가
 // 끝나면 실제 상태(비어있음 포함)에 맞춰 이 is-hidden들을 다시 정확히 계산해
 // 덮어쓰므로, 여기서는 로딩 중 화면만 신경 쓰면 된다.
 function showListSkeleton() {
   listSkeletonEl.classList.remove('is-hidden');
   groupRecentEl.classList.add('is-hidden');
-  groupPastEl.classList.add('is-hidden');
   listEmptyEl.classList.add('is-hidden');
   // 스켈레톤 자체는 장식용(aria-hidden)이라 스크린 리더가 읽지 않으므로,
   // 별도의 sr-only 상태 텍스트로 로딩 중임을 알린다.
@@ -953,6 +1005,7 @@ async function loadEntries() {
   }
 
   if (isInitialLoad) hideListSkeleton();
+  listVisibleCount = LIST_PAGE_SIZE;
   renderList();
 }
 
