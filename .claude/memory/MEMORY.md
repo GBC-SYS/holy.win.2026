@@ -12,7 +12,7 @@
 - [QR 공유 기능 리뷰 이력](project_qr-share-feature-review.md) — SRI 미고정·iOS Safari 저장 실패 두 Major 2026-09-23 재검토에서 해결·APPROVED. 남은 Minor: QR 렌더 전 저장 버튼 활성 상태(빈 이미지 저장 가능), toBlob 비동기 갭으로 인한 user-activation 소실 시 원래 문제로 조용히 회귀할 이론적 가능성
 - [PWA 설치 버튼은 QR 시트에 통합됨](project_install-prompt-qr-integration.md) — 독립 배너(1세대) 폐기, #btn-qr-install이 최종 구조. install-prompt.js가 entries.js보다 먼저 로드돼야 함. iOS는 설치 후에도 브라우저 탭에서 버튼이 다시 뜰 수 있음(플랫폼 한계)
 - [classic script 로드 순서 의존성](project_classic-script-load-order.md) — 번들러 없음, 다른 파일 함수를 top-level에서 즉시 참조하면 index.html의 script 태그 순서가 실행을 좌우함(함수 바디 안 참조는 순서 무관)
-- [승인된 기능도 즉시 재설계될 수 있음](feedback_post-approval-redesign-expected.md) — code-reviewer 2회 APPROVED 받은 전면 색상 리브랜딩도 "컨셉과 다르다"며 통째로 롤백됨. 참고 이미지까지 첨부된 요청을 정확히 구현해도 곧바로 되돌려달라 할 수 있음. 대비 안전 마진 같은 접근성 트레이드오프도 한 번 안내하면 재경고 없이 그대로 따를 것
+- [승인된 기능도 즉시 재설계·폐기될 수 있음](feedback_post-approval-redesign-expected.md) — code-reviewer 2회 APPROVED 받은 전면 색상 리브랜딩도 "컨셉과 다르다"며 통째로 롤백됨. 브라우저 실측까지 마친 인트로 애니메이션도 이유 설명 없이 전면 삭제됨(2026-09-29) — 롤백 시 code-reviewer가 남긴 agent-memory 변경분도 함께 확인할 것
 - [티켓 상세는 "두 개의 뜬 카드" 구조로 확정](project_ticket-detail-two-card-layout.md) — 주황/흰 카드 사이 틈은 버그 아님, 하나로 합쳤다가 바로 거부당한 전례 있음. 정확한 margin 값은 계속 바뀌므로 코드에서 직접 확인
 - [사진 배경 대비는 픽셀 계산으로만 증명됨](feedback_photo-bg-contrast-needs-pixel-math.md) — (2026-09-29 갱신: list-bg.jpg는 삭제되어 현재 미해당) 사진 위 텍스트 대비 검증 시 스크린샷 육안 확인은 불충분, 뷰포트 전 구간 픽셀 합성 계산이 원칙이라는 교훈만 유효
 - [list-bg.jpg 배경 사진 완전 제거](project_list-bg-photo-removed.md) — 2026-09-29, 데이터 늘어날수록 cover 확대로 배경이 깨지는 문제로 #screen-list/.ticket-hero 둘 다 단색(--glass-sheen+accent 82%)으로 교체, 파일 삭제
@@ -20,3 +20,4 @@
 - [QR 시트가 유리질감 대신 순백 카드로 재설계됨](project_qr-sheet-flat-card-redesign.md) — 2026-09-27, 사용자 요청으로 의도적 예외. .qr-info-card radius 20px가 05번 문서 스케일(16/24)과 안 맞아 커밋 전 수정 또는 문서 예외 등록 필요
 - [IG 예시 캐러셀 미디어 생명주기](project_ig-example-carousel-media-lifecycle.md) — 시트는 display:none 아닌 transform으로 숨겨짐 → 자동재생 영상은 DOM 생성 시점이 아니라 반드시 openIgSheet/closeIgSheet에 묶을 것. AVIF 선례 있음, mp4는 아직 미압축
 - [code-reviewer도 Bash 없음](feedback_code-reviewer-no-bash.md) — git diff 못 돌림, Read/Grep/Glob으로 대체. 호출 시 변경 파일·diff·배경을 프롬프트에 직접 요약해서 줄 것
+- [img{max-width:100%} 전역 리셋이 확대 레이아웃을 깸](project_img-max-width-reset-trap.md) — init.css 리셋 때문에 width:100% 초과 값이 조용히 눌림. 이미지가 계산값보다 작게 나오면 좌표 수식 대신 이 리셋부터 의심할 것
