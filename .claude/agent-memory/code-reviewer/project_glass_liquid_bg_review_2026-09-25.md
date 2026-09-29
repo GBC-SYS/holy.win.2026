@@ -91,3 +91,7 @@ Major #2(09번 미동기화)·#3(06/08번 그라디언트/그림자 예외 문�
 **Why:** 4차에서 지적한 두 Major가 "1개 폭에서만 계산"→"320~430px 대표 폭 집합 재계산", "문서 미등록"→"등록"으로 정확히 대응되어 해소됨. 코드 대조와 수동 근사 계산이 보고된 수치와 합리적으로 일치.
 
 **How to apply:** 이 영역이 다시 바뀌면 (1) 틴트/스크림 alpha 중 하나만 바꾸는 diff는 반드시 "몇 개 폭에서 재계산했는지"를 diff 설명에 명시하도록 요구할 것(1개 폭만 계산하는 패턴이 3번 반복됐던 이력이 있음), (2) 이 저장소엔 Bash/PIL 실행 도구가 없어 수치를 직접 재현할 수 없으므로, 보고된 수치는 항상 "코드-설명 일치 + 극단값(peak 밝기) 수동 근사"로만 검증 가능하다는 한계를 인지할 것. 남은 Minor(entry-status--praying 누락, group-label--dim no-op)는 계속 범위 밖.
+
+---
+
+**후속 확인(2026-09-29, [[project_past_group_removal_review]] 리뷰 중 발견):** `index.html` 55행의 `.group-label--dim` no-op이 해소됨 — 현재 index.html에는 `<p class="group-label">이번 주 제출</p>`만 남아있고 `--dim` modifier 자체가 사라짐(과거 "이번 주 제출"/"이전 명단" 두 그룹 라벨 중 이전 명단 쪽에 톤 다운용으로 쓰이던 클래스였던 것으로 추정 — `#group-past` 블록 전체 삭제 시 같이 제거된 것으로 보임). `docs/02-colors.md`의 `.entry-status--praying` 누락 Minor는 여전히 미해소.
