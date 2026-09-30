@@ -38,6 +38,7 @@ const formFields = {
   to: document.getElementById('input-to-name'),
   from: document.getElementById('input-from-name'),
   relation: document.getElementById('input-relation'),
+  pin: document.getElementById('input-pin'),
 };
 
 // ============ DOM 참조 — 수정 바텀시트 ============
@@ -49,6 +50,7 @@ const editFormFields = {
   to: document.getElementById('edit-input-to-name'),
   from: document.getElementById('edit-input-from-name'),
   relation: document.getElementById('edit-input-relation'),
+  pin: document.getElementById('edit-input-pin'),
 };
 
 // ============ DOM 참조 — QR 코드 공유 바텀시트 ============
@@ -79,7 +81,8 @@ const igLightboxContent = document.getElementById('ig-lightbox-content');
 const btnIgLightboxClose = document.getElementById('btn-ig-lightbox-close');
 
 // ============ DOM 참조 — 티켓 소유자 액션(수정/삭제) ============
-const ticketOwnerActions = document.getElementById('ticket-owner-actions');
+// 두 버튼 모두 이제 모든 글에서 항상 노출된다(renderTicket 참고) — 컨테이너
+// 자체(#ticket-owner-actions)의 hidden 토글이 없어져 별도 참조가 필요 없다.
 const btnEditEntry = document.getElementById('btn-edit-entry');
 const btnDeleteEntry = document.getElementById('btn-delete-entry');
 
@@ -91,9 +94,18 @@ const dialogDescription = document.getElementById('dialog-description');
 const dialogCancelBtn = document.getElementById('dialog-cancel-btn');
 const dialogConfirmBtn = document.getElementById('dialog-confirm-btn');
 
+// ============ DOM 참조 — 비밀번호 확인 다이얼로그 ============
+const pinDialogBackdrop = document.getElementById('pin-dialog-backdrop');
+const pinDialogPanel = document.getElementById('pin-dialog-panel');
+const pinDialogDescription = document.getElementById('pin-dialog-description');
+const pinDialogInput = document.getElementById('pin-dialog-input');
+const pinDialogError = document.getElementById('pin-dialog-error');
+const pinDialogCancelBtn = document.getElementById('pin-dialog-cancel-btn');
+const pinDialogConfirmBtn = document.getElementById('pin-dialog-confirm-btn');
+const pinDialogDefaultDescription = pinDialogDescription.textContent;
+
 // ============ 상태 ============
 let entries = [];
-let currentUserId = null;
 // "전체"/"기도 중"/"완료"/"내가 쓴 글" 중 하나만 선택되는 단일 필터. 처음엔 작성자
 // 필터("전체"/"내가 쓴 글")와 상태 필터("전체"/"기도 중"/"완료")를 별도 탭 줄 두 개로
 // 나눠 AND로 결합했으나, 탭이 두 줄로 겹쳐 보인다는 피드백으로 한 줄·단일 선택으로
@@ -247,7 +259,9 @@ function renderTicket(entry) {
   ticketFields.status.replaceChildren(createStatusBadge(entry), createStatusHint());
   ticketFields.stamp.classList.toggle('stamp--done', entry.status === '완료');
   ticketFields.stampStatus.textContent = entry.status;
-  ticketOwnerActions.classList.toggle('ticket-owner-actions--hidden', !entry.isMine);
+  // 수정/삭제 버튼은 이제 항상 노출한다 — 실제 권한은 비밀번호를 아는지 여부로
+  // 판별하므로(0005_pin_ownership.sql), 이 기기에서 등록했는지(entry.isMine)와는
+  // 무관하다. isMine은 "내가 쓴 글" 필터 탭에만 쓰인다.
 }
 
 // 상태 배지 클릭 시 진입점. Supabase에 UPDATE를 보내고, 실제로 반영된 행이
@@ -255,13 +269,16 @@ function renderTicket(entry) {
 // renderTicket(entry)에, 리스트 화면은 renderList()에 위임해 두 화면 모두
 // 같은 entry 객체를 바라보며 항상 동기화되도록 한다.
 async function handleStatusToggle(entry) {
+  const pin = await promptPin('상태를 변경하려면 등록할 때 설정한 비밀번호를 입력해주세요.');
+  if (pin === null) return;
+
   const nextStatus = cycleStatus(entry.status);
 
-  const { data, error } = await window.supabaseClient
-    .from('holywin_entries')
-    .update({ status: nextStatus })
-    .eq('id', entry.id)
-    .select();
+  const { data, error } = await window.supabaseClient.rpc('holywin_update_status', {
+    entry_id: entry.id,
+    pin,
+    new_status: nextStatus,
+  });
 
   if (error) {
     console.error('상태 업데이트에 실패했습니다.', error);
@@ -269,10 +286,15 @@ async function handleStatusToggle(entry) {
     return;
   }
 
-  if (!data || data.length === 0) {
-    // RLS의 using 절이 대상 행을 걸러내면 에러 없이 빈 배열만 돌아온다.
-    // (예: 본인이 작성하지 않은 시드 데이터의 status는 변경할 수 없음)
-    await showDialog({ description: '본인이 작성한 글만 상태를 변경할 수 있습니다.' });
+  if (!data?.id) {
+    // 비밀번호가 틀렸거나(또는 pin_hash가 아예 없는 시드 데이터) 대상이 없으면
+    // RPC의 SQL 레벨에서는 NULL을 반환하지만, PostgREST가 이를 REST 응답으로
+    // 감싸는 과정에서 `null`이 아니라 "모든 필드가 null인 객체"
+    // (`{"id":null,"to_name":null,...}`)로 직렬화한다(curl로 직접 재현해 확정 —
+    // row_to_json(NULL::composite)는 SQL에서 진짜 null이지만 RPC 응답 경로는
+    // 다르게 동작함). 이 객체는 `!data`로는 걸러지지 않아 실패를 성공으로
+    // 오판하는 버그가 났었다 — data.id로 실제 매치 여부를 확인해야 한다.
+    await showDialog({ description: '비밀번호가 일치하지 않습니다.' });
     return;
   }
 
@@ -281,19 +303,25 @@ async function handleStatusToggle(entry) {
   renderList();
 }
 
-// 등록 폼 제출 진입점. Supabase에 INSERT를 보내고, 성공 시 반환된 행을
-// mapRowToEntry로 변환해 entries 배열 맨 앞에 추가한 뒤 리스트 화면으로 복귀한다.
-// owner_id/status/submitted_at은 DB 기본값(auth.uid()/'기도 중'/now())에 맡기고
-// payload에 절대 포함하지 않는다.
+// 등록 폼 제출 진입점. holywin_create_entry RPC로 INSERT + 비밀번호 해시 저장을 한
+// 트랜잭션으로 처리하고, 성공 시 반환된 행을 mapRowToEntry로 변환해 entries
+// 배열 맨 앞에 추가한 뒤 리스트 화면으로 복귀한다. owner_id/status/submitted_at은
+// 여전히 DB 기본값(auth.uid()/'기도 중'/now())에 맡기고 payload에 포함하지 않는다.
 async function handleEntryFormSubmit(event) {
   event.preventDefault();
 
   const toName = formFields.to.value.trim();
   const fromName = formFields.from.value.trim();
   const relation = formFields.relation.value.trim();
+  const pin = formFields.pin.value.trim();
 
   if (!toName || !fromName || !relation) {
     await showDialog({ description: '모든 항목을 입력해주세요.' });
+    return;
+  }
+
+  if (!/^\d{4}$/.test(pin)) {
+    await showDialog({ description: '비밀번호는 숫자 4자리로 입력해주세요.' });
     return;
   }
 
@@ -301,10 +329,12 @@ async function handleEntryFormSubmit(event) {
   // 액션이므로, 세션 초기화가 아직 끝나지 않았을 가능성을 방어적으로 기다린다.
   await window.supabaseReady;
 
-  const { data, error } = await window.supabaseClient
-    .from('holywin_entries')
-    .insert({ to_name: toName, from_name: fromName, relation })
-    .select();
+  const { data, error } = await window.supabaseClient.rpc('holywin_create_entry', {
+    to_name: toName,
+    from_name: fromName,
+    relation,
+    pin,
+  });
 
   if (error) {
     console.error('전도 대상자 등록에 실패했습니다.', error);
@@ -312,9 +342,9 @@ async function handleEntryFormSubmit(event) {
     return;
   }
 
-  const [newRow] = data ?? [];
-  if (newRow) {
-    entries.unshift(mapRowToEntry(newRow));
+  if (data) {
+    rememberMyEntryId(data.id);
+    entries.unshift(mapRowToEntry(data));
     // entries가 1개 늘어난 만큼 listVisibleCount도 같이 늘려야 한다. 안 그러면
     // slice(0, listVisibleCount) 경계에 걸려있던, 방금까지 화면에 보이던 마지막
     // 카드가 새 글 등록 직후 설명 없이 사라져 보인다.
@@ -326,9 +356,9 @@ async function handleEntryFormSubmit(event) {
   closeEntryForm();
 }
 
-// 수정 폼 제출 진입점. handleStatusToggle과 동일한 방어 패턴(error/빈 배열/성공
-// 세 갈래)을 따른다. owner_id는 payload에 포함하지 않는다 — .eq('id', ...)로
-// 대상만 지정하고, 실제 소유권 판별은 RLS(using owner_id = auth.uid())에 맡긴다.
+// 수정 폼 제출 진입점. handleStatusToggle과 동일한 방어 패턴(error/NULL/성공
+// 세 갈래)을 따른다. 소유권 판별은 더 이상 owner_id/auth.uid()가 아니라
+// holywin_update_entry RPC 내부의 비밀번호 해시 검증이 담당한다(0005_pin_ownership.sql).
 async function handleEditFormSubmit(event) {
   event.preventDefault();
 
@@ -337,17 +367,25 @@ async function handleEditFormSubmit(event) {
   const toName = editFormFields.to.value.trim();
   const fromName = editFormFields.from.value.trim();
   const relation = editFormFields.relation.value.trim();
+  const pin = editFormFields.pin.value.trim();
 
   if (!toName || !fromName || !relation) {
     await showDialog({ description: '모든 항목을 입력해주세요.' });
     return;
   }
 
-  const { data, error } = await window.supabaseClient
-    .from('holywin_entries')
-    .update({ to_name: toName, from_name: fromName, relation })
-    .eq('id', currentTicketEntry.id)
-    .select();
+  if (!/^\d{4}$/.test(pin)) {
+    await showDialog({ description: '비밀번호는 숫자 4자리로 입력해주세요.' });
+    return;
+  }
+
+  const { data, error } = await window.supabaseClient.rpc('holywin_update_entry', {
+    entry_id: currentTicketEntry.id,
+    pin,
+    new_to_name: toName,
+    new_from_name: fromName,
+    new_relation: relation,
+  });
 
   if (error) {
     console.error('명단 수정에 실패했습니다.', error);
@@ -355,8 +393,10 @@ async function handleEditFormSubmit(event) {
     return;
   }
 
-  if (!data || data.length === 0) {
-    await showDialog({ description: '본인이 작성한 글만 수정할 수 있습니다.' });
+  if (!data?.id) {
+    // handleStatusToggle의 동일 분기 주석 참고 — PostgREST RPC 응답은 매치
+    // 실패 시 null이 아니라 모든 필드가 null인 객체를 반환한다.
+    await showDialog({ description: '비밀번호가 일치하지 않습니다.' });
     return;
   }
 
@@ -375,11 +415,10 @@ async function handleEditFormSubmit(event) {
 // 그 행이 SELECT 정책(using (deleted_at is null))을 더 이상 통과하지 못하고,
 // PostgREST는 .select() 없이도 내부적으로 항상 RETURNING을 구성하기 때문에
 // Postgres가 이를 조용히 생략하지 않고 42501(RLS 위반) 에러로 막아버린다
-// (curl로 직접 재현해 확정 — relation 등 deleted_at을 안 건드리는 수정은
-// 항상 성공했다). 그래서 RLS의 RETURNING 가시성 검사를 거치지 않는
-// security definer RPC(holywin_soft_delete_entry, 0003_soft_delete_rpc.sql)를
-// 대신 호출한다. 소유권 검증(owner_id = auth.uid())은 그 함수 내부에서
-// 직접 수행되므로 안전하다.
+// (curl로 직접 재현해 확정). 그래서 RLS의 RETURNING 가시성 검사를 거치지 않는
+// security definer RPC(holywin_soft_delete_entry)를 대신 호출한다. 인증은
+// owner_id/auth.uid()가 아니라 비밀번호 해시 비교로 함수 내부에서 직접 수행된다
+// (0005_pin_ownership.sql).
 async function handleDeleteEntry(entry) {
   const confirmed = await showDialog({
     title: '정말 삭제하시겠습니까?',
@@ -390,9 +429,12 @@ async function handleDeleteEntry(entry) {
   });
   if (!confirmed) return;
 
+  const pin = await promptPin('삭제하려면 등록할 때 설정한 비밀번호를 입력해주세요.');
+  if (pin === null) return;
+
   const { data: deleted, error } = await window.supabaseClient.rpc(
     'holywin_soft_delete_entry',
-    { entry_id: entry.id }
+    { entry_id: entry.id, pin }
   );
 
   if (error) {
@@ -402,7 +444,7 @@ async function handleDeleteEntry(entry) {
   }
 
   if (!deleted) {
-    await showDialog({ description: '본인이 작성한 글만 삭제할 수 있습니다.' });
+    await showDialog({ description: '비밀번호가 일치하지 않습니다.' });
     return;
   }
 
@@ -489,6 +531,8 @@ function openEditForm(entry) {
   editFormFields.to.value = entry.to;
   editFormFields.from.value = entry.from;
   editFormFields.relation.value = entry.relation;
+  // 비밀번호는 보안상 미리 채우지 않는다 — 매번 다시 입력해야 한다.
+  editFormFields.pin.value = '';
   editSheetBackdrop.classList.remove('sheet-backdrop--hidden');
   editSheetPanel.classList.remove('sheet-panel--hidden');
   lockBodyScroll();
@@ -822,6 +866,62 @@ function closeDialog() {
   dialogPanel.classList.add('dialog-panel--hidden');
 }
 
+// ============ 비밀번호 확인 다이얼로그 ============
+// showDialog와 같은 오버레이 메커니즘을 쓰지만, boolean이 아니라 입력된 비밀번호
+// 문자열(취소 시 null)로 resolve한다는 점이 다르다. 틀린 비밀번호에 대한 자동 재시도
+// 루프는 두지 않는다 — 호출부가 실패를 안내하면 사용자가 다시 액션을 누르면 된다.
+let pinDialogConfirmHandler = null;
+let pinDialogCancelHandler = null;
+let pinDialogKeydownHandler = null;
+
+function promptPin(description) {
+  return new Promise((resolve) => {
+    pinDialogInput.value = '';
+    pinDialogError.classList.add('is-hidden');
+    pinDialogDescription.textContent = description || pinDialogDefaultDescription;
+
+    if (pinDialogConfirmHandler) pinDialogConfirmBtn.removeEventListener('click', pinDialogConfirmHandler);
+    if (pinDialogCancelHandler) pinDialogCancelBtn.removeEventListener('click', pinDialogCancelHandler);
+    if (pinDialogKeydownHandler) pinDialogInput.removeEventListener('keydown', pinDialogKeydownHandler);
+
+    const submit = () => {
+      const pin = pinDialogInput.value.trim();
+      if (!/^\d{4}$/.test(pin)) {
+        pinDialogError.textContent = '비밀번호는 숫자 4자리로 입력해주세요.';
+        pinDialogError.classList.remove('is-hidden');
+        return;
+      }
+      closePinDialog();
+      resolve(pin);
+    };
+
+    pinDialogConfirmHandler = submit;
+    pinDialogCancelHandler = () => {
+      closePinDialog();
+      resolve(null);
+    };
+    pinDialogKeydownHandler = (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        submit();
+      }
+    };
+
+    pinDialogConfirmBtn.addEventListener('click', pinDialogConfirmHandler);
+    pinDialogCancelBtn.addEventListener('click', pinDialogCancelHandler);
+    pinDialogInput.addEventListener('keydown', pinDialogKeydownHandler);
+
+    pinDialogBackdrop.classList.remove('sheet-backdrop--hidden');
+    pinDialogPanel.classList.remove('dialog-panel--hidden');
+    setTimeout(() => pinDialogInput.focus(), 0);
+  });
+}
+
+function closePinDialog() {
+  pinDialogBackdrop.classList.add('sheet-backdrop--hidden');
+  pinDialogPanel.classList.add('dialog-panel--hidden');
+}
+
 // ============ 이벤트 바인딩 ============
 btnBack.addEventListener('click', backToList);
 
@@ -951,8 +1051,29 @@ function formatEntryDate(submittedAt) {
   return `${year}.${month}.${day}`;
 }
 
-// currentUserId가 null인 극단적 케이스(익명 세션 발급 자체가 실패한 경우)에는
-// 절대 "내 글"로 오판하지 않도록 currentUserId != null 조건을 함께 확인한다.
+// "내가 쓴 글"(isMine)은 더 이상 auth.uid()(브라우저별 익명 세션)로 판별하지
+// 않는다 — 비밀번호 도입 이후 수정/삭제 권한 자체는 비밀번호 해시 검증(0005_pin_ownership.sql)만이
+// 판별하고, 이 값은 오직 "내가 쓴 글" 필터 탭(리스트 화면 표시용)에만 쓰인다.
+// 이 기기에서 직접 등록한 글의 id만 localStorage에 남겨두고 그걸로 판별한다.
+const MY_ENTRY_IDS_KEY = 'holywin_my_entry_ids';
+
+function getMyEntryIds() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(MY_ENTRY_IDS_KEY));
+    return Array.isArray(raw) ? raw : [];
+  } catch {
+    return [];
+  }
+}
+
+function rememberMyEntryId(id) {
+  const ids = getMyEntryIds();
+  if (!ids.includes(id)) {
+    ids.push(id);
+    localStorage.setItem(MY_ENTRY_IDS_KEY, JSON.stringify(ids));
+  }
+}
+
 function mapRowToEntry(row) {
   return {
     id: row.id,
@@ -962,7 +1083,7 @@ function mapRowToEntry(row) {
     status: row.status,
     date: formatEntryDate(row.submitted_at),
     ownerId: row.owner_id,
-    isMine: currentUserId != null && row.owner_id === currentUserId,
+    isMine: getMyEntryIds().includes(row.id),
   };
 }
 
@@ -993,12 +1114,14 @@ async function loadEntries() {
   const isInitialLoad = entries.length === 0;
   if (isInitialLoad) showListSkeleton();
   try {
-    const session = await window.supabaseReady;
-    currentUserId = session?.user?.id ?? null;
+    await window.supabaseReady;
 
+    // select('*')를 쓰지 않는다 — pin_hash 컬럼이 함께 딸려 나와 모든 방문자에게
+    // 노출되는 걸 막기 위해(0006_restrict_pin_hash_select.sql), mapRowToEntry가
+    // 실제로 읽는 컬럼만 명시적으로 요청한다.
     const { data, error } = await window.supabaseClient
       .from('holywin_entries')
-      .select('*')
+      .select('id, to_name, from_name, relation, status, submitted_at, owner_id')
       .order('submitted_at', { ascending: false });
 
     if (error) {

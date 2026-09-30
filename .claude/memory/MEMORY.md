@@ -2,6 +2,7 @@
 - [git-commit-pusher 신뢰 불가](feedback_git-commit-pusher-unreliable.md) — 도구 목록에 Bash 자체가 없음(구조적 원인, 5회 재현·2026-09-30 재확인). code-reviewer APPROVED 후 호출 자체를 생략하고 바로 직접 git 실행할 것
 - [CSS 튜닝 전 인라인 스타일부터 확인](feedback_check-inline-styles-before-css-tuning.md) — padding 반복 증가로 안 고쳐지면 JS의 .style.* 강제 대입부터 grep
 - [Supabase CRUD 마이그레이션 완료](project_supabase-crud-migration.md) — 6단계 전부 완료·배포(커밋 db5e447), holywin_ 접두사·소프트삭제 RPC 등 확정 규칙만 남음
+- [비밀번호 기반 소유권 전환 + 다음 작업](project_pin-ownership-and-next-steps.md) — auth.uid() → 4자리 비밀번호로 수정/삭제 인증 전환(2026-09-30). "내가 쓴 글"은 여전히 기기 로컬 한계, 다음은 제출자 이름 검색 추가 예정
 - [Supabase 프로젝트를 statkit.cms.api와 공유](project_supabase-shared-project-conflict.md) — 다른 앱 트리거가 익명 로그인과 충돌한 전례, realtime.messages RLS 정책 0개(private 채널 위험), CLAUDE.md "무관" 서술은 부분적으로만 맞음(⚠️)
 - [GitHub Pages 실배포 + PWA 아이콘](project_github-pages-deployment.md) — gbc-sys.github.io/holy.win.2026, 매니페스트 앱이름은 영문 "holywin" 선호
 - [사용자는 스크린샷 기반 소규모 반복 조정 선호](user_screenshot-driven-iteration.md) — 이미지 첨부 시 그대로 구현, 없으면 먼저 확인

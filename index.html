@@ -172,7 +172,7 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c0-7-4-10-8-10 0 6 3 9 8 10zm0 0c0-7 4-10 8-10 0 6-3 9-8 10z"/></svg>
         </p>
 
-        <div class="ticket-owner-actions ticket-owner-actions--hidden" id="ticket-owner-actions">
+        <div class="ticket-owner-actions" id="ticket-owner-actions">
           <button type="button" class="btn-danger" id="btn-delete-entry">삭제</button>
           <button type="button" class="btn-secondary" id="btn-edit-entry">수정</button>
         </div>
@@ -194,16 +194,20 @@
 
       <form class="form-wrap" id="entry-form">
         <div class="form-field">
-          <label class="form-label" for="input-to-name">대상자 이름</label>
+          <label class="form-label" for="input-to-name">대상자 이름<span class="required-mark" aria-hidden="true"></span></label>
           <input class="form-input" type="text" id="input-to-name" name="to_name" maxlength="50" required autocomplete="off">
         </div>
         <div class="form-field">
-          <label class="form-label" for="input-from-name">제출자 이름</label>
+          <label class="form-label" for="input-from-name">제출자 이름<span class="required-mark" aria-hidden="true"></span></label>
           <input class="form-input" type="text" id="input-from-name" name="from_name" maxlength="50" required autocomplete="off">
         </div>
         <div class="form-field">
-          <label class="form-label" for="input-relation">관계</label>
+          <label class="form-label" for="input-relation">관계<span class="required-mark" aria-hidden="true"></span></label>
           <input class="form-input" type="text" id="input-relation" name="relation" maxlength="50" required autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="input-pin">수정/삭제용 비밀번호 (숫자 4자리)<span class="required-mark" aria-hidden="true"></span></label>
+          <input class="form-input pin-input" type="text" inputmode="numeric" pattern="[0-9]{4}" id="input-pin" name="pin" maxlength="4" required autocomplete="off">
         </div>
 
         <button type="submit" class="cta-btn form-submit-btn">등록하기</button>
@@ -225,16 +229,20 @@
 
       <form class="form-wrap" id="edit-entry-form">
         <div class="form-field">
-          <label class="form-label" for="edit-input-to-name">대상자 이름</label>
+          <label class="form-label" for="edit-input-to-name">대상자 이름<span class="required-mark" aria-hidden="true"></span></label>
           <input class="form-input" type="text" id="edit-input-to-name" name="to_name" maxlength="50" required autocomplete="off">
         </div>
         <div class="form-field">
-          <label class="form-label" for="edit-input-from-name">제출자 이름</label>
+          <label class="form-label" for="edit-input-from-name">제출자 이름<span class="required-mark" aria-hidden="true"></span></label>
           <input class="form-input" type="text" id="edit-input-from-name" name="from_name" maxlength="50" required autocomplete="off">
         </div>
         <div class="form-field">
-          <label class="form-label" for="edit-input-relation">관계</label>
+          <label class="form-label" for="edit-input-relation">관계<span class="required-mark" aria-hidden="true"></span></label>
           <input class="form-input" type="text" id="edit-input-relation" name="relation" maxlength="50" required autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="edit-input-pin">등록할 때 설정한 비밀번호 (숫자 4자리)<span class="required-mark" aria-hidden="true"></span></label>
+          <input class="form-input pin-input" type="text" inputmode="numeric" pattern="[0-9]{4}" id="edit-input-pin" name="pin" maxlength="4" required autocomplete="off">
         </div>
 
         <button type="submit" class="cta-btn form-submit-btn">저장하기</button>
@@ -353,6 +361,20 @@
       <div class="dialog-actions">
         <button type="button" class="cta-btn dialog-confirm-btn" id="dialog-confirm-btn">확인</button>
         <button type="button" class="btn-secondary dialog-cancel-btn" id="dialog-cancel-btn">취소</button>
+      </div>
+    </div>
+
+    <!-- ============ 비밀번호 확인 다이얼로그 ============ -->
+    <div class="sheet-backdrop sheet-backdrop--hidden" id="pin-dialog-backdrop"></div>
+
+    <div class="dialog-panel dialog-panel--hidden" id="pin-dialog-panel" role="alertdialog" aria-modal="true" aria-labelledby="pin-dialog-title" aria-describedby="pin-dialog-description">
+      <p class="dialog-title" id="pin-dialog-title">비밀번호 확인</p>
+      <p class="dialog-description" id="pin-dialog-description">등록할 때 설정한 4자리 비밀번호를 입력해주세요.</p>
+      <input class="form-input pin-input pin-dialog-input" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" id="pin-dialog-input" autocomplete="off">
+      <p class="pin-dialog-error is-hidden" id="pin-dialog-error">비밀번호가 일치하지 않습니다.</p>
+      <div class="dialog-actions">
+        <button type="button" class="cta-btn dialog-confirm-btn" id="pin-dialog-confirm-btn">확인</button>
+        <button type="button" class="btn-secondary dialog-cancel-btn" id="pin-dialog-cancel-btn">취소</button>
       </div>
     </div>
 
