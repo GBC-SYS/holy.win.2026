@@ -21,3 +21,5 @@
 - [IG 예시 캐러셀 미디어 생명주기](project_ig-example-carousel-media-lifecycle.md) — 시트는 display:none 아닌 transform으로 숨겨짐 → 자동재생 영상은 DOM 생성 시점이 아니라 반드시 openIgSheet/closeIgSheet에 묶을 것. AVIF 선례 있음, mp4는 아직 미압축
 - [code-reviewer도 Bash 없음](feedback_code-reviewer-no-bash.md) — git diff 못 돌림, Read/Grep/Glob으로 대체. 호출 시 변경 파일·diff·배경을 프롬프트에 직접 요약해서 줄 것
 - [img{max-width:100%} 전역 리셋이 확대 레이아웃을 깸](project_img-max-width-reset-trap.md) — init.css 리셋 때문에 width:100% 초과 값이 조용히 눌림. 이미지가 계산값보다 작게 나오면 좌표 수식 대신 이 리셋부터 의심할 것
+- [전체 폰트사이즈 --fluid-scale 반응형화](project_fluid-typography-scale.md) — calc(Npx * var(--fluid-scale)) 패턴, 새 font-size/padding도 이 패턴 따를 것. docs/03-typography.md 갱신 필요 여부 미확정(⚠️ 커밋 전 확인)
+- [상태 배지+말풍선 레이아웃 정착 이력](project_status-badge-hint-layout.md) — 그리드 풀스팬·fit-content는 시도했다가 폐기됨, 다시 시도하지 말 것

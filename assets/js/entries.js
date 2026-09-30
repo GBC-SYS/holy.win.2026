@@ -178,8 +178,18 @@ function createStatusBadge(entry) {
 function createStatusHint() {
   const hint = document.createElement('span');
   hint.className = 'status-hint';
-  hint.textContent = '눌러서 상태 변경';
   hint.setAttribute('aria-hidden', 'true');
+
+  const viewport = document.createElement('span');
+  viewport.className = 'status-hint-viewport';
+
+  const track = document.createElement('span');
+  track.className = 'status-hint-track';
+  track.textContent = '눌러서 상태 변경';
+
+  viewport.appendChild(track);
+  hint.appendChild(viewport);
+
   return hint;
 }
 

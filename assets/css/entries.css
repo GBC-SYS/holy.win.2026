@@ -21,6 +21,14 @@
   --glass-border: rgba(255, 255, 255, 0.38);
   --glass-sheen: linear-gradient(155deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 50%);
   --glass-shadow: 0 10px 24px rgba(58, 20, 8, 0.16);
+
+  /* 반응형 글자 크기 배율 — 이 앱은 .container가 max-width: 430px로 고정돼 있어
+     데스크톱에서도 카드 폭이 430px를 넘지 않으므로, 100vw 기준 클램프가 430px
+     이상에서는 항상 1(원래 디자인 값 그대로)로 멈춘다. 320px(지원 최소 폭)에서는
+     0.9배로 줄어들고, 그 사이는 선형 보간된다. 모든 font-size는 고정 px 값에
+     이 배율을 곱해(calc) 참조하므로, 이 한 줄만 조정하면 전체 타이포그래피의
+     반응성을 한 번에 튜닝할 수 있다. */
+  --fluid-scale: clamp(0.9, calc(0.9 + 0.1 * (100vw - 320px) / (430px - 320px)), 1);
 }
 
 @font-face {
@@ -171,7 +179,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin: 0;
   font-family: 'Pretendard', sans-serif;
   font-weight: 900;
-  font-size: 28px;
+  font-size: calc(28px * var(--fluid-scale));
   color: var(--ink);
 }
 
@@ -194,7 +202,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   padding: 6px 14px;
 }
 
-.count-chip span { font-size: 13px; font-weight: 700; }
+.count-chip span { font-size: calc(13px * var(--fluid-scale)); font-weight: 700; }
 
 /* 새로고침 아이콘 버튼 — back-btn 스타일 재사용. 로딩 중에는 아이콘을 회전시켜
    네트워크 요청이 진행 중임을 알린다(.is-spinning). */
@@ -208,7 +216,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .subtitle {
   margin: 0;
-  font-size: 14px;
+  font-size: calc(14px * var(--fluid-scale));
   color: var(--ink);
 }
 
@@ -233,7 +241,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   border-radius: 999px;
   padding: 6px 14px;
   font-family: inherit;
-  font-size: 15px;
+  font-size: calc(15px * var(--fluid-scale));
   font-weight: 700;
   color: var(--muted);
   cursor: pointer;
@@ -252,7 +260,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .group-label {
-  font-size: 12px;
+  font-size: calc(12px * var(--fluid-scale));
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--ink);
@@ -269,7 +277,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .list-empty {
   margin: 40px 0 0;
   text-align: center;
-  font-size: 14px;
+  font-size: calc(14px * var(--fluid-scale));
   color: var(--ink);
 }
 
@@ -378,7 +386,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .entry-from {
-  font-size: 12px;
+  font-size: calc(12px * var(--fluid-scale));
   color: var(--muted);
   margin: 0 0 4px;
 }
@@ -386,7 +394,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .entry-to {
   font-family: 'Pretendard', sans-serif;
   font-weight: 700;
-  font-size: 20px;
+  font-size: calc(20px * var(--fluid-scale));
   color: var(--ink);
   margin: 0;
 }
@@ -403,7 +411,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   max-width: 8em;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 11px;
+  font-size: calc(11px * var(--fluid-scale));
   font-weight: 700;
   color: var(--accent);
   background: var(--accent-soft);
@@ -413,7 +421,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .entry-status {
-  font-size: 11px;
+  font-size: calc(11px * var(--fluid-scale));
   font-weight: 700;
   border-radius: 999px;
   padding: 3px 10px;
@@ -434,7 +442,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin: 10px 0 0;
   padding-top: 10px;
   border-top: 1px dashed #e5e3df;
-  font-size: 12px;
+  font-size: calc(12px * var(--fluid-scale));
   color: var(--muted);
 }
 
@@ -487,7 +495,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   border-radius: 14px;
   padding: 16px;
   font-family: inherit;
-  font-size: 16px;
+  font-size: calc(16px * var(--fluid-scale));
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
@@ -531,12 +539,12 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 #btn-add .cta-text strong {
-  font-size: 15px;
+  font-size: calc(15px * var(--fluid-scale));
   font-weight: 800;
 }
 
 #btn-add .cta-text span {
-  font-size: 12px;
+  font-size: calc(12px * var(--fluid-scale));
   font-weight: 600;
   opacity: 0.72;
 }
@@ -545,8 +553,14 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 /* 상단 주황 영역(topbar+ticket-head)을 떠 있는 카드로 묶는 wrapper.
    배경/모서리/그림자를 여기서 한 번에 관리하고, 두 자식은 overflow:hidden에
-   맞춰 클리핑된다 — 각자 그림자를 가지면 이음매에 이중 그림자가 생기기 때문. */
+   맞춰 클리핑된다 — 각자 그림자를 가지면 이음매에 이중 그림자가 생기기 때문.
+   .ticket-wrap보다 z-index를 높여 스태킹 순서상 위에 둔다 — DOM 순서상으로는
+   이미 먼저 오지만, 명시적 position/z-index가 없으면 나중에 오는 .ticket-wrap이
+   기본적으로 위 레이어가 되어 이 카드의 box-shadow가 .ticket-wrap 상단 모서리와
+   어색하게 겹쳐 보인다(모서리 radius가 28px/32px로 서로 달라 이음매가 갈라짐). */
 .ticket-hero {
+  position: relative;
+  z-index: 2;
   margin: 0 16px;
   border-radius: 28px;
   overflow: hidden;
@@ -595,12 +609,14 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .topbar-title {
-  font-size: 20px;
+  font-size: calc(20px * var(--fluid-scale));
   font-weight: 700;
   color: var(--ink);
 }
 
 .ticket-wrap {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   margin: 0 16px;
@@ -629,7 +645,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   margin: 8px 0 0;
   font-family: 'Pretendard', sans-serif;
   font-weight: 900;
-  font-size: 44px;
+  font-size: calc(44px * var(--fluid-scale));
   line-height: 1.1;
   color: var(--ink);
 }
@@ -639,7 +655,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   align-items: center;
   gap: 8px;
   margin-top: 22px;
-  font-size: 16px;
+  font-size: calc(16px * var(--fluid-scale));
   font-weight: 600;
   color: var(--ink);
 }
@@ -653,13 +669,13 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .grid-label {
   margin: 0 0 4px;
-  font-size: 12px;
+  font-size: calc(12px * var(--fluid-scale));
   color: #a6a39e;
 }
 
 .grid-value {
   margin: 0;
-  font-size: 20px;
+  font-size: calc(20px * var(--fluid-scale));
   font-weight: 700;
   color: var(--ink);
 }
@@ -689,42 +705,59 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .ticket-perf::after { right: -18px; }
 
 /* 항상 이미 블러된 .ticket-wrap 안에서만 쓰이므로 자체 backdrop-filter는 두지
-   않는다(이중 블러 방지) — 배경 틴트만으로 유리 느낌을 유지한다. */
+   않는다(이중 블러 방지) — 배경 틴트만으로 유리 느낌을 유지한다.
+   다른 알약형 칩(.count-chip, .filter-tab, .relation-tag 등)은 font-size만
+   --fluid-scale을 곱하고 padding은 고정값이지만, 이 배지는 좁은 화면에서 배지
+   크기 자체를 더 줄이기 위해 padding도 함께 스케일링하는 의도된 예외다. */
 .status-badge {
   display: inline-block;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
   border: 1px solid var(--glass-border);
   border-radius: 999px;
-  padding: 4px 12px;
+  padding: calc(6px * var(--fluid-scale)) calc(8px * var(--fluid-scale));
   font: inherit;
-  font-size: 20px;
+  font-size: calc(14px * var(--fluid-scale));
   font-weight: 700;
   cursor: pointer;
   transition: opacity 0.15s ease;
 }
 
-/* "상태" 그리드 칸은 배지 아래에 말풍선 힌트를 쌓는다(다른 3칸은 텍스트 한 줄뿐이라
-   영향 없음). 그리드 칸 폭이 좁아(모바일 375px 기준 약 135px) 배지+말풍선을
-   가로로 나란히 두면 배지 글자 자체가 줄바꿈돼 알약이 아니라 타원으로 깨졌다 —
-   그래서 나란히 배치 대신 세로로 쌓아, 각 줄이 자기 폭만 있으면 되게 한다. */
+/* "상태" 칸은 원래 그리드 위치(제출자 옆, 오른쪽 아래 칸)에 그대로 두고 그 안에서
+   배지+말풍선을 가로로 배치한다. 칸 폭이 좁은 화면(모바일 기준 약 135~170px)에서도
+   배지(white-space: nowrap)는 항상 알약 모양을 유지하고, 대신 말풍선 쪽이
+   flex-wrap으로 다음 줄로 넘어가 배지 모양이 깨지지 않게 한다. 폰트가 아직 로드되기
+   전 폴백 폰트로 렌더링돼 글자 폭이 예상보다 넓어지는 경우에도 카드 밖으로 새지
+   않도록, 그리드 칸(min-width: 0)과 배지(위의 max-width/overflow)에 안전장치를
+   둔다. */
+.ticket-grid > div:has(#t-status) {
+  min-width: 0;
+}
+
 #t-status {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px 8px;
+  min-width: 0;
 }
 
 /* 상태 배지가 눌러서 바꿀 수 있는 버튼이라는 것을 알려주는 말풍선 힌트.
    배지를 가리키는 작은 꼬리(::before)가 달린 순수 안내용 말풍선이라 클릭 대상이
-   아니다(aria-hidden, JS에서도 별도 리스너를 달지 않음). */
+   아니다(aria-hidden, JS에서도 별도 리스너를 달지 않음). 배지 옆(오른쪽)에 붙으므로
+   꼬리는 왼쪽을 가리킨다. */
 .status-hint {
   position: relative;
-  padding: 5px 10px;
-  margin-top: 4px;
+  padding: calc(5px * var(--fluid-scale)) calc(10px * var(--fluid-scale));
   border-radius: 10px;
-  background: var(--card-muted);
-  color: var(--muted);
-  font-size: 11px;
+  background: var(--glass-sheen), rgba(232, 98, 44, 0.82);
+  color: var(--ink);
+  font-size: calc(11px * var(--fluid-scale));
   font-weight: 600;
   white-space: nowrap;
 }
@@ -732,11 +765,45 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 .status-hint::before {
   content: '';
   position: absolute;
-  left: 14px;
-  top: -5px;
-  border-width: 0 5px 6px 5px;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 5px 6px 5px 0;
   border-style: solid;
-  border-color: transparent transparent var(--card-muted) transparent;
+  border-color: transparent rgba(232, 98, 44, 0.82) transparent transparent;
+}
+
+/* 말풍선이 버튼이라는 걸 계속 상기시키는 마퀴 — 고정 폭 창(.status-hint-viewport)
+   안에서 텍스트(.status-hint-track)가 오른쪽에서 들어와 왼쪽으로 흘러 나가는
+   진짜 이동형 텍스트다(하이라이트만 지나가는 방식이 아니라 글자 자체가 움직인다). */
+.status-hint-viewport {
+  display: inline-block;
+  width: 52px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.status-hint-track {
+  display: inline-block;
+  white-space: nowrap;
+  transform: translateX(52px);
+  animation: status-hint-marquee 3s linear infinite;
+}
+
+@keyframes status-hint-marquee {
+  0% { transform: translateX(52px); }
+  100% { transform: translateX(-100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-hint-viewport {
+    width: auto;
+  }
+
+  .status-hint-track {
+    animation: none;
+    transform: none;
+  }
 }
 
 .status-badge:hover { opacity: 0.85; }
@@ -744,7 +811,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .status-badge--praying {
   color: #3a1e10;
-  background: var(--glass-sheen), rgba(255, 237, 217, 0.68);
+  background: var(--glass-sheen), rgba(255, 224, 189, 0.92);
 }
 
 .status-badge--done {
@@ -781,7 +848,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   gap: 6px;
   margin: 20px 0 0;
   padding: 0 28px;
-  font-size: 13px;
+  font-size: calc(13px * var(--fluid-scale));
   color: var(--muted);
 }
 
@@ -808,7 +875,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   border: 1px solid var(--glass-border);
   border-radius: 14px;
   font-family: inherit;
-  font-size: 16px;
+  font-size: calc(16px * var(--fluid-scale));
   font-weight: 700;
   cursor: pointer;
 }
@@ -826,7 +893,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   border: 1px solid var(--glass-border);
   border-radius: 14px;
   font-family: inherit;
-  font-size: 16px;
+  font-size: calc(16px * var(--fluid-scale));
   font-weight: 700;
   cursor: pointer;
 }
@@ -852,7 +919,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .form-label {
   margin: 0;
-  font-size: 11px;
+  font-size: calc(11px * var(--fluid-scale));
   color: #a6a39e;
 }
 
@@ -863,7 +930,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   border: 1px solid transparent;
   border-radius: 14px;
   font-family: inherit;
-  font-size: 16px;
+  font-size: calc(16px * var(--fluid-scale));
   color: var(--ink);
 }
 
@@ -1018,7 +1085,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   border-radius: 16px;
   box-shadow: 0 14px 30px rgba(58, 20, 8, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45);
   color: var(--ink);
-  font-size: 13px;
+  font-size: calc(13px * var(--fluid-scale));
   font-weight: 600;
   line-height: 1.35;
   text-align: center;
@@ -1033,14 +1100,14 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .qr-caption {
   margin: 0;
-  font-size: 14px;
+  font-size: calc(14px * var(--fluid-scale));
   color: var(--muted);
   text-align: center;
 }
 
 .qr-url {
   margin: 0;
-  font-size: 13px;
+  font-size: calc(13px * var(--fluid-scale));
   color: #a6a39e;
   text-align: center;
   word-break: break-all;
@@ -1094,14 +1161,14 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .ig-story-username {
   flex: 1;
-  font-size: 13px;
+  font-size: calc(13px * var(--fluid-scale));
   font-weight: 700;
   color: var(--muted);
   text-align: center;
 }
 
 .ig-story-more {
-  font-size: 16px;
+  font-size: calc(16px * var(--fluid-scale));
   line-height: 1;
 }
 
@@ -1143,14 +1210,14 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .ig-story-action-text {
-  font-size: 13px;
+  font-size: calc(13px * var(--fluid-scale));
   font-weight: 700;
   color: var(--ink);
 }
 
 .ig-guide-text {
   margin: 0;
-  font-size: 15px;
+  font-size: calc(15px * var(--fluid-scale));
   font-weight: 700;
   line-height: 1.5;
   color: var(--ink);
@@ -1158,7 +1225,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .ig-tag-text {
-  font-size: 13px;
+  font-size: calc(13px * var(--fluid-scale));
   font-weight: 400;
   line-height: 1.6;
   color: var(--muted);
@@ -1166,7 +1233,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .ig-example-disclaimer {
   margin: 0;
-  font-size: 12px;
+  font-size: calc(12px * var(--fluid-scale));
   font-weight: 400;
   line-height: 1.5;
   color: var(--muted);
@@ -1180,7 +1247,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .ig-tag-chip {
   display: inline-block;
-  font-size: 13px;
+  font-size: calc(13px * var(--fluid-scale));
   font-weight: 700;
   color: var(--accent);
   background: var(--accent-soft);
@@ -1297,7 +1364,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .ig-example-label {
-  font-size: 11px;
+  font-size: calc(11px * var(--fluid-scale));
   font-weight: 600;
   line-height: 1.3;
   text-align: center;
@@ -1371,7 +1438,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 }
 
 .lightbox-content .ig-example-label {
-  font-size: 14px;
+  font-size: calc(14px * var(--fluid-scale));
 }
 
 /* ---------- 알림/확인 다이얼로그 ----------
@@ -1406,15 +1473,16 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .dialog-title {
   margin: 0;
-  font-size: 16px;
+  font-size: calc(16px * var(--fluid-scale));
   font-weight: 700;
   color: var(--ink);
 }
 
 .dialog-description {
   margin: 8px 0 0;
-  font-size: 14px;
-  color: var(--muted);
+  font-size: calc(14px * var(--fluid-scale));
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .dialog-actions {
