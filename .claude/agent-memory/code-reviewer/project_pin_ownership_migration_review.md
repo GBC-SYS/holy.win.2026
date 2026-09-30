@@ -27,6 +27,26 @@ metadata:
 3. PIN을 평문으로 RPC 인자로 보내는 것 — HTTPS 구간 자체는 문제 아님(위협은 pin_hash 노출 쪽이 훨씬 큼). 이 앱 위협 모델에서 전송 자체는 허용 가능.
 4. `required-mark` 빈 span(`aria-hidden`) — 문제 없음. 실제 필수 여부는 input의 `required` 속성이 전달하고, 점은 순수 시각 장식이라 aria-hidden 처리가 맞음.
 
-## 다음 리뷰 시 확인할 것
-- `revoke select (pin_hash) ...` 마이그레이션이 실제로 적용됐는지, `entries.js`의 select 목록이 명시적 컬럼으로 바뀌었는지 최우선 재확인.
-- `docs/07-components.md` L11/L18의 "본인 글일 때만 노출" 문구 수정 여부, `.ticket-owner-actions--hidden` 죽은 CSS/주석 정리 여부.
+## 2차 리뷰: APPROVED (2026-09-30, `revoke select (pin_hash)`만 적용된 버전)
+`entries.js`가 명시적 컬럼 목록(`id, to_name, from_name, relation, status, submitted_at, owner_id`)으로 바뀐 것과 `revoke select (pin_hash) on public.holywin_entries from anon, authenticated;`를 확인하고 APPROVED 처리함.
+
+**⚠️ 이 2차 APPROVED 판정은 틀렸다 — 컬럼 단위 revoke는 프로덕션에서 실효가 없었음.**
+사용자가 실제 프로덕션에 여러 차례 적용(Dashboard SQL Editor "Success" 메시지까지 확인)해도 `has_column_privilege('anon', ..., 'pin_hash', 'select')`가 계속 `true`로 나옴을 발견. Supabase 공식 column-level-security 가이드 재확인 결과: **테이블 단위 SELECT grant와 컬럼 단위 SELECT grant/revoke가 공존하면, 테이블 단위 권한이 계속 우선 적용되어 컬럼 단위 revoke는 아무 효과가 없다.** `0001_init.sql`이 이미 `grant select on public.holywin_entries to anon, authenticated`(테이블 전체)를 걸어뒀기 때문에, `revoke select (pin_hash) ...`만으로는 이를 좁힐 수 없었다(SQL 문법은 유효해 에러 없이 "성공"하지만 실질적 효과가 0).
+
+**올바른 패턴(공식 문서 예시 그대로):**
+```sql
+revoke select on public.holywin_entries from anon, authenticated;  -- 테이블 단위 권한을 통째로 걷어낸다
+grant select (id, to_name, from_name, relation, status, submitted_at, owner_id, deleted_at)
+  on public.holywin_entries to anon, authenticated;                -- 원하는 컬럼만 다시 컬럼 단위로 grant
+```
+테이블 단위 grant를 먼저 제거하지 않으면 어떤 컬럼 단위 revoke도 무의미하다.
+
+## 3차 리뷰: APPROVED (2026-09-30, 위 올바른 패턴으로 교체된 버전)
+`revoke select on table` → `grant select (컬럼목록) on table`로 교체된 버전을 실제 프로덕션에서 검증(`has_column_privilege` false, REST `?select=*`/`?select=...,pin_hash` 모두 401 42501, entries.js가 쓰는 컬럼 목록은 200 OK, insert/update 권한 불변, 브라우저 렌더링 정상)한 결과와 함께 재확인 — APPROVED. 이 패턴이 이 프로젝트의 정답이며, 앞으로 이 테이블에 새 민감 컬럼을 추가할 때도 반드시 "table-level REVOKE + column-level GRANT" 형태를 따를 것(컬럼 단위 REVOKE만 쓰면 안 됨).
+
+## 향후 리뷰 시 일반 원칙 (Postgres GRANT/REVOKE 리뷰 시 항상 확인)
+컬럼 단위 SELECT를 제한하는 마이그레이션을 리뷰할 때, "컬럼 단위 revoke만" 쓰고 있다면 그 테이블에 이미 테이블 단위 SELECT grant가 걸려있는지(다른 마이그레이션 파일 포함) 반드시 함께 확인할 것 — 걸려있다면 그 revoke는 SQL 에러 없이 조용히 무효가 된다. 이는 이 리포지토리에 국한되지 않는 일반적인 Postgres 함정이라 다른 프로젝트 리뷰에도 적용.
+
+## 남은 문서 드리프트 (미해결, 차단 대상 아님)
+- `docs/07-components.md` L11/L18의 "본인 글일 때만 노출" 문구 미수정.
+- `.ticket-owner-actions--hidden` 죽은 CSS/주석 정리 여부 미확인.

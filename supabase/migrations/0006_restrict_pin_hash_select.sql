@@ -16,10 +16,25 @@
 -- 이 마이그레이션 적용 전까지 등록된 모든 글의 PIN은 이미 유출 가능한
 -- 상태였다는 뜻이므로, 이 파일은 다른 마이그레이션보다 우선 적용한다.
 --
--- 해결 1: 컬럼 단위 REVOKE로 pin_hash만 좁혀 차단한다. 0001의 테이블 단위
--- SELECT grant는 그대로 두고 이 컬럼 하나만 제외 — Postgres는 테이블 단위
--- grant 위에 컬럼 단위 revoke를 얹으면 해당 컬럼만 정상적으로 좁혀진다.
-revoke select (pin_hash) on public.holywin_entries from anon, authenticated;
+-- 해결 1: 테이블 단위 SELECT grant를 통째로 걷어내고, pin_hash를 제외한
+-- 컬럼만 다시 컬럼 단위로 grant한다.
+--
+-- ⚠️ 최초 버전의 실수(기록으로 남김): 이전에는 "테이블 단위 grant는 그대로
+-- 두고 `revoke select (pin_hash) ...`만 실행하면 그 컬럼만 좁혀질 것"이라고
+-- 판단해 그렇게 작성했었다. 하지만 실제로 여러 차례(Dashboard SQL Editor에서
+-- "Success" 메시지까지 확인하며) 실행해도 `has_column_privilege('anon', ...,
+-- 'pin_hash', 'select')`가 계속 true로 나와, Supabase 공식 문서
+-- (column-level-security 가이드)를 재확인해 원인을 찾았다: "테이블 단위
+-- 권한과 컬럼 단위 권한이 둘 다 있으면, 컬럼 단위 권한만 revoke해도 테이블
+-- 단위 권한이 여전히 유효하다." 즉 0001에서 이미 걸어둔 테이블 단위
+-- `grant select on ... to anon, authenticated`가 pin_hash까지 포함해 계속
+-- 허용하고 있었으므로, 컬럼 단위 revoke만으로는 그걸 좁힐 수 없었다.
+-- 컬럼 단위로 실제 제한하려면 테이블 단위 권한 자체를 먼저 없애야 한다
+-- (공식 가이드의 `revoke ... on table ... from ...` → `grant ... (컬럼목록)
+-- on table ... to ...` 패턴을 그대로 따름).
+revoke select on public.holywin_entries from anon, authenticated;
+grant select (id, to_name, from_name, relation, status, submitted_at, owner_id, deleted_at)
+  on public.holywin_entries to anon, authenticated;
 
 -- 해결 2(심층 방어): holywin_create_entry/holywin_update_entry/
 -- holywin_update_status는 `returns public.holywin_entries`(단일 행 전체)라
