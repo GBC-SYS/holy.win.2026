@@ -18,8 +18,9 @@
     .on('presence', { event: 'sync' }, () => {
       const state = channel.presenceState();
       const count = Object.keys(state).length;
-      countTextEl.textContent = `${count}명`;
-      countChipEl?.setAttribute('aria-label', `현재 접속자 수 ${count}명`);
+      const label = `${count}명이 보고 있어요`;
+      countTextEl.textContent = label;
+      countChipEl?.setAttribute('aria-label', label);
     })
     .subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {

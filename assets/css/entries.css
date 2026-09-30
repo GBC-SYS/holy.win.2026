@@ -256,7 +256,10 @@ body:has(#screen-ticket:not(.screen--hidden)) {
 
 .list-scroll {
   flex: 1;
-  padding: 8px 24px calc(104px + env(safe-area-inset-bottom, 0px));
+  /* 150px = .floating-bottom 실측 높이(count-chip+cta-bar+상하 padding, 141.5px) + 여유 8px.
+     count-chip이 cta-bar 위에 추가되면서 .floating-bottom이 커진 만큼 같이 늘려야
+     마지막 카드가 배지 뒤로 가려지지 않는다(2026-09-30). */
+  padding: 8px 24px calc(150px + env(safe-area-inset-bottom, 0px));
 }
 
 .group-label {
@@ -446,7 +449,10 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   color: var(--muted);
 }
 
-.cta-bar {
+/* count-chip(접속자 수 배지)과 cta-bar를 세로로 쌓아 화면 하단에 고정한다.
+   배지 높이가 --fluid-scale에 따라 달라지므로, cta-bar만 따로 fixed였던 이전 구조 대신
+   이 래퍼 하나에 fixed를 걸고 배지는 그 위에 자연스럽게 쌓이게 한다(하드코딩된 bottom 오프셋 불필요). */
+.floating-bottom {
   position: fixed;
   left: 50%;
   bottom: 0;
@@ -454,10 +460,18 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   width: 100%;
   max-width: 430px;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   pointer-events: none;
+}
+
+.cta-bar {
+  width: 100%;
+  display: flex;
+  gap: 10px;
 }
 
 .cta-bar .cta-btn {
