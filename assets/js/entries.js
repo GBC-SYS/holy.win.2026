@@ -3,7 +3,6 @@
 // ============ DOM 참조 — 리스트 화면 ============
 const screenList = document.getElementById('screen-list');
 const listRecent = document.getElementById('list-recent');
-const countText = document.getElementById('count-text');
 const btnAdd = document.getElementById('btn-add');
 const btnRefresh = document.getElementById('btn-refresh');
 const groupRecentEl = document.getElementById('group-recent');
@@ -209,7 +208,6 @@ function renderList() {
       : activeFilter === '내가 쓴 글'
         ? entries.filter((entry) => entry.isMine)
         : entries.filter((entry) => entry.status === activeFilter);
-  countText.textContent = `${source.length}명`;
 
   const visibleSource = source.slice(0, listVisibleCount);
 
