@@ -1,8 +1,8 @@
 - [애매한 시각 요청은 후보 확인 후 수정](feedback_ambiguous-visual-requests.md) — Chrome 자동화는 2026-09-23부터 정상 연결됨(직접 스크린샷 검증 가능). 이미지가 첨부돼도 두 이미지 내용이 구조적으로 안 맞으면 여전히 AskUserQuestion으로 확인
-- [git-commit-pusher 신뢰 불가](feedback_git-commit-pusher-unreliable.md) — 도구 목록에 Bash 자체가 없음(구조적 원인, 4회 재현). code-reviewer APPROVED 후 호출 생략하고 바로 직접 git 실행 권장
+- [git-commit-pusher 신뢰 불가](feedback_git-commit-pusher-unreliable.md) — 도구 목록에 Bash 자체가 없음(구조적 원인, 5회 재현·2026-09-30 재확인). code-reviewer APPROVED 후 호출 자체를 생략하고 바로 직접 git 실행할 것
 - [CSS 튜닝 전 인라인 스타일부터 확인](feedback_check-inline-styles-before-css-tuning.md) — padding 반복 증가로 안 고쳐지면 JS의 .style.* 강제 대입부터 grep
 - [Supabase CRUD 마이그레이션 완료](project_supabase-crud-migration.md) — 6단계 전부 완료·배포(커밋 db5e447), holywin_ 접두사·소프트삭제 RPC 등 확정 규칙만 남음
-- [Supabase 프로젝트를 statkit.cms.api와 공유](project_supabase-shared-project-conflict.md) — 다른 앱 트리거가 익명 로그인과 충돌한 전례, 새 DB 작업 전 기존 트리거 확인 필요
+- [Supabase 프로젝트를 statkit.cms.api와 공유](project_supabase-shared-project-conflict.md) — 다른 앱 트리거가 익명 로그인과 충돌한 전례, realtime.messages RLS 정책 0개(private 채널 위험), CLAUDE.md "무관" 서술은 부분적으로만 맞음(⚠️)
 - [GitHub Pages 실배포 + PWA 아이콘](project_github-pages-deployment.md) — gbc-sys.github.io/holy.win.2026, 매니페스트 앱이름은 영문 "holywin" 선호
 - [사용자는 스크린샷 기반 소규모 반복 조정 선호](user_screenshot-driven-iteration.md) — 이미지 첨부 시 그대로 구현, 없으면 먼저 확인
 - [사용자는 대시보드/DevTools 탐색에 안내 필요](user_needs-dashboard-navigation-guidance.md) — 클릭 단위로 구체적 경로 안내, 예시 코드는 적용 여부 먼저 판단해줄 것
@@ -21,5 +21,6 @@
 - [IG 예시 캐러셀 미디어 생명주기](project_ig-example-carousel-media-lifecycle.md) — 시트는 display:none 아닌 transform으로 숨겨짐 → 자동재생 영상은 DOM 생성 시점이 아니라 반드시 openIgSheet/closeIgSheet에 묶을 것. AVIF 선례 있음, mp4는 아직 미압축
 - [code-reviewer도 Bash 없음](feedback_code-reviewer-no-bash.md) — git diff 못 돌림, Read/Grep/Glob으로 대체. 호출 시 변경 파일·diff·배경을 프롬프트에 직접 요약해서 줄 것
 - [img{max-width:100%} 전역 리셋이 확대 레이아웃을 깸](project_img-max-width-reset-trap.md) — init.css 리셋 때문에 width:100% 초과 값이 조용히 눌림. 이미지가 계산값보다 작게 나오면 좌표 수식 대신 이 리셋부터 의심할 것
-- [전체 폰트사이즈 --fluid-scale 반응형화](project_fluid-typography-scale.md) — calc(Npx * var(--fluid-scale)) 패턴, 새 font-size/padding도 이 패턴 따를 것. docs/03-typography.md 갱신 필요 여부 미확정(⚠️ 커밋 전 확인)
+- [전체 폰트사이즈 --fluid-scale 반응형화](project_fluid-typography-scale.md) — calc(Npx * var(--fluid-scale)) 패턴, 새 font-size/padding도 이 패턴 따를 것. docs/03·07 갱신까지 완료·APPROVED
 - [상태 배지+말풍선 레이아웃 정착 이력](project_status-badge-hint-layout.md) — 그리드 풀스팬·fit-content는 시도했다가 폐기됨, 다시 시도하지 말 것
+- [count-chip이 실시간 접속자 수로 교체됨](project_realtime-presence-viewer-count.md) — 2026-09-30, 신규 assets/js/presence.js가 Supabase Realtime Presence로 사람 단위 집계, private 채널 금지, aria-label 동적 갱신 필수
