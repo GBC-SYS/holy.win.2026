@@ -1,6 +1,6 @@
 ---
 name: project-pin-ownership-and-next-steps
-description: 전도 대상자 수정/삭제 권한을 auth.uid()에서 4자리 비밀번호(PIN) 방식으로 전환(2026-09-30) — "내가 쓴 글" 필터는 여전히 기기 로컬이며, 다음 작업은 제출자 이름 검색 추가로 예정됨
+description: 전도 대상자 수정/삭제 권한을 auth.uid()에서 4자리 비밀번호 방식으로 전환(2026-09-30, 이후 pin_hash 노출 Critical 취약점 발견·수정까지 완료) — "내가 쓴 글" 필터는 여전히 기기 로컬이며, 다음 작업은 제출자 이름 검색 추가로 예정됨
 metadata:
   type: project
   modified: 2026-09-30
@@ -15,3 +15,7 @@ metadata:
 **Why:** 사용자가 "다른 PC에서 봐도 같은 정보(내가 쓴 글)를 볼 수 있냐"고 질문해서, 비밀번호 기반 권한 모델과 "내가 쓴 글" 필터가 서로 다른 메커니즘이라는 걸 명확히 설명한 뒤 나온 결정.
 
 **How to apply:** 이 기능을 다시 건드릴 때 이 결정 두 가지(현재 한계를 알고 있음 + 다음은 이름 검색)를 전제로 진행할 것. [[project-supabase-crud-migration]]의 소유권 모델 설명은 이제 이 비밀번호 방식으로 대체됐으므로 함께 갱신 필요.
+
+**후속 이력(2026-09-30):** 0005 배포 직후 `pin_hash` 컬럼이 anon/authenticated에 전체 노출되는 Critical 취약점이 발견돼 0006으로 긴급 차단함 — 근본 원인과 올바른 패턴은 [[postgres-column-revoke-trap]] 참고. 이 과정에서 RPC 응답의 null 처리 버그도 함께 발견·수정함([[postgrest-rpc-null-object-quirk]]). UI 텍스트 표기 규칙은 [[pin-ui-wording-password-only]] 참고. 목데이터도 이 비밀번호 방식으로 시연 가능하게 교체함([[mock-seed-v2-pending-db-apply]]).
+
+**후속 이력(2026-10-03):** "다음 작업"이었던 제출자 이름 검색을 완료함 — 범위를 넓혀 전도대상자 이름까지 포함했고, "내가 쓴 글" 탭 자체를 삭제하고 돋보기 아이콘 토글 검색바로 대체했다. 상세는 [[name-search-replaces-mine-tab]] 참고. 같은 세션에서 모든 이름 표시(리스트/티켓/수정 폼)에 마스킹도 적용함([[name-masking-display]]).

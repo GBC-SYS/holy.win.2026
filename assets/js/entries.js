@@ -13,7 +13,10 @@ const listLoadMoreSentinel = document.getElementById('list-load-more-sentinel');
 const filterTabAll = document.getElementById('filter-tab-all');
 const filterTabPraying = document.getElementById('filter-tab-praying');
 const filterTabDone = document.getElementById('filter-tab-done');
-const filterTabMine = document.getElementById('filter-tab-mine');
+const btnSearchToggle = document.getElementById('btn-search-toggle');
+const searchBar = document.getElementById('search-bar');
+const inputSearch = document.getElementById('input-search');
+const btnSearchClear = document.getElementById('btn-search-clear');
 
 // ============ DOM 참조 — 티켓 상세 화면 ============
 const screenTicket = document.getElementById('screen-ticket');
@@ -106,12 +109,13 @@ const pinDialogDefaultDescription = pinDialogDescription.textContent;
 
 // ============ 상태 ============
 let entries = [];
-// "전체"/"기도 중"/"완료"/"내가 쓴 글" 중 하나만 선택되는 단일 필터. 처음엔 작성자
-// 필터("전체"/"내가 쓴 글")와 상태 필터("전체"/"기도 중"/"완료")를 별도 탭 줄 두 개로
-// 나눠 AND로 결합했으나, 탭이 두 줄로 겹쳐 보인다는 피드백으로 한 줄·단일 선택으로
-// 합쳤다 — "기도 중"/"완료"는 entry.status 값과 그대로 비교하므로 STATUS_OPTIONS와
-// 다른 문자열 집합을 만들지 않는다.
+// "전체"/"기도 중"/"완료" 중 하나만 선택되는 단일 상태 필터 — "기도 중"/"완료"는
+// entry.status 값과 그대로 비교하므로 STATUS_OPTIONS와 다른 문자열 집합을 만들지
+// 않는다. 검색어(searchQuery)는 이 상태 필터와 별개로 AND 조건으로 결합된다
+// (renderList 참고) — 과거엔 작성자 필터("내가 쓴 글")가 네 번째 탭이었으나,
+// 기기 로컬(localStorage)로만 판별 가능한 한계 때문에 이름 검색으로 대체됐다.
 let activeFilter = '전체';
+let searchQuery = '';
 let currentTicketEntry = null;
 
 // ============ 무한 스크롤 상태 ============
@@ -129,6 +133,18 @@ function cycleStatus(current) {
   return STATUS_OPTIONS[nextIndex];
 }
 
+// ============ 이름 마스킹 ============
+// 표시 단계(클라이언트 렌더링)에서만 가린다 — Supabase select 응답(네트워크
+// 탭)과 검색(entry.to/from 원본 비교, renderList 참고)은 여전히 평문 이름을
+// 쓴다. 서버가 평문을 그대로 내려주는 이 앱의 위협 모델(로그인 없는 정적
+// 사이트, RLS만 존재)에서는 허용 가능한 절충으로 판단함.
+// 2자는 가운데가 없어 끝 글자만, 3자 이상은 첫/끝 글자를 남기고 가운데를 전부 가린다.
+function maskName(name) {
+  if (!name || name.length <= 1) return name;
+  if (name.length === 2) return name.replace(/^(.)(.)$/, '$1*');
+  return name.replace(/^(.)(.*)(.)$/, (_, first, middle, last) => first + '*'.repeat(middle.length) + last);
+}
+
 // ============ 컴포넌트 팩토리 ============
 // 절제 카드(entry-card--dark) variant를 쓰던 호출부가 없어졌다 — 카드는 이제
 // 항상 이 하나의 모양(entry-date 포함)으로만 그려진다.
@@ -143,10 +159,10 @@ function createEntryCard(entry) {
   const left = document.createElement('div');
   const from = document.createElement('p');
   from.className = 'entry-from';
-  from.textContent = `${entry.from} → 전도대상자`;
+  from.textContent = `${maskName(entry.from)} → 전도대상자`;
   const to = document.createElement('p');
   to.className = 'entry-to';
-  to.textContent = entry.to;
+  to.textContent = maskName(entry.to);
   left.append(from, to);
 
   const right = document.createElement('div');
@@ -214,12 +230,13 @@ function createStatusHint() {
 // 지금은 행사 명단 규모가 작아 문제되지 않는다는 전제로 단순함을 택했다 — 데이터가
 // 크게 늘어나면 "새로 늘어난 구간만 append"하는 방식으로 바꾸는 걸 재검토할 것.
 function renderList() {
-  const source =
-    activeFilter === '전체'
-      ? entries
-      : activeFilter === '내가 쓴 글'
-        ? entries.filter((entry) => entry.isMine)
-        : entries.filter((entry) => entry.status === activeFilter);
+  const statusFiltered =
+    activeFilter === '전체' ? entries : entries.filter((entry) => entry.status === activeFilter);
+
+  const query = searchQuery.trim();
+  const source = query
+    ? statusFiltered.filter((entry) => entry.to.includes(query) || entry.from.includes(query))
+    : statusFiltered;
 
   const visibleSource = source.slice(0, listVisibleCount);
 
@@ -241,7 +258,6 @@ function renderList() {
     [filterTabAll, '전체'],
     [filterTabPraying, '기도 중'],
     [filterTabDone, '완료'],
-    [filterTabMine, '내가 쓴 글'],
   ].forEach(([tab, value]) => {
     const selected = activeFilter === value;
     tab.classList.toggle('filter-tab--active', selected);
@@ -251,17 +267,16 @@ function renderList() {
 
 function renderTicket(entry) {
   currentTicketEntry = entry;
-  ticketFields.to.textContent = entry.to;
-  ticketFields.from.textContent = entry.from;
+  ticketFields.to.textContent = maskName(entry.to);
+  ticketFields.from.textContent = maskName(entry.from);
   ticketFields.relation.textContent = entry.relation;
   ticketFields.date.textContent = entry.date;
-  ticketFields.from2.textContent = entry.from;
+  ticketFields.from2.textContent = maskName(entry.from);
   ticketFields.status.replaceChildren(createStatusBadge(entry), createStatusHint());
   ticketFields.stamp.classList.toggle('stamp--done', entry.status === '완료');
   ticketFields.stampStatus.textContent = entry.status;
   // 수정/삭제 버튼은 이제 항상 노출한다 — 실제 권한은 비밀번호를 아는지 여부로
-  // 판별하므로(0005_pin_ownership.sql), 이 기기에서 등록했는지(entry.isMine)와는
-  // 무관하다. isMine은 "내가 쓴 글" 필터 탭에만 쓰인다.
+  // 판별하므로(0005_pin_ownership.sql), 이 기기에서 등록했는지와는 무관하다.
 }
 
 // 상태 배지 클릭 시 진입점. Supabase에 UPDATE를 보내고, 실제로 반영된 행이
@@ -343,7 +358,6 @@ async function handleEntryFormSubmit(event) {
   }
 
   if (data) {
-    rememberMyEntryId(data.id);
     entries.unshift(mapRowToEntry(data));
     // entries가 1개 늘어난 만큼 listVisibleCount도 같이 늘려야 한다. 안 그러면
     // slice(0, listVisibleCount) 경계에 걸려있던, 방금까지 화면에 보이던 마지막
@@ -364,10 +378,18 @@ async function handleEditFormSubmit(event) {
 
   if (!currentTicketEntry) return;
 
-  const toName = editFormFields.to.value.trim();
-  const fromName = editFormFields.from.value.trim();
+  const toNameInput = editFormFields.to.value.trim();
+  const fromNameInput = editFormFields.from.value.trim();
   const relation = editFormFields.relation.value.trim();
   const pin = editFormFields.pin.value.trim();
+
+  // 입력창은 비워둔 채 placeholder로만 마스킹된 이름을 보여준다(openEditForm
+  // 참고) — 비워두고 제출하면 "안 바꾼다"는 뜻으로 원본 실명을 그대로 쓴다.
+  // 입력창에 마스킹 문자열을 그대로 프리필하던 이전 방식은, 사용자가 그중
+  // 한 글자만 고치고 나머지 `*`는 그대로 둔 채 제출하면 그 `*`가 실명에
+  // 섞여 영구 저장되는 사고로 이어질 수 있어 이 구조로 바꿨다.
+  const toName = toNameInput === '' ? currentTicketEntry.to : toNameInput;
+  const fromName = fromNameInput === '' ? currentTicketEntry.from : fromNameInput;
 
   if (!toName || !fromName || !relation) {
     await showDialog({ description: '모든 항목을 입력해주세요.' });
@@ -453,7 +475,7 @@ async function handleDeleteEntry(entry) {
   renderList();
 }
 
-// ============ 리스트 필터(전체/기도 중/완료/내가 쓴 글, 단일 선택) ============
+// ============ 리스트 필터(전체/기도 중/완료, 단일 선택) ============
 function setActiveFilter(filter) {
   activeFilter = filter;
   listVisibleCount = LIST_PAGE_SIZE;
@@ -526,10 +548,15 @@ function closeEntryForm() {
 
 // ============ 명단 수정 바텀시트 ============
 // 등록 바텀시트와 같은 오버레이 메커니즘을 그대로 재사용하는 두 번째 시트다.
-// 열 때 현재 티켓(currentTicketEntry)의 값을 입력 필드에 미리 채워넣는다.
+// 이름 입력창은 값을 비워두고 placeholder로만 마스킹된 현재 이름을 보여준다 —
+// 실명을 입력창에 그대로 프리필하지 않으면서도(이름 노출 방지), 빈 채로
+// 제출하면 "안 바꾼다"는 뜻으로 해석해 원본을 유지한다(handleEditFormSubmit
+// 참고). 관계는 마스킹 대상이 아니므로 그대로 프리필한다.
 function openEditForm(entry) {
-  editFormFields.to.value = entry.to;
-  editFormFields.from.value = entry.from;
+  editFormFields.to.value = '';
+  editFormFields.to.placeholder = `비워두면 유지: ${maskName(entry.to)}`;
+  editFormFields.from.value = '';
+  editFormFields.from.placeholder = `비워두면 유지: ${maskName(entry.from)}`;
   editFormFields.relation.value = entry.relation;
   // 비밀번호는 보안상 미리 채우지 않는다 — 매번 다시 입력해야 한다.
   editFormFields.pin.value = '';
@@ -959,7 +986,39 @@ editEntryForm.addEventListener('submit', handleEditFormSubmit);
 filterTabAll.addEventListener('click', () => setActiveFilter('전체'));
 filterTabPraying.addEventListener('click', () => setActiveFilter('기도 중'));
 filterTabDone.addEventListener('click', () => setActiveFilter('완료'));
-filterTabMine.addEventListener('click', () => setActiveFilter('내가 쓴 글'));
+
+// 돋보기 아이콘 토글 — 닫을 때는 검색어도 같이 지워서, 바를 닫았는데 필터링된
+// 리스트만 남아있는 어긋난 상태가 생기지 않게 한다. classList.toggle의 반환값
+// (토글 후 클래스가 존재하는지)으로 "지금 닫혔는지"를 그대로 판별한다.
+btnSearchToggle.addEventListener('click', () => {
+  const isNowHidden = searchBar.classList.toggle('is-hidden');
+  btnSearchToggle.setAttribute('aria-expanded', String(!isNowHidden));
+  if (isNowHidden) {
+    inputSearch.value = '';
+    searchQuery = '';
+    btnSearchClear.classList.add('is-hidden');
+    listVisibleCount = LIST_PAGE_SIZE;
+    renderList();
+  } else {
+    inputSearch.focus();
+  }
+});
+
+inputSearch.addEventListener('input', () => {
+  searchQuery = inputSearch.value;
+  btnSearchClear.classList.toggle('is-hidden', searchQuery.trim() === '');
+  listVisibleCount = LIST_PAGE_SIZE;
+  renderList();
+});
+
+btnSearchClear.addEventListener('click', () => {
+  inputSearch.value = '';
+  searchQuery = '';
+  btnSearchClear.classList.add('is-hidden');
+  listVisibleCount = LIST_PAGE_SIZE;
+  inputSearch.focus();
+  renderList();
+});
 
 btnQrShare.addEventListener('click', openQrSheet);
 
@@ -1051,29 +1110,6 @@ function formatEntryDate(submittedAt) {
   return `${year}.${month}.${day}`;
 }
 
-// "내가 쓴 글"(isMine)은 더 이상 auth.uid()(브라우저별 익명 세션)로 판별하지
-// 않는다 — 비밀번호 도입 이후 수정/삭제 권한 자체는 비밀번호 해시 검증(0005_pin_ownership.sql)만이
-// 판별하고, 이 값은 오직 "내가 쓴 글" 필터 탭(리스트 화면 표시용)에만 쓰인다.
-// 이 기기에서 직접 등록한 글의 id만 localStorage에 남겨두고 그걸로 판별한다.
-const MY_ENTRY_IDS_KEY = 'holywin_my_entry_ids';
-
-function getMyEntryIds() {
-  try {
-    const raw = JSON.parse(localStorage.getItem(MY_ENTRY_IDS_KEY));
-    return Array.isArray(raw) ? raw : [];
-  } catch {
-    return [];
-  }
-}
-
-function rememberMyEntryId(id) {
-  const ids = getMyEntryIds();
-  if (!ids.includes(id)) {
-    ids.push(id);
-    localStorage.setItem(MY_ENTRY_IDS_KEY, JSON.stringify(ids));
-  }
-}
-
 function mapRowToEntry(row) {
   return {
     id: row.id,
@@ -1083,7 +1119,6 @@ function mapRowToEntry(row) {
     status: row.status,
     date: formatEntryDate(row.submitted_at),
     ownerId: row.owner_id,
-    isMine: getMyEntryIds().includes(row.id),
   };
 }
 

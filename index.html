@@ -31,6 +31,12 @@
         <div class="header-row">
           <h1 class="title">전도 대상자</h1>
           <div class="header-actions">
+            <button type="button" class="back-btn" id="btn-search-toggle" aria-label="이름으로 검색" aria-expanded="false" aria-controls="search-bar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="m21 21-4.3-4.3"/>
+              </svg>
+            </button>
             <button type="button" class="back-btn" id="btn-refresh" aria-label="새로고침">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
@@ -46,7 +52,19 @@
           <button type="button" class="filter-tab filter-tab--active" id="filter-tab-all" role="tab" aria-selected="true">전체</button>
           <button type="button" class="filter-tab" id="filter-tab-praying" role="tab" aria-selected="false">기도 중</button>
           <button type="button" class="filter-tab" id="filter-tab-done" role="tab" aria-selected="false">완료</button>
-          <button type="button" class="filter-tab" id="filter-tab-mine" role="tab" aria-selected="false">내가 쓴 글</button>
+        </div>
+        <div class="search-bar is-hidden" id="search-bar">
+          <svg class="search-bar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input type="text" class="search-bar-input" id="input-search" placeholder="전도대상자 이름, 제출자 이름으로 검색" aria-label="이름으로 검색">
+          <button type="button" class="search-bar-clear is-hidden" id="btn-search-clear" aria-label="검색어 지우기">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18"/>
+              <path d="M6 6l12 12"/>
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -230,11 +248,11 @@
       <form class="form-wrap" id="edit-entry-form">
         <div class="form-field">
           <label class="form-label" for="edit-input-to-name">대상자 이름<span class="required-mark" aria-hidden="true"></span></label>
-          <input class="form-input" type="text" id="edit-input-to-name" name="to_name" maxlength="50" required autocomplete="off">
+          <input class="form-input" type="text" id="edit-input-to-name" name="to_name" maxlength="50" autocomplete="off">
         </div>
         <div class="form-field">
           <label class="form-label" for="edit-input-from-name">제출자 이름<span class="required-mark" aria-hidden="true"></span></label>
-          <input class="form-input" type="text" id="edit-input-from-name" name="from_name" maxlength="50" required autocomplete="off">
+          <input class="form-input" type="text" id="edit-input-from-name" name="from_name" maxlength="50" autocomplete="off">
         </div>
         <div class="form-field">
           <label class="form-label" for="edit-input-relation">관계<span class="required-mark" aria-hidden="true"></span></label>

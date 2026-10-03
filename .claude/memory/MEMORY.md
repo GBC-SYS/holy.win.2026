@@ -2,7 +2,7 @@
 - [git-commit-pusher 신뢰 불가](feedback_git-commit-pusher-unreliable.md) — 도구 목록에 Bash 자체가 없음(구조적 원인, 5회 재현·2026-09-30 재확인). code-reviewer APPROVED 후 호출 자체를 생략하고 바로 직접 git 실행할 것
 - [CSS 튜닝 전 인라인 스타일부터 확인](feedback_check-inline-styles-before-css-tuning.md) — padding 반복 증가로 안 고쳐지면 JS의 .style.* 강제 대입부터 grep
 - [Supabase CRUD 마이그레이션 완료](project_supabase-crud-migration.md) — 6단계 전부 완료·배포(커밋 db5e447), holywin_ 접두사·소프트삭제 RPC 등 확정 규칙만 남음
-- [비밀번호 기반 소유권 전환 + 다음 작업](project_pin-ownership-and-next-steps.md) — auth.uid() → 4자리 비밀번호로 수정/삭제 인증 전환(2026-09-30). "내가 쓴 글"은 여전히 기기 로컬 한계, 다음은 제출자 이름 검색 추가 예정
+- [비밀번호 기반 소유권 전환 + 다음 작업](project_pin-ownership-and-next-steps.md) — auth.uid() → 4자리 비밀번호로 전환, pin_hash 노출 취약점 수정 완료(2026-09-30). "내가 쓴 글" 한계는 2026-10-03 이름 검색 도입으로 해소됨
 - [Supabase 프로젝트를 statkit.cms.api와 공유](project_supabase-shared-project-conflict.md) — 다른 앱 트리거가 익명 로그인과 충돌한 전례, realtime.messages RLS 정책 0개(private 채널 위험), CLAUDE.md "무관" 서술은 부분적으로만 맞음(⚠️)
 - [GitHub Pages 실배포 + PWA 아이콘](project_github-pages-deployment.md) — gbc-sys.github.io/holy.win.2026, 매니페스트 앱이름은 영문 "holywin" 선호
 - [사용자는 스크린샷 기반 소규모 반복 조정 선호](user_screenshot-driven-iteration.md) — 이미지 첨부 시 그대로 구현, 없으면 먼저 확인
@@ -25,3 +25,11 @@
 - [전체 폰트사이즈 --fluid-scale 반응형화](project_fluid-typography-scale.md) — calc(Npx * var(--fluid-scale)) 패턴, 새 font-size/padding도 이 패턴 따를 것. docs/03·07 갱신까지 완료·APPROVED
 - [상태 배지+말풍선 레이아웃 정착 이력](project_status-badge-hint-layout.md) — 그리드 풀스팬·fit-content는 시도했다가 폐기됨, 다시 시도하지 말 것
 - [count-chip이 실시간 접속자 수로 교체됨](project_realtime-presence-viewer-count.md) — 2026-09-30, 신규 assets/js/presence.js가 Supabase Realtime Presence로 사람 단위 집계, private 채널 금지, aria-label 동적 갱신 필수
+- [UI 텍스트는 "PIN"이 아니라 "비밀번호"](feedback_pin-ui-wording-password-only.md) — 사용자 노출 텍스트 전부 비밀번호로 표기, DB 컬럼/RPC 파라미터명 pin은 유지
+- [컬럼 단위 REVOKE는 테이블 단위 GRANT를 못 이김](project_postgres-column-revoke-trap.md) — 반드시 테이블 단위 REVOKE 후 컬럼 단위 GRANT로 재작성, Dashboard "Success" 메시지 믿지 말 것
+- [단일 행 RPC의 NULL은 REST에서 all-null 객체로 옴](project_postgrest-rpc-null-object-quirk.md) — !data 대신 !data?.id로 체크할 것
+- [DB 변경은 사용자 확인 말고 직접 재검증](feedback_verify-db-changes-empirically.md) — has_column_privilege/curl로 확인하는 습관이 실제 Critical 버그를 잡아냄
+- [목데이터 v2(서연 외 4명) 마이그레이션 작성 완료·DB 미적용](project_mock-seed-v2-pending-db-apply.md) — 0007 커밋됨(f09c3a0), Dashboard SQL Editor 실행 전까지 실제 DB는 그대로
+- [이름 전체 마스킹(수정 폼 입력창 포함)](project_name-masking-display.md) — maskName() 전역 적용, 수정 폼은 "placeholder와 같으면 원본으로 치환"해 데이터 손실 방지
+- [이름 검색이 "내가 쓴 글" 탭을 대체](project_name-search-replaces-mine-tab.md) — 돋보기 토글 검색바, 상태 필터와 AND, 관련 localStorage/isMine 데드코드 삭제
+- [라이브 공유 데모 DB 주의](feedback_live-shared-demo-db-caution.md) — 목데이터도 실시간 공유 상태, 테스트 중 값이 "기대와 다르면" 먼저 SQL로 현재 상태 재확인

@@ -254,6 +254,64 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   color: var(--accent);
 }
 
+/* 돋보기 아이콘(#btn-search-toggle) 토글로 보이는 검색 바 — .filter-tab과 같은
+   유리질감 알약 톤을 그대로 재사용해 필터 탭 줄과 한 세트처럼 보이게 한다. */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: var(--glass-sheen), rgba(236, 231, 219, 0.6);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+}
+
+/* .form-input:focus와 같은 포커스 표시 원칙(outline 항상 노출)을 따르되,
+   알약 모양 부모 전체에 걸어 radius와 어긋나지 않게 한다 — input 자체의
+   outline은 꺼서 이중으로 겹치지 않게 한다. */
+.search-bar:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.search-bar-icon {
+  flex: none;
+  color: var(--muted);
+}
+
+.search-bar-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: calc(15px * var(--fluid-scale));
+  color: var(--ink);
+}
+
+.search-bar-input::placeholder {
+  color: var(--muted);
+}
+
+.search-bar-input:focus {
+  outline: none;
+}
+
+.search-bar-clear {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+}
+
 .list-scroll {
   flex: 1;
   /* 150px = .floating-bottom 실측 높이(count-chip+cta-bar+상하 padding, 141.5px) + 여유 8px.
@@ -276,7 +334,7 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   gap: 12px;
 }
 
-/* 빈 상태(Empty state) — "내가 쓴 글" 필터에 결과가 없을 때만 노출되는 1줄 안내 문구 */
+/* 빈 상태(Empty state) — 현재 상태 필터+검색어 조건에 맞는 항목이 없을 때만 노출되는 1줄 안내 문구 */
 .list-empty {
   margin: 40px 0 0;
   text-align: center;
