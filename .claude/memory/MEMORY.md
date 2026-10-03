@@ -24,7 +24,9 @@
 - [img{max-width:100%} 전역 리셋이 확대 레이아웃을 깸](project_img-max-width-reset-trap.md) — init.css 리셋 때문에 width:100% 초과 값이 조용히 눌림. 이미지가 계산값보다 작게 나오면 좌표 수식 대신 이 리셋부터 의심할 것
 - [전체 폰트사이즈 --fluid-scale 반응형화](project_fluid-typography-scale.md) — calc(Npx * var(--fluid-scale)) 패턴, 새 font-size/padding도 이 패턴 따를 것. docs/03·07 갱신까지 완료·APPROVED
 - [상태 배지+말풍선 레이아웃 정착 이력](project_status-badge-hint-layout.md) — 그리드 풀스팬·fit-content는 시도했다가 폐기됨, 다시 시도하지 말 것
-- [count-chip이 실시간 접속자 수로 교체됨](project_realtime-presence-viewer-count.md) — 2026-09-30, 신규 assets/js/presence.js가 Supabase Realtime Presence로 사람 단위 집계, private 채널 금지, aria-label 동적 갱신 필수
+- [count-chip이 실시간 접속자 수로 교체됨](project_realtime-presence-viewer-count.md) — 2026-09-30, 신규 assets/js/presence.js가 Supabase Realtime Presence로 사람 단위 집계, private 채널 금지, aria-label 동적 갱신 필수. ⚠️2026-10-03: 노출 타이밍은 더 이상 presence.js 소관 아님(아래 항목 참고)
+- [count-chip 진입 애니메이션(2.5초 고정 지연)](project_count-chip-entrance-animation.md) — 순수 CSS keyframe, --ease-out 토큰 최초 도입, presence.js의 JS 트리거 방식은 폐기됨
+- ["N초 후 노출"은 고정 딜레이로, 데이터 도착 시점 연동 금지](feedback_fixed-delay-over-data-driven-timing.md) — Realtime sync 연동 1차 구현을 사용자가 재요청으로 교정, 애매하면 고정 딜레이가 기본값
 - [UI 텍스트는 "PIN"이 아니라 "비밀번호"](feedback_pin-ui-wording-password-only.md) — 사용자 노출 텍스트 전부 비밀번호로 표기, DB 컬럼/RPC 파라미터명 pin은 유지
 - [컬럼 단위 REVOKE는 테이블 단위 GRANT를 못 이김](project_postgres-column-revoke-trap.md) — 반드시 테이블 단위 REVOKE 후 컬럼 단위 GRANT로 재작성, Dashboard "Success" 메시지 믿지 말 것
 - [단일 행 RPC의 NULL은 REST에서 all-null 객체로 옴](project_postgrest-rpc-null-object-quirk.md) — !data 대신 !data?.id로 체크할 것
@@ -33,3 +35,4 @@
 - [이름 전체 마스킹(수정 폼 입력창 포함)](project_name-masking-display.md) — maskName() 전역 적용, 수정 폼은 "placeholder와 같으면 원본으로 치환"해 데이터 손실 방지
 - [이름 검색이 "내가 쓴 글" 탭을 대체](project_name-search-replaces-mine-tab.md) — 돋보기 토글 검색바, 상태 필터와 AND, 관련 localStorage/isMine 데드코드 삭제
 - [라이브 공유 데모 DB 주의](feedback_live-shared-demo-db-caution.md) — 목데이터도 실시간 공유 상태, 테스트 중 값이 "기대와 다르면" 먼저 SQL로 현재 상태 재확인
+- [10/3 외 날짜 삭제 마이그레이션(0008) 작성됨·미적용](project_delete-non-oct3-entries-pending-db-apply.md) — id 125~130 하드 삭제 대기 중, Dashboard 실행 전까지 DB는 그대로

@@ -29,6 +29,8 @@
      이 배율을 곱해(calc) 참조하므로, 이 한 줄만 조정하면 전체 타이포그래피의
      반응성을 한 번에 튜닝할 수 있다. */
   --fluid-scale: clamp(0.9, calc(0.9 + 0.1 * (100vw - 320px) / (430px - 320px)), 1);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 @font-face {
@@ -200,6 +202,29 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   color: var(--ink);
   border-radius: 999px;
   padding: 6px 14px;
+  /* 접속 직후 2~3초간은 숨겨뒀다가, 아래에서 위로 떠오르며 노출한다.
+     JS 상태 없이 마운트 시 고정 지연으로 자동 재생되는 순전한 CSS 애니메이션. */
+  opacity: 0;
+  transform: translateY(10px);
+  animation: count-chip-reveal 0.32s var(--ease-out) 2.5s both;
+}
+
+@keyframes count-chip-reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .count-chip {
+    transform: none;
+    animation-name: count-chip-reveal-fade;
+  }
+}
+
+@keyframes count-chip-reveal-fade {
+  to { opacity: 1; }
 }
 
 .count-chip span { font-size: calc(13px * var(--fluid-scale)); font-weight: 700; }
