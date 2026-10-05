@@ -175,6 +175,10 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* header-actions에 total-count-badge가 추가되며 폭이 늘어났다 — 320px 같은
+     초협폭 뷰포트에서 타이틀과 겹치지 않고 다음 줄로 떨어지도록 안전망을 둔다. */
+  flex-wrap: wrap;
+  row-gap: 6px;
 }
 
 .title {
@@ -189,6 +193,22 @@ body:has(#screen-ticket:not(.screen--hidden)) {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* 전체 전도 대상자 등록 건수 배지 — .filter-tab/.back-btn과 같은 글래스 알약
+   레시피를 재사용한다. 필터/검색과 무관하게 entries 배열 전체 길이를 보여준다
+   (renderList() 참고) — 36px 원형 아이콘 버튼 옆에 붙으므로 패딩은 더 작게. */
+.total-count-badge {
+  background: var(--glass-sheen), rgba(236, 231, 219, 0.6);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .count-chip {

@@ -14,6 +14,7 @@ const filterTabAll = document.getElementById('filter-tab-all');
 const filterTabPraying = document.getElementById('filter-tab-praying');
 const filterTabDone = document.getElementById('filter-tab-done');
 const btnSearchToggle = document.getElementById('btn-search-toggle');
+const totalCountText = document.getElementById('total-count-text');
 const searchBar = document.getElementById('search-bar');
 const inputSearch = document.getElementById('input-search');
 const btnSearchClear = document.getElementById('btn-search-clear');
@@ -230,6 +231,8 @@ function createStatusHint() {
 // 지금은 행사 명단 규모가 작아 문제되지 않는다는 전제로 단순함을 택했다 — 데이터가
 // 크게 늘어나면 "새로 늘어난 구간만 append"하는 방식으로 바꾸는 걸 재검토할 것.
 function renderList() {
+  totalCountText.textContent = `총 ${entries.length}명`;
+
   const statusFiltered =
     activeFilter === '전체' ? entries : entries.filter((entry) => entry.status === activeFilter);
 
